@@ -24,4 +24,5 @@ public class SplashScreenActivity extends Activity {
             }
         }, SPLASH_TIME_OUT);
     }
+
 }

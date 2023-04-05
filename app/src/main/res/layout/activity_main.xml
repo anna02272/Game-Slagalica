@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:src="@drawable/background"
-        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
