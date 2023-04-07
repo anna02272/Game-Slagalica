@@ -25,7 +25,7 @@
         android:layout_marginStart="196dp"
         android:layout_marginTop="44dp"
         android:layout_weight="1"
-        android:text="Registracija"
+        android:text="Prijava/ Registracija"
         app:layout_constraintStart_toStartOf="@+id/login"
         app:layout_constraintTop_toTopOf="parent" />
 
