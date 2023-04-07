@@ -1,12 +1,15 @@
 package com.example.slagalica;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,6 +30,7 @@ public class RegistrationFragment extends Fragment {
     public RegistrationFragment() {
         // Required empty public constructor
     }
+
 
     /**
      * Use this factory method to create a new instance of
@@ -61,4 +65,6 @@ public class RegistrationFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_registration, container, false);
     }
-}
+
+
+    }
