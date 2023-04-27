@@ -22,54 +22,58 @@
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="200dp"
+                android:layout_height="180dp"
                 android:src="@drawable/pic_splashnoback" />
 
             <EditText
                 android:id="@+id/login_email"
-                android:layout_width="300dp"
-                android:layout_height="50dp"
+                android:layout_width="250dp"
+                android:layout_height="48dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="0dp"
                 android:background="@drawable/login_edittext_bkg"
                 android:drawableLeft="@drawable/login_person"
+                android:drawableTint="@color/dark_pruple"
                 android:drawablePadding="8dp"
                 android:hint="@string/login_email"
-                android:padding="8dp" />
+                android:padding="8dp"
+                android:textColorHint="@color/gray"/>
 
             <EditText
                 android:id="@+id/login_password"
-                android:layout_width="300dp"
-                android:layout_height="50dp"
+                android:layout_width="250dp"
+                android:layout_height="48dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/login_edittext_bkg"
                 android:drawableLeft="@drawable/login_lock"
                 android:drawablePadding="8dp"
                 android:hint="@string/login_reg_password"
+                android:drawableTint="@color/dark_pruple"
                 android:inputType="textPassword"
-                android:padding="8dp" />
+                android:padding="8dp"
+                android:textColorHint="@color/gray"/>
 
 
             <Button
                 android:id="@+id/login_button"
-                android:layout_width="300dp"
-                android:layout_height="60dp"
+                android:layout_width="250dp"
+                android:layout_height="48dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
                 android:text="@string/login_login"
                 android:textSize="18sp"
-                app:cornerRadius="30dp" />
+                app:cornerRadius="20dp" />
 
             <Button
                 android:id="@+id/cancel_login_button"
-                android:layout_width="300dp"
-                android:layout_height="60dp"
+                android:layout_width="250dp"
+                android:layout_height="48dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:text="@string/login_reg_cancel"
                 android:textSize="18sp"
-                app:cornerRadius="30dp" />
+                app:cornerRadius="20dp" />
 
         </LinearLayout>
 

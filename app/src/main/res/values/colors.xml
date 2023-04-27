@@ -4,4 +4,16 @@
     <color name="white">#FFFFFFFF</color>
     <color name="chinese_violet">#856088</color>
     <color name="mountbatten_pink">#997A8D</color>
+    <color name="dark_pruple">#301934</color>
+    <color name="eggplant">#614051</color>
+    <color name="english_violet">#563C5C</color>
+    <color name="fairy_tale">#F2C1D1</color>
+    <color name="lavender_blush">#FFF0F5</color>
+    <color name="pomp_and_power">#86608E</color>
+    <color name="tropical_indigo">#9683EC</color>
+    <color name="gray">#808080</color>
+    <color name="slate_gray">#708090</color>
+    <color name="russian_violet">#32174D</color>
+
+
 </resources>

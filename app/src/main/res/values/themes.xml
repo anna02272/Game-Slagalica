@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.Slagalica" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/chinese_violet</item>
+        <item name="colorPrimary">@color/english_violet</item>
         <item name="colorPrimaryVariant">@color/black</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
