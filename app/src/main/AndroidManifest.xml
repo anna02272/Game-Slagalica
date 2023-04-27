@@ -12,7 +12,7 @@
         android:theme="@style/Theme.Slagalica"
         tools:targetApi="31">
         <activity
-            android:name=".RegistrationLoginActivity"
+            android:name=".login_registration.RegistrationLoginActivity"
             android:exported="false" />
         <activity
             android:name=".SplashScreenActivity"
