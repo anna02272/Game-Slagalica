@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    tools:context=".games.PlayersFragment">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/player1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            >
+
+            <ImageView
+                android:id="@+id/player1Image"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/pic_walle_icon_circle" />
+
+            <TextView
+                android:id="@+id/player1Username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@id/player1Image"
+                android:text="@string/games_player1"
+                android:textSize="18sp"
+                android:textStyle="bold"
+               />
+
+            <TextView
+                android:id="@+id/player1Points"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/player1Username"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="1dp"
+                android:layout_toEndOf="@id/player1Image"
+                android:text="@string/games_points"
+                android:textSize="16sp"
+               />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="@string/games_time" />
+
+        <RelativeLayout
+            android:id="@+id/player2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:layout_alignLeft="@id/time">
+
+            <ImageView
+                android:id="@+id/player2Image"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/pic_eve_icon_circle" />
+
+            <TextView
+                android:id="@+id/player2Username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/player2Image"
+                android:layout_marginEnd="5dp"
+                android:text="@string/games_player2"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/player2Points"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/player2Username"
+                android:layout_toStartOf="@id/player2Image"
+                android:layout_marginEnd="5dp"
+                android:text="@string/games_points"
+                android:textSize="16sp" />
+
+
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/gameDescription"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:text="@string/games_description"
+            android:textSize="16sp"
+            android:layout_below="@id/player2"
+            android:background="@color/chinese_violet"/>
+
+    </RelativeLayout>
+
+
+</FrameLayout>

@@ -16,6 +16,8 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.slagalica.games.KoZnaZnaActivity;
+import com.example.slagalica.games.SpojniceActivity;
 import com.example.slagalica.login_registration.RegistrationLoginActivity;
 import com.example.slagalica.menu.FriendsFragment;
 import com.example.slagalica.menu.HomeFragment;
@@ -35,12 +37,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
             Button buttonRegister = findViewById(R.id.register);
+            Button buttonStartGame = findViewById(R.id.startgame);
 
             buttonRegister.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     Intent intent = new Intent(MainActivity.this, RegistrationLoginActivity.class);
+
+                    startActivity(intent);
+                }
+            });
+            buttonStartGame.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent intent = new Intent(MainActivity.this, SpojniceActivity.class);
 
                     startActivity(intent);
                 }
