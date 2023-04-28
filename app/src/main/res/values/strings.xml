@@ -24,6 +24,8 @@
     <string name="menu_logout">Odjavi se</string>
     <string name="menu_user">Korisnik</string>
     <string name="menu_user_email">korisnik@gmail.com</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>
