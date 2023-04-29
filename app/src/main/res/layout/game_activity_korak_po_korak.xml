@@ -143,6 +143,7 @@
                     android:textSize="10sp"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
+                    android:clickable="false"
                     />
 
                 <Button
@@ -153,6 +154,7 @@
                     android:textSize="10sp"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
+                    android:clickable="false"
                     />
                 <Button
                     android:id="@+id/button_11"
@@ -171,6 +173,7 @@
                     android:textSize="10sp"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
+                    android:clickable="false"
                     />
                 <Button
                     android:id="@+id/button_13"
@@ -180,6 +183,7 @@
                     android:textSize="10sp"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
+                    android:clickable="false"
                     />
                 <Button
                     android:id="@+id/button_14"
@@ -189,6 +193,7 @@
                     android:textSize="10sp"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
+                    android:clickable="false"
                     />
                 <Button
                     android:id="@+id/confirm"
