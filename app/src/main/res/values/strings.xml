@@ -36,6 +36,14 @@
     <string name="games_answer">Odgovor</string>
     <string name="games_confirm">OK</string>
     <string name="games_end">Kraj igre</string>
+    <string name="games_mojbroj_answer">\???</string>
+    <string name="games_mojbroj_confirm">Potvrdi</string>
+    <string name="games_mojbroj_plus">+</string>
+    <string name="games_mojbroj_minus">-</string>
+    <string name="games_mojbroj_multiple">x</string>
+    <string name="games_mojbroj_divide">/</string>
+    <string name="games_mojbroj_open">(</string>
+    <string name="games_mojbroj_close">)</string>
 
 
 </resources>
