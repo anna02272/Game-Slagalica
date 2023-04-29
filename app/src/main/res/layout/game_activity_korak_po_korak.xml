@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".games.KorakPoKorakActivity">
+    tools:context=".games.KorakPoKorakActivity"
+ >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,74 +29,60 @@
                 <Button
                     android:id="@+id/button_1"
                     android:layout_width="320dp"
-                    android:layout_height="48dp"
+                    android:layout_height="55dp"
                     android:text="@string/games_korak"
-                    android:textSize="10sp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:textSize="15sp"
                     android:layout_marginLeft="5dp"
                     />
 
                 <Button
                     android:id="@+id/button_2"
                     android:layout_width="320dp"
-                    android:layout_height="48dp"
+                    android:layout_height="55dp"
                     android:text="@string/games_korak"
-                    android:textSize="10sp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:textSize="15sp"
                     android:layout_marginLeft="5dp"
                     />
 
                 <Button
                     android:id="@+id/button_3"
                     android:layout_width="320dp"
-                    android:layout_height="48dp"
+                    android:layout_height="55dp"
                     android:text="@string/games_korak"
-                    android:textSize="10sp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:textSize="15sp"
                     android:layout_marginLeft="5dp"
                     />
                 <Button
                     android:id="@+id/button_4"
                     android:layout_width="320dp"
-                    android:layout_height="48dp"
+                    android:layout_height="55dp"
                     android:text="@string/games_korak"
-                    android:textSize="10sp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:textSize="15sp"
                     android:layout_marginLeft="5dp"
                     />
 
                 <Button
                     android:id="@+id/button_5"
                     android:layout_width="320dp"
-                    android:layout_height="48dp"
+                    android:layout_height="55dp"
                     android:text="@string/games_korak"
-                    android:textSize="10sp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:textSize="15sp"
                     android:layout_marginLeft="5dp"
                     />
                 <Button
                     android:id="@+id/button_6"
                     android:layout_width="320dp"
-                    android:layout_height="48dp"
+                    android:layout_height="55dp"
                     android:text="@string/games_korak"
-                    android:textSize="10sp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:textSize="15sp"
                     android:layout_marginLeft="5dp"
                     />
                 <Button
                     android:id="@+id/button_7"
                     android:layout_width="320dp"
-                    android:layout_height="48dp"
+                    android:layout_height="55dp"
                     android:text="@string/games_korak"
-                    android:textSize="10sp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:textSize="15sp"
                     android:layout_marginLeft="5dp"
                     />
 
@@ -104,14 +91,13 @@
                     android:layout_width="320dp"
                     android:layout_height="48dp"
                     android:layout_gravity="center"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="5dp"
                     android:layout_marginLeft="5dp"
                     android:background="@drawable/login_edittext_bkg"
-                    android:drawablePadding="8dp"
                     android:hint="@string/games_answer"
-                    android:padding="8dp"
-                    android:textColorHint="@color/gray"/>
+                    android:padding="15dp"
+                    android:textColorHint="@color/gray"
+                    android:layout_marginTop="30dp"
+                   />
 
 
             </LinearLayout>
@@ -127,84 +113,70 @@
                 <Button
                     android:id="@+id/button_8"
                     android:layout_width="60dp"
-                    android:layout_height="48dp"
+                    android:layout_height="55dp"
                     android:text="70"
-                    android:textSize="10sp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:textSize="15sp"
                     android:clickable="false"
                     />
 
                 <Button
                     android:id="@+id/button_9"
                     android:layout_width="60dp"
-                    android:layout_height="48dp"
+                    android:layout_height="55dp"
                     android:text="60"
-                    android:textSize="10sp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:textSize="15sp"
                     android:clickable="false"
                     />
 
                 <Button
                     android:id="@+id/button_10"
                     android:layout_width="60dp"
-                    android:layout_height="48dp"
+                    android:layout_height="55dp"
                     android:text="50"
-                    android:textSize="10sp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:textSize="15sp"
                     android:clickable="false"
                     />
                 <Button
                     android:id="@+id/button_11"
                     android:layout_width="60dp"
-                    android:layout_height="48dp"
+                    android:layout_height="55dp"
                     android:text="40"
-                    android:textSize="10sp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:textSize="15sp"
+                    android:clickable="false"
                     />
                 <Button
                     android:id="@+id/button_12"
                     android:layout_width="60dp"
-                    android:layout_height="48dp"
+                    android:layout_height="55dp"
                     android:text="30"
-                    android:textSize="10sp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:textSize="15sp"
                     android:clickable="false"
                     />
                 <Button
                     android:id="@+id/button_13"
                     android:layout_width="60dp"
-                    android:layout_height="48dp"
+                    android:layout_height="55dp"
                     android:text="20"
-                    android:textSize="10sp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:textSize="15sp"
                     android:clickable="false"
                     />
                 <Button
                     android:id="@+id/button_14"
                     android:layout_width="60dp"
-                    android:layout_height="48dp"
+                    android:layout_height="55dp"
                     android:text="10"
-                    android:textSize="10sp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:textSize="15sp"
                     android:clickable="false"
                     />
                 <Button
                     android:id="@+id/confirm"
                     android:layout_width="60dp"
-                    android:layout_height="48dp"
-                    android:text="@string/games_confirm"
-                    android:textSize="10sp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_height="55dp"
+                    android:text="OK"
+                    android:textSize="15sp"
+                    android:clickable="false"
+                    android:layout_marginTop="26dp"
                     />
-
 
             </LinearLayout>
 
