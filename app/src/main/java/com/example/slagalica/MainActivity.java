@@ -17,6 +17,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.slagalica.games.KoZnaZnaActivity;
+import com.example.slagalica.games.KorakPoKorakActivity;
 import com.example.slagalica.games.SpojniceActivity;
 import com.example.slagalica.login_registration.RegistrationLoginActivity;
 import com.example.slagalica.menu.FriendsFragment;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(MainActivity.this, SpojniceActivity.class);
+                    Intent intent = new Intent(MainActivity.this, KoZnaZnaActivity.class);
 
                     startActivity(intent);
                 }
