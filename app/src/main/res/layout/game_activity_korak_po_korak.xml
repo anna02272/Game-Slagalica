@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".games.KorakPoKorakActivity"
+ >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <include layout="@layout/game_fragment_players"></include>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="480dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/button_1"
+                    android:layout_width="320dp"
+                    android:layout_height="55dp"
+                    android:text="@string/games_korak"
+                    android:textSize="15sp"
+                    android:layout_marginLeft="5dp"
+                    />
+
+                <Button
+                    android:id="@+id/button_2"
+                    android:layout_width="320dp"
+                    android:layout_height="55dp"
+                    android:text="@string/games_korak"
+                    android:textSize="15sp"
+                    android:layout_marginLeft="5dp"
+                    />
+
+                <Button
+                    android:id="@+id/button_3"
+                    android:layout_width="320dp"
+                    android:layout_height="55dp"
+                    android:text="@string/games_korak"
+                    android:textSize="15sp"
+                    android:layout_marginLeft="5dp"
+                    />
+                <Button
+                    android:id="@+id/button_4"
+                    android:layout_width="320dp"
+                    android:layout_height="55dp"
+                    android:text="@string/games_korak"
+                    android:textSize="15sp"
+                    android:layout_marginLeft="5dp"
+                    />
+
+                <Button
+                    android:id="@+id/button_5"
+                    android:layout_width="320dp"
+                    android:layout_height="55dp"
+                    android:text="@string/games_korak"
+                    android:textSize="15sp"
+                    android:layout_marginLeft="5dp"
+                    />
+                <Button
+                    android:id="@+id/button_6"
+                    android:layout_width="320dp"
+                    android:layout_height="55dp"
+                    android:text="@string/games_korak"
+                    android:textSize="15sp"
+                    android:layout_marginLeft="5dp"
+                    />
+                <Button
+                    android:id="@+id/button_7"
+                    android:layout_width="320dp"
+                    android:layout_height="55dp"
+                    android:text="@string/games_korak"
+                    android:textSize="15sp"
+                    android:layout_marginLeft="5dp"
+                    />
+
+                <EditText
+                    android:id="@+id/input"
+                    android:layout_width="320dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/login_edittext_bkg"
+                    android:hint="@string/games_answer"
+                    android:padding="15dp"
+                    android:textColorHint="@color/gray"
+                    android:layout_marginTop="30dp"
+                   />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/button_8"
+                    android:layout_width="60dp"
+                    android:layout_height="55dp"
+                    android:text="70"
+                    android:textSize="15sp"
+                    android:clickable="false"
+                    />
+
+                <Button
+                    android:id="@+id/button_9"
+                    android:layout_width="60dp"
+                    android:layout_height="55dp"
+                    android:text="60"
+                    android:textSize="15sp"
+                    android:clickable="false"
+                    />
+
+                <Button
+                    android:id="@+id/button_10"
+                    android:layout_width="60dp"
+                    android:layout_height="55dp"
+                    android:text="50"
+                    android:textSize="15sp"
+                    android:clickable="false"
+                    />
+                <Button
+                    android:id="@+id/button_11"
+                    android:layout_width="60dp"
+                    android:layout_height="55dp"
+                    android:text="40"
+                    android:textSize="15sp"
+                    android:clickable="false"
+                    />
+                <Button
+                    android:id="@+id/button_12"
+                    android:layout_width="60dp"
+                    android:layout_height="55dp"
+                    android:text="30"
+                    android:textSize="15sp"
+                    android:clickable="false"
+                    />
+                <Button
+                    android:id="@+id/button_13"
+                    android:layout_width="60dp"
+                    android:layout_height="55dp"
+                    android:text="20"
+                    android:textSize="15sp"
+                    android:clickable="false"
+                    />
+                <Button
+                    android:id="@+id/button_14"
+                    android:layout_width="60dp"
+                    android:layout_height="55dp"
+                    android:text="10"
+                    android:textSize="15sp"
+                    android:clickable="false"
+                    />
+                <Button
+                    android:id="@+id/confirm"
+                    android:layout_width="60dp"
+                    android:layout_height="55dp"
+                    android:text="OK"
+                    android:textSize="15sp"
+                    android:clickable="false"
+                    android:layout_marginTop="26dp"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+        <Button
+            android:id="@+id/button_next"
+            android:layout_width="90dp"
+            android:layout_height="48dp"
+            android:text="@string/games_next"
+            android:textSize="10sp"
+            android:layout_gravity="end"
+            android:layout_marginRight="15dp"
+            />
+    </LinearLayout>
+</RelativeLayout>
