@@ -30,6 +30,12 @@
     <string name="games_points">Poeni: 1</string>
     <string name="games_time">10:00</string>
     <string name="games_description">Ovde ide opis igre</string>
+    <string name="games_next">Sledeća igra</string>
+    <string name="games_spojnica">Spojnica</string>
+    <string name="games_korak">Korak</string>
+    <string name="games_answer">Odgovor</string>
+    <string name="games_confirm">OK</string>
+    <string name="games_end">Kraj igre</string>
 
 
 </resources>

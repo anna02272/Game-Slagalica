@@ -24,7 +24,10 @@
             android:name=".games.KoZnaZnaActivity"
             android:exported="false" />
         <activity
-            android:name=".profile.ProfileActivity"
+            android:name=".games.AsocijacijeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".games.KorakPoKorakActivity"
             android:exported="false" />
         <activity
             android:name=".login_registration.RegistrationLoginActivity"
