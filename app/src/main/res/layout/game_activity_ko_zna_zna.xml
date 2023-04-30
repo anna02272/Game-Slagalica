@@ -10,6 +10,88 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
         <include layout="@layout/game_fragment_players"></include>
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+           <LinearLayout
+               android:id="@+id/linearLayout2"
+               android:layout_width="match_parent"
+               android:layout_height="200dp"
+               android:layout_below="@id/linearLayout"
+               android:layout_weight="1"
+               android:gravity="center"
+               android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/gameDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:gravity="center"
+                    android:text="@string/games_ko_zna_zna_question"
+                    android:textSize="20sp"
+                    android:background="@color/fairy_tale"/>
+           </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_below="@id/linearLayout"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button_answer1"
+                    android:layout_width="180dp"
+                    android:layout_height="75dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:text="@string/games_ko_zna_zna_answer1"
+                    android:textSize="15sp"
+                    />
+                <Button
+                    android:id="@+id/button_answer2"
+                    android:layout_width="180dp"
+                    android:layout_height="75dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:text="@string/games_ko_zna_zna_answer2"
+                    android:textSize="15sp"
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linearLayout4"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_below="@id/linearLayout"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/button_answer3"
+                    android:layout_width="180dp"
+                    android:layout_height="75dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:text="@string/games_ko_zna_zna_answer3"
+                    android:textSize="15sp"
+                    />
+                <Button
+                    android:id="@+id/button_answer4"
+                    android:layout_width="180dp"
+                    android:layout_height="75dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:text="@string/games_ko_zna_zna_answer4"
+                    android:textSize="15sp"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
         <Button
             android:id="@+id/button_next"
             android:layout_width="90dp"
