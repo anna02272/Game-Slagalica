@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "984897571394",
+    "firebase_url": "https://mobilneaplikacije2023-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "mobilneaplikacije2023",
+    "storage_bucket": "mobilneaplikacije2023.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:984897571394:android:833200fe726523377c3bdb",
+        "android_client_info": {
+          "package_name": "com.example.slagalica"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdjkHqRTuIRSlP6uqcAHLcH8SBElXhGUw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

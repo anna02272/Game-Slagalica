@@ -1,0 +1,38 @@
+{
+  "korak_po_korak" : {
+    "steps1": {
+      "1": "Ima veze s Malezijom",
+      "2": "Lik je Bate Zivojinovica u filmu 'Most'",
+      "3": "To je strip Junak Hobs",
+      "4": "Kod Dragane Mirkovic je animiran",
+      "5": "Ima svoju vrstu ajkule",
+      "6": "U naslovu filma je pritajen",
+      "7": "Nazov je kompanije iz pirota",
+      "answer": "Tigar"
+    },
+    "steps2": {
+      "1": "Ima veze s Nikolom Jokicem",
+      "2": "U hokeju je deo 'gordi hau het-trika'",
+      "3": "Moze da bude opsta",
+      "4": "Uz dodato slovo na kraju je deo cveta",
+      "5": "Sinonim je za padavinu grad",
+      "6": "Moze da bude kafanska",
+      "7": "Medjusobno je udaranje dve ili vise osoba",
+      "answer": "Tuca"
+    },
+    "steps3": {
+      "1": "Imaju mostove",
+      "2": "Mogu biti stalni",
+      "3": "Imaju svoj konac",
+      "4": "Neki ime duguju mleku",
+      "5": "Imaju ih testere",
+      "6": "Imaju svoju pastu",
+      "7": "U izreci, poklonu se u njih ne gleda",
+      "answer": "Zubi"
+    }
+},
+
+"moj_broj" : {
+
+}
+}
