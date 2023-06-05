@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,6 +30,8 @@ public class KorakPoKorakActivity extends AppCompatActivity {
     private Random random;
     private CountDownTimer countDownTimer;
     private int currentCount = 7;
+    private String currentStepAnswer;
+    private EditText input;
 
 
     @Override
@@ -34,7 +39,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity_korak_po_korak);
 
-        PlayersFragment playersFragment = PlayersFragment.newInstance(70);
+        PlayersFragment playersFragment = PlayersFragment.newInstance(71);
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -43,6 +48,8 @@ public class KorakPoKorakActivity extends AppCompatActivity {
 
 
         Button buttonNext = findViewById(R.id.button_next);
+        input = findViewById(R.id.input);
+
         buttonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,6 +57,14 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        Button confirmButton = findViewById(R.id.confirm);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkAnswer();
+            }
+        });
+
 
         buttons = new ArrayList<>();
         buttons.add(findViewById(R.id.button_1));
@@ -118,6 +133,9 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                                 Button button = buttons.get(buttonIndex);
                                 buttonSteps.put(button, step);
                                 setButtonListener(button);
+                                if (stepKey.equals("steps" + (currentCount ))) {
+                                    currentStepAnswer = stepsMap.get("answer");
+                                }
                             }
                         }
                     }
@@ -130,6 +148,18 @@ public class KorakPoKorakActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    private void checkAnswer() {
+        String userInput = input.getText().toString().trim();
+
+        if (userInput.equalsIgnoreCase(currentStepAnswer)) {
+            Toast.makeText(KorakPoKorakActivity.this, "Correct answer!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(KorakPoKorakActivity.this, "Incorrect answer!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     private void setButtonListener(final Button button) {
         button.setOnClickListener(new View.OnClickListener() {

@@ -8,7 +8,7 @@
       "step5": "Ima svoju vrstu ajkule",
       "step6": "U naslovu filma je pritajen",
       "step7": "Nazov je kompanije iz pirota",
-      "answer": "Tigar"
+      "answer1": "Tigar"
     },
     "steps2": {
       "step1": "Ima veze s Nikolom Jokicem",
@@ -18,7 +18,7 @@
       "step5": "Sinonim je za padavinu grad",
       "step6": "Moze da bude kafanska",
       "step7": "Medjusobno je udaranje dve ili vise osoba",
-      "answer": "Tuca"
+      "answer2": "Tuca"
     },
     "steps3": {
       "step1": "Imaju mostove",
@@ -28,7 +28,7 @@
       "step5": "Imaju ih testere",
       "step6": "Imaju svoju pastu",
       "step7": "U izreci, poklonu se u njih ne gleda",
-      "answer": "Zubi"
+      "answer3": "Zubi"
     },
     "steps4": {
       "step1": "U izvesnom smislu moze da leti",
@@ -38,7 +38,7 @@
       "step5": "U jednom domacem filmu je 'prokleti'",
       "step6": "... a u drugom je 'voleo vozove'",
       "step7": "Ta zivotinja je 'covekov najbolji prijatelj'",
-      "answer": "Pas"
+      "answer4": "Pas"
     },
     "steps5": {
       "step1": "Ima veze sa Savom i Dunavom",
@@ -48,7 +48,7 @@
       "step5": "Ima svog agenta i svoju premiju",
       "step6": "Za vozilo je obavezno",
       "step7": "Postoji i Kasko varijanta",
-      "answer": "Osiguranje"
+      "answer5": "Osiguranje"
     }
   },
 
@@ -68,7 +68,7 @@
     "number4": "8",
     "number5": "10",
     "number6": "50",
-    "final_number": "239"
+    "final_number1": "239"
   },
   "numbers2": {
     "number1": "4",
@@ -77,7 +77,7 @@
     "number4": "9",
     "number5": "15",
     "number6": "25",
-    "final_number": "92"
+    "final_number2": "92"
   },
   "numbers3": {
     "number1": "6",
@@ -86,7 +86,7 @@
     "number4": "6",
     "number5": "10",
     "number6": "50",
-    "final_number": "259"
+    "final_number3": "259"
   },
   "numbers4": {
     "number1": "9",
@@ -95,7 +95,7 @@
     "number4": "5",
     "number5": "10",
     "number6": "50",
-    "final_number": "756"
+    "final_number4": "756"
   },
   "numbers5": {
     "number1": "3",
@@ -104,7 +104,7 @@
     "number4": "3",
     "number5": "15",
     "number6": "50",
-    "final_number": "846"
+    "final_number5": "846"
   }
 }
 }
