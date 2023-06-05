@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <include layout="@layout/game_fragment_players"></include>
+        <include layout="@layout/game_fragment_players" android:id="@+id/fragment_container"></include>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -114,7 +114,7 @@
                     android:id="@+id/button_8"
                     android:layout_width="60dp"
                     android:layout_height="55dp"
-                    android:text="70"
+                    android:text=""
                     android:textSize="15sp"
                     android:clickable="false"
                     />
@@ -123,7 +123,7 @@
                     android:id="@+id/button_9"
                     android:layout_width="60dp"
                     android:layout_height="55dp"
-                    android:text="60"
+                    android:text=""
                     android:textSize="15sp"
                     android:clickable="false"
                     />
@@ -132,7 +132,7 @@
                     android:id="@+id/button_10"
                     android:layout_width="60dp"
                     android:layout_height="55dp"
-                    android:text="50"
+                    android:text=""
                     android:textSize="15sp"
                     android:clickable="false"
                     />
@@ -140,7 +140,7 @@
                     android:id="@+id/button_11"
                     android:layout_width="60dp"
                     android:layout_height="55dp"
-                    android:text="40"
+                    android:text=""
                     android:textSize="15sp"
                     android:clickable="false"
                     />
@@ -148,7 +148,7 @@
                     android:id="@+id/button_12"
                     android:layout_width="60dp"
                     android:layout_height="55dp"
-                    android:text="30"
+                    android:text=""
                     android:textSize="15sp"
                     android:clickable="false"
                     />
@@ -156,7 +156,7 @@
                     android:id="@+id/button_13"
                     android:layout_width="60dp"
                     android:layout_height="55dp"
-                    android:text="20"
+                    android:text=""
                     android:textSize="15sp"
                     android:clickable="false"
                     />
@@ -164,7 +164,7 @@
                     android:id="@+id/button_14"
                     android:layout_width="60dp"
                     android:layout_height="55dp"
-                    android:text="10"
+                    android:text=""
                     android:textSize="15sp"
                     android:clickable="false"
                     />

@@ -16,6 +16,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.slagalica.games.AsocijacijeActivity;
 import com.example.slagalica.games.KoZnaZnaActivity;
 import com.example.slagalica.games.KorakPoKorakActivity;
 import com.example.slagalica.games.SpojniceActivity;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(MainActivity.this, KoZnaZnaActivity.class);
+                    Intent intent = new Intent(MainActivity.this, AsocijacijeActivity.class);
 
                     startActivity(intent);
                 }

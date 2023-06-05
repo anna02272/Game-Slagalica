@@ -1,6 +1,8 @@
 package com.example.slagalica.games;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +12,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -20,13 +23,24 @@ public class KorakPoKorakActivity extends AppCompatActivity {
 
     private List<Button> buttons;
     private FirebaseDatabase firebaseDatabase;
-    private List<String> stepKeys;
+    private Map<Button, String> buttonSteps;
     private Random random;
+    private CountDownTimer countDownTimer;
+    private int currentCount = 7;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity_korak_po_korak);
+
+        PlayersFragment playersFragment = PlayersFragment.newInstance(70);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.fragment_container, playersFragment)
+                .commit();
+
 
         Button buttonNext = findViewById(R.id.button_next);
         buttonNext.setOnClickListener(new View.OnClickListener() {
@@ -45,26 +59,39 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         buttons.add(findViewById(R.id.button_5));
         buttons.add(findViewById(R.id.button_6));
         buttons.add(findViewById(R.id.button_7));
+        buttons.add(findViewById(R.id.button_8));
+        buttons.add(findViewById(R.id.button_9));
+        buttons.add(findViewById(R.id.button_10));
+        buttons.add(findViewById(R.id.button_11));
+        buttons.add(findViewById(R.id.button_12));
+        buttons.add(findViewById(R.id.button_13));
+        buttons.add(findViewById(R.id.button_14));
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         random = new Random();
 
-        retrieveStepKeys();
+        buttonSteps = new HashMap<>();
+
+        retrieveSteps();
     }
 
-    private void retrieveStepKeys() {
+    private void retrieveSteps() {
         firebaseDatabase.getReference("korak_po_korak").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChildren()) {
-                    stepKeys = new ArrayList<>();
+                    List<DataSnapshot> stepSnapshots = new ArrayList<>();
                     for (DataSnapshot stepSnapshot : dataSnapshot.getChildren()) {
                         if (stepSnapshot.getKey().startsWith("steps")) {
-                            stepKeys.add(stepSnapshot.getKey());
+                            stepSnapshots.add(stepSnapshot);
                         }
                     }
 
-                    setButtonListeners();
+                    if (!stepSnapshots.isEmpty()) {
+                        int randomIndex = random.nextInt(stepSnapshots.size());
+                        DataSnapshot randomStepSnapshot = stepSnapshots.get(randomIndex);
+                        retrieveStep(randomStepSnapshot);
+                    }
                 }
             }
 
@@ -76,32 +103,23 @@ public class KorakPoKorakActivity extends AppCompatActivity {
     }
 
 
-    private void setButtonListeners() {
-        for (int i = 0; i < buttons.size(); i++) {
-            final Button button = buttons.get(i);
-            final int buttonIndex = i;
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (stepKeys != null && !stepKeys.isEmpty()) {
-                        String randomKey = stepKeys.get(random.nextInt(stepKeys.size()));
-                        retrieveStepsForButton(buttonIndex, randomKey);
-                    }
-                }
-            });
-        }
-    }
-
-
-    private void retrieveStepsForButton(final int buttonIndex, String stepKey) {
+    private void retrieveStep(final DataSnapshot stepSnapshot) {
+        final String stepKey = stepSnapshot.getKey();
         firebaseDatabase.getReference("korak_po_korak/" + stepKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map<String, String> stepsMap = (Map<String, String>) dataSnapshot.getValue();
                 if (stepsMap != null && !stepsMap.isEmpty()) {
-                    String step = stepsMap.get("step" + (buttonIndex + 1));
-                    if (step != null) {
-                        buttons.get(buttonIndex).setText(step);
+                    for (int i = 1; i <= 7; i++) {
+                        String step = stepsMap.get("step" + i);
+                        if (step != null) {
+                            int buttonIndex = i - 1;
+                            if (buttonIndex < buttons.size()) {
+                                Button button = buttons.get(buttonIndex);
+                                buttonSteps.put(button, step);
+                                setButtonListener(button);
+                            }
+                        }
                     }
                 }
             }
@@ -113,6 +131,52 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         });
     }
 
+    private void setButtonListener(final Button button) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String step = buttonSteps.get(button);
+                if (step != null) {
+                    button.setText(step);
+                    button.setEnabled(false);
+                }
+            }
+        });
+    }
+
+    private void startTimer() {
+        countDownTimer = new CountDownTimer(70000, 10000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                int time = (int) (millisUntilFinished / 1000);
+                int buttonIndex = currentCount ;
+                if (buttonIndex >= 7 && buttonIndex < buttons.size()) {
+                    Button button = buttons.get(buttonIndex);
+                    button.setText(String.valueOf(time));
+                }
+                currentCount++;
+            }
+
+            @Override
+            public void onFinish() {
+
+            }
+        };
+
+        countDownTimer.start();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startTimer();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+    }
 }
-
-
