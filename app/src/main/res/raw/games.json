@@ -1,38 +1,112 @@
 {
   "korak_po_korak" : {
     "steps1": {
-      "1": "Ima veze s Malezijom",
-      "2": "Lik je Bate Zivojinovica u filmu 'Most'",
-      "3": "To je strip Junak Hobs",
-      "4": "Kod Dragane Mirkovic je animiran",
-      "5": "Ima svoju vrstu ajkule",
-      "6": "U naslovu filma je pritajen",
-      "7": "Nazov je kompanije iz pirota",
+      "step1": "Ima veze s Malezijom",
+      "step2": "Lik je Bate Zivojinovica u filmu 'Most'",
+      "step3": "To je strip Junak Hobs",
+      "step4": "Kod Dragane Mirkovic je animiran",
+      "step5": "Ima svoju vrstu ajkule",
+      "step6": "U naslovu filma je pritajen",
+      "step7": "Nazov je kompanije iz pirota",
       "answer": "Tigar"
     },
     "steps2": {
-      "1": "Ima veze s Nikolom Jokicem",
-      "2": "U hokeju je deo 'gordi hau het-trika'",
-      "3": "Moze da bude opsta",
-      "4": "Uz dodato slovo na kraju je deo cveta",
-      "5": "Sinonim je za padavinu grad",
-      "6": "Moze da bude kafanska",
-      "7": "Medjusobno je udaranje dve ili vise osoba",
+      "step1": "Ima veze s Nikolom Jokicem",
+      "step2": "U hokeju je deo 'gordi hau het-trika'",
+      "step3": "Moze da bude opsta",
+      "step4": "Uz dodato slovo na kraju je deo cveta",
+      "step5": "Sinonim je za padavinu grad",
+      "step6": "Moze da bude kafanska",
+      "step7": "Medjusobno je udaranje dve ili vise osoba",
       "answer": "Tuca"
     },
     "steps3": {
-      "1": "Imaju mostove",
-      "2": "Mogu biti stalni",
-      "3": "Imaju svoj konac",
-      "4": "Neki ime duguju mleku",
-      "5": "Imaju ih testere",
-      "6": "Imaju svoju pastu",
-      "7": "U izreci, poklonu se u njih ne gleda",
+      "step1": "Imaju mostove",
+      "step2": "Mogu biti stalni",
+      "step3": "Imaju svoj konac",
+      "step4": "Neki ime duguju mleku",
+      "step5": "Imaju ih testere",
+      "step6": "Imaju svoju pastu",
+      "step7": "U izreci, poklonu se u njih ne gleda",
       "answer": "Zubi"
+    },
+    "steps4": {
+      "step1": "U izvesnom smislu moze da leti",
+      "step2": "Moze imati veze sa zivotom",
+      "step3": "U imenima je vise rasa",
+      "step4": "Moze imati veze s morem",
+      "step5": "U jednom domacem filmu je 'prokleti'",
+      "step6": "... a u drugom je 'voleo vozove'",
+      "step7": "Ta zivotinja je 'covekov najbolji prijatelj'",
+      "answer": "Pas"
+    },
+    "steps5": {
+      "step1": "Ima veze sa Savom i Dunavom",
+      "step2": "Svih devet slova ove reci je razlicito",
+      "step3": "Ima veze sa zdravljem",
+      "step4": "Moze se odnositi na zivot",
+      "step5": "Ima svog agenta i svoju premiju",
+      "step6": "Za vozilo je obavezno",
+      "step7": "Postoji i Kasko varijanta",
+      "answer": "Osiguranje"
     }
-},
+  },
 
 "moj_broj" : {
+  "operations": {
+    "plus": "+",
+    "minus": "-",
+    "multiple": "*",
+    "divide": "/",
+    "opened": "(",
+    "closed": ")"
+  },
+  "numbers1": {
+    "number1": "8",
+    "number2": "5",
+    "number3": "1",
+    "number4": "8",
+    "number5": "10",
+    "number6": "50",
+    "final_number": "239"
+  },
+  "numbers2": {
+    "number1": "4",
+    "number2": "5",
+    "number3": "7",
+    "number4": "9",
+    "number5": "15",
+    "number6": "25",
+    "final_number": "92"
+  },
+  "numbers3": {
+    "number1": "6",
+    "number2": "7",
+    "number3": "6",
+    "number4": "6",
+    "number5": "10",
+    "number6": "50",
+    "final_number": "259"
+  },
+  "numbers4": {
+    "number1": "9",
+    "number2": "2",
+    "number3": "5",
+    "number4": "5",
+    "number5": "10",
+    "number6": "50",
+    "final_number": "756"
+  },
+  "numbers5": {
+    "number1": "3",
+    "number2": "9",
+    "number3": "9",
+    "number4": "3",
+    "number5": "15",
+    "number6": "50",
+    "final_number": "846"
+  }
+}
+}
 
-}
-}
+

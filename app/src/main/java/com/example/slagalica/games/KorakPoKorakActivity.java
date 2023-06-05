@@ -75,6 +75,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         });
     }
 
+
     private void setButtonListeners() {
         for (int i = 0; i < buttons.size(); i++) {
             final Button button = buttons.get(i);
@@ -82,44 +83,35 @@ public class KorakPoKorakActivity extends AppCompatActivity {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    retrieveStepsForButton(buttonIndex);
-                }
-            });
-        }
-    }
-
-    private void retrieveStepsForButton(final int buttonIndex) {
-        if (stepKeys != null && !stepKeys.isEmpty()) {
-            String randomKey = stepKeys.get(random.nextInt(stepKeys.size()));
-            firebaseDatabase.getReference("korak_po_korak/" + randomKey).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Map<String, String> stepsMap = (Map<String, String>) dataSnapshot.getValue();
-                    if (stepsMap != null && !stepsMap.isEmpty()) {
-                        List<String> steps = new ArrayList<>();
-                        for (int i = 1; i <= 7; i++) {
-                            String step = stepsMap.get(String.valueOf(i));
-                            if (step != null) {
-                                steps.add(step);
-                            }
-                        }
-                        if (!steps.isEmpty()) {
-                            for (int i = 0; i < buttons.size(); i++) {
-                                Button button = buttons.get(i);
-                                button.setText(steps.get(i));
-                            }
-                        }
+                    if (stepKeys != null && !stepKeys.isEmpty()) {
+                        String randomKey = stepKeys.get(random.nextInt(stepKeys.size()));
+                        retrieveStepsForButton(buttonIndex, randomKey);
                     }
                 }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    // Handle error
-                }
             });
         }
     }
 
+
+    private void retrieveStepsForButton(final int buttonIndex, String stepKey) {
+        firebaseDatabase.getReference("korak_po_korak/" + stepKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, String> stepsMap = (Map<String, String>) dataSnapshot.getValue();
+                if (stepsMap != null && !stepsMap.isEmpty()) {
+                    String step = stepsMap.get("step" + (buttonIndex + 1));
+                    if (step != null) {
+                        buttons.get(buttonIndex).setText(step);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle error
+            }
+        });
+    }
 
 }
 
