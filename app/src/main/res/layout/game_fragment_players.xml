@@ -107,7 +107,6 @@
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:gravity="center"
-            android:text="@string/games_description"
             android:textSize="16sp"
             android:layout_below="@id/player2"
             android:background="@color/chinese_violet"/>
