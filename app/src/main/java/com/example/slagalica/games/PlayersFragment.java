@@ -15,8 +15,11 @@ import com.example.slagalica.R;
 public class PlayersFragment extends Fragment {
 
     private static final String ARG_TIMER_DURATION = "timer_duration";
+    private static final String ARG_GAME_TYPE = "game_type";
 
+    private CountDownTimer countDownTimer;
     private int mTimerDuration;
+    private String mGameType;
 
     public PlayersFragment() {
     }
@@ -28,8 +31,9 @@ public class PlayersFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
-
+    public void setGameType(String gameType) {
+        mGameType = gameType;
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,12 +48,15 @@ public class PlayersFragment extends Fragment {
 
         int timerDuration = getArguments().getInt(ARG_TIMER_DURATION);
         TextView timeTextView = rootView.findViewById(R.id.time);
+        TextView descriptionTextView = rootView.findViewById(R.id.gameDescription);
         startTimer(timeTextView, timerDuration);
+        setDescription(descriptionTextView);
 
         return rootView;
     }
+
     private void startTimer(TextView timeTextView, int timerDuration) {
-        CountDownTimer countDownTimer = new CountDownTimer(70000, 1000) {
+        CountDownTimer countDownTimer = new CountDownTimer(timerDuration * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 int time = (int) (millisUntilFinished / 1000);
@@ -61,7 +68,36 @@ public class PlayersFragment extends Fragment {
                 timeTextView.setText("0");
             }
         };
+
         countDownTimer.start();
     }
+    private void setDescription(TextView descriptionTextView) {
+        String description;
+        switch (mGameType) {
+            case "KorakPoKorak":
+                description = "Korak po korak";
+                break;
+            case "MojBroj":
+                description = "Moj broj";
+                break;
+            case "Asocijacije":
+                description = "Asocijacije";
+                break;
+            case "Slagalica":
+                description = "Slagalica";
+                break;
+            case "Spojnice":
+                description = "Spojnice";
+                break;
+            case "KoZnaZna":
+                description = "Ko zna zna";
+                break;
+            default:
+                description = "";
+                break;
+        }
+        descriptionTextView.setText(description);
+    }
+
 
 }
