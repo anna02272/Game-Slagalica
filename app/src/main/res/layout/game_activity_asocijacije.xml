@@ -31,7 +31,7 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/button_A1"
+                    android:id="@+id/button_1"
                     android:layout_width="150dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="10dp"
@@ -40,7 +40,7 @@
                     android:textSize="15sp" />
 
                 <Button
-                    android:id="@+id/button_B1"
+                    android:id="@+id/button_5"
                     android:layout_width="150dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="25dp"
@@ -59,7 +59,7 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/button_A2"
+                    android:id="@+id/button_2"
                     android:layout_width="150dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="10dp"
@@ -68,7 +68,7 @@
                     android:textSize="15sp" />
 
                 <Button
-                    android:id="@+id/button_B2"
+                    android:id="@+id/button_6"
                     android:layout_width="150dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="25dp"
@@ -86,7 +86,7 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/button_A3"
+                    android:id="@+id/button_3"
                     android:layout_width="150dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="10dp"
@@ -95,7 +95,7 @@
                     android:textSize="15sp" />
 
                 <Button
-                    android:id="@+id/button_B3"
+                    android:id="@+id/button_7"
                     android:layout_width="150dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="25dp"
@@ -113,7 +113,7 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/button_A4"
+                    android:id="@+id/button_4"
                     android:layout_width="150dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="10dp"
@@ -122,7 +122,7 @@
                     android:textSize="15sp" />
 
                 <Button
-                    android:id="@+id/button_B4"
+                    android:id="@+id/button_8"
                     android:layout_width="150dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="25dp"
@@ -140,7 +140,7 @@
                 android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/inputA"
+                    android:id="@+id/button_inputA"
                     android:layout_width="150dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
@@ -152,7 +152,7 @@
                     android:padding="10dp"
                     android:textColorHint="@color/gray" />
                 <EditText
-                    android:id="@+id/inputB"
+                    android:id="@+id/button_inputB"
                     android:layout_width="150dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
@@ -167,7 +167,7 @@
 
 
             <EditText
-                android:id="@+id/input"
+                android:id="@+id/button_input"
                 android:layout_width="320dp"
                 android:layout_height="48dp"
                 android:layout_gravity="center"
@@ -189,7 +189,7 @@
                 android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/inputC"
+                    android:id="@+id/button_inputC"
                     android:layout_width="150dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
@@ -201,7 +201,7 @@
                     android:padding="10dp"
                     android:textColorHint="@color/gray" />
                 <EditText
-                    android:id="@+id/inputD"
+                    android:id="@+id/button_inputD"
                     android:layout_width="150dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
@@ -223,7 +223,7 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/button_C1"
+                    android:id="@+id/button_9"
                     android:layout_width="150dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="10dp"
@@ -232,7 +232,7 @@
                     android:textSize="15sp" />
 
                 <Button
-                    android:id="@+id/button_D1"
+                    android:id="@+id/button_13"
                     android:layout_width="150dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="25dp"
@@ -251,7 +251,7 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/button_C2"
+                    android:id="@+id/button_10"
                     android:layout_width="150dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="10dp"
@@ -260,7 +260,7 @@
                     android:textSize="15sp" />
 
                 <Button
-                    android:id="@+id/button_D2"
+                    android:id="@+id/button_14"
                     android:layout_width="150dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="25dp"
@@ -278,7 +278,7 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/button_C3"
+                    android:id="@+id/button_11"
                     android:layout_width="150dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="10dp"
@@ -287,7 +287,7 @@
                     android:textSize="15sp" />
 
                 <Button
-                    android:id="@+id/button_D3"
+                    android:id="@+id/button_15"
                     android:layout_width="150dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="25dp"
@@ -305,7 +305,7 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/button_C4"
+                    android:id="@+id/button_12"
                     android:layout_width="150dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="10dp"
@@ -314,7 +314,7 @@
                     android:textSize="15sp" />
 
                 <Button
-                    android:id="@+id/button_D4"
+                    android:id="@+id/button_16"
                     android:layout_width="150dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="25dp"

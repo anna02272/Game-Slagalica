@@ -35,28 +35,28 @@
                     android:gravity="center"
                     android:orientation="horizontal">
                     <Button
-                        android:id="@+id/button_combination1.1"
+                        android:id="@+id/button_combination1"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white"/>
                     <Button
-                        android:id="@+id/button_combiniation1.2"
+                        android:id="@+id/button_combiniation2"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white" />
                     <Button
-                        android:id="@+id/button_combiniation1.3"
+                        android:id="@+id/button_combiniation3"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white" />
                     <Button
-                        android:id="@+id/button_combiniation1.4"
+                        android:id="@+id/button_combiniation4"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
@@ -102,28 +102,28 @@
                     android:gravity="center"
                     android:orientation="horizontal">
                     <Button
-                        android:id="@+id/button_combination2.1"
+                        android:id="@+id/button_combination5"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white"/>
                     <Button
-                        android:id="@+id/button_combiniation2.2"
+                        android:id="@+id/button_combiniation6"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white" />
                     <Button
-                        android:id="@+id/button_combiniation2.3"
+                        android:id="@+id/button_combiniation7"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white" />
                     <Button
-                        android:id="@+id/button_combiniation2.4"
+                        android:id="@+id/button_combiniation8"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
@@ -168,28 +168,28 @@
                     android:gravity="center"
                     android:orientation="horizontal">
                     <Button
-                        android:id="@+id/button_combination3.1"
+                        android:id="@+id/button_combination9"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white"/>
                     <Button
-                        android:id="@+id/button_combiniation3.2"
+                        android:id="@+id/button_combiniation10"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white" />
                     <Button
-                        android:id="@+id/button_combiniation3.3"
+                        android:id="@+id/button_combiniation11"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white" />
                     <Button
-                        android:id="@+id/button_combiniation3.4"
+                        android:id="@+id/button_combiniation12"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
@@ -234,28 +234,28 @@
                     android:gravity="center"
                     android:orientation="horizontal">
                     <Button
-                        android:id="@+id/button_combination4.1"
+                        android:id="@+id/button_combination13"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white"/>
                     <Button
-                        android:id="@+id/button_combiniation4.2"
+                        android:id="@+id/button_combiniation14"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white" />
                     <Button
-                        android:id="@+id/button_combiniation4.3"
+                        android:id="@+id/button_combiniation15"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white" />
                     <Button
-                        android:id="@+id/button_combiniation4.4"
+                        android:id="@+id/button_combiniation16"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
@@ -300,28 +300,28 @@
                     android:gravity="center"
                     android:orientation="horizontal">
                     <Button
-                        android:id="@+id/button_combination5.1"
+                        android:id="@+id/button_combination17"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white"/>
                     <Button
-                        android:id="@+id/button_combiniation5.2"
+                        android:id="@+id/button_combiniation18"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white" />
                     <Button
-                        android:id="@+id/button_combiniation5.3"
+                        android:id="@+id/button_combiniation19"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white" />
                     <Button
-                        android:id="@+id/button_combiniation5.4"
+                        android:id="@+id/button_combiniation20"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
@@ -366,28 +366,28 @@
                     android:gravity="center"
                     android:orientation="horizontal">
                     <Button
-                        android:id="@+id/button_combination6.1"
+                        android:id="@+id/button_combination21"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white"/>
                     <Button
-                        android:id="@+id/button_combiniation6.2"
+                        android:id="@+id/button_combiniation22"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white" />
                     <Button
-                        android:id="@+id/button_combiniation6.3"
+                        android:id="@+id/button_combiniation23"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white" />
                     <Button
-                        android:id="@+id/button_combiniation6.4"
+                        android:id="@+id/button_combiniation24"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
@@ -459,28 +459,28 @@
                     android:gravity="center"
                     android:orientation="horizontal">
                     <Button
-                        android:id="@+id/button_combination7.1"
+                        android:id="@+id/button_combination25"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white"/>
                     <Button
-                        android:id="@+id/button_combiniation7.2"
+                        android:id="@+id/button_combiniation26"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white" />
                     <Button
-                        android:id="@+id/button_combiniation7.3"
+                        android:id="@+id/button_combiniation27"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
                         android:layout_marginRight="2dp"
                         android:backgroundTint="@color/white" />
                     <Button
-                        android:id="@+id/button_combiniation7.4"
+                        android:id="@+id/button_combiniation28"
                         android:layout_width="45dp"
                         android:layout_height="45dp"
                         android:layout_marginLeft="2dp"
@@ -567,44 +567,53 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/skocko_icon1"
+                    android:id="@+id/eve_icon"
                     android:layout_width="65dp"
                     android:layout_height="55dp"
                     android:layout_alignParentStart="true"
                     android:src="@drawable/pic_eve_icon_skocko"
-                    android:clickable="true"/>
+                    android:clickable="true"
+                    android:onClick="onIconClick"/>
                 <ImageView
-                    android:id="@+id/skocko_icon2"
+                    android:id="@+id/boot_icon"
                     android:layout_width="65dp"
                     android:layout_height="55dp"
                     android:layout_alignParentStart="true"
                     android:src="@drawable/pic_boot_icon_skocko"
-                    android:clickable="true"/>
+                    android:clickable="true"
+                    android:onClick="onIconClick"/>
                 <ImageView
-                    android:id="@+id/skocko_icon3"
+                    android:id="@+id/astronaut_icon"
                     android:layout_width="65dp"
                     android:layout_height="55dp"
                     android:layout_alignParentStart="true"
                     android:src="@drawable/pic_astronaut_skocko"
-                    android:clickable="true"/>
+                    android:clickable="true"
+                    android:onClick="onIconClick"/>
                 <ImageView
-                    android:id="@+id/skocko_icon4"
+                    android:id="@+id/walle_icon"
                     android:layout_width="65dp"
                     android:layout_height="55dp"
                     android:layout_alignParentStart="true"
-                    android:src="@drawable/pic_walle_icon_skocko" />
+                    android:src="@drawable/pic_walle_icon_skocko"
+                    android:clickable="true"
+                    android:onClick="onIconClick"/>
                 <ImageView
-                    android:id="@+id/skocko_icon5"
+                    android:id="@+id/leaf_icon"
                     android:layout_width="65dp"
                     android:layout_height="55dp"
                     android:layout_alignParentStart="true"
-                    android:src="@drawable/pic_leaf_icon_skocko" />
+                    android:src="@drawable/pic_leaf_icon_skocko"
+                    android:clickable="true"
+                    android:onClick="onIconClick"/>
                 <ImageView
-                    android:id="@+id/skocko_icon6"
+                    android:id="@+id/spaceship_icon"
                     android:layout_width="65dp"
                     android:layout_height="55dp"
                     android:layout_alignParentStart="true"
-                    android:src="@drawable/pic_spaceship_icon_skocko" />
+                    android:src="@drawable/pic_spaceship_icon_skocko"
+                    android:clickable="true"
+                    android:onClick="onIconClick"/>
 
             </LinearLayout>
 
