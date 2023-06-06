@@ -106,7 +106,156 @@
     "number6": "50",
     "final_number": "846"
   }
-}
+},
+  "asocijacije" : {
+    "asociations1": {
+      "asociation_field1": "ISTINA",
+      "asociation_field2": "PODRUM",
+      "asociation_field3": "MUSICA",
+      "asociation_field4": "BURE",
+      "A": "VINO",
+      "asociation_field5": "SKANDINAVIJA",
+      "asociation_field6": "KRALJEVINA",
+      "asociation_field7": "NOBEL",
+      "asociation_field8": "OSLO",
+      "B": "SVEDSKA",
+      "asociation_field9": "SIGNAL",
+      "asociation_field10": "ALADIN",
+      "asociation_field11": "PETROLEJ",
+      "asociation_field12": "BATERIJA",
+      "C": "LAMPA",
+      "asociation_field13": "ZAOKRUZEN",
+      "asociation_field14": "OBLI",
+      "asociation_field15": "LOPTA",
+      "asociation_field16": "ZAOKRUZEN",
+      "D": "OKRUGLI",
+      "Finaly": "STO"
+    },
+    "asociations2": {
+      "asociation_field1": "PANDA",
+      "asociation_field2": "TORINO",
+      "asociation_field3": "FABRIKA",
+      "asociation_field4": "BRAVO",
+      "A": "FIAT",
+      "asociation_field5": "VESELJE",
+      "asociation_field6": "RUZMARIN",
+      "asociation_field7": "KUM",
+      "asociation_field8": "ZLATNA",
+      "B": "SVADBA",
+      "asociation_field9": "OPERA",
+      "asociation_field10": "STEPEN",
+      "asociation_field11": "ZEMLJA",
+      "asociation_field12": "TEMPERATURA",
+      "C": "SKALA",
+      "asociation_field13": "SVECANOST",
+      "asociation_field14": "STAJANJE",
+      "asociation_field15": "DRZAVNA",
+      "asociation_field16": "SV. SAVA",
+      "D": "HIMNA",
+      "Finaly": "ZASTAVA"
+    },
+    "asociations3": {
+      "asociation_field1": "SALATA",
+      "asociation_field2": "JUG",
+      "asociation_field3": "KIVI",
+      "asociation_field4": "MANGO",
+      "A": "VOCE",
+      "asociation_field5": "BEOGRAD",
+      "asociation_field6": "NOVI SAD",
+      "asociation_field7": "NIS",
+      "asociation_field8": "ZBOGOM",
+      "B": "SRBIJA",
+      "asociation_field9": "INDUSTRIJA",
+      "asociation_field10": "PRERADJIVAC",
+      "asociation_field11": "KOREN",
+      "asociation_field12": "GRADJA",
+      "C": "DRVO",
+      "asociation_field13": "ALKOHOL",
+      "asociation_field14": "KAJSIJA",
+      "asociation_field15": "DOMACA",
+      "asociation_field16": "JAKA",
+      "D": "RAKIJA",
+      "Finaly": "SLJIVA"
+    },
+    "asociations4": {
+      "asociation_field1": "FESTIVAL",
+      "asociation_field2": "MJUZIKL",
+      "asociation_field3": "TABLETA",
+      "asociation_field4": "FOTO-APARAT",
+      "A": "FILM",
+      "asociation_field5": "ODELO",
+      "asociation_field6": "NAVIKA",
+      "asociation_field7": "BERZA",
+      "asociation_field8": "HONORAR",
+      "B": "RAD",
+      "asociation_field9": "ODGOVOR",
+      "asociation_field10": "ALERGIJA",
+      "asociation_field1": "LANAC",
+      "asociation_field12": "HEMIJA",
+      "C": "REAKCIJA",
+      "asociation_field13": "PESAK",
+      "asociation_field14": "FIFA",
+      "asociation_field15": "UEFA",
+      "asociation_field16": "STADION",
+      "D": "FUDBAL",
+      "Finaly": "AKCIJA"
+    },
+    "asociations5": {
+      "asociation_field1": "NOC",
+      "asociation_field2": "PEVACICA",
+      "asociation_field3": "PERSPEKTIVA",
+      "asociation_field4": "LET",
+      "A": "PTICA",
+      "asociation_field5": "KCI",
+      "asociation_field6": "CIZME",
+      "asociation_field7": "MREZA",
+      "asociation_field8": "LOLA",
+      "B": "RIBAR",
+      "asociation_field9": "PAUK",
+      "asociation_field10": "KK RADNICKI",
+      "asociation_field11": "POHODI",
+      "asociation_field12": "RATOVI",
+      "C": "KRSTAS",
+      "asociation_field13": "LAVOVI",
+      "asociation_field14": "DVOR",
+      "asociation_field15": "UM",
+      "asociation_field16": "LUK",
+      "D": "BELI",
+      "Finaly": "ORAO"
+    }
+  },
+  "skocko" : {
+    "combination1": {
+      "icon1": "@+id/walle_icon",
+      "icon2": "@+id/eve_icon",
+      "icon3": "@+id/eve_icon",
+      "icon4": "@+id/walle_icon"
+    },
+    "combination2": {
+      "icon1": "@+id/boot_icon",
+      "icon2": "@+id/leaf_icon",
+      "icon3": "@+id/boot_icon",
+      "icon4": "@+id/walle_icon"
+    },
+    "combination3": {
+      "icon1": "@+id/spaceship_icon",
+      "icon2": "@+id/eve_icon",
+      "icon3": "@+id/leaf_icon",
+      "icon4": "@+id/astronaut_icon"
+    },
+    "combination4": {
+      "icon1": "@+id/astronaut_icon",
+      "icon2": "@+id/walle_icon",
+      "icon3": "@+id/eve_icon",
+      "icon4": "@+id/spaceship_icon"
+    },
+    "combination 5": {
+      "icon1": "@+id/eve_icon",
+      "icon2": "@+id/boot_icon",
+      "icon3": "@+id/astronaut_icon",
+      "icon4": "@+id/leaf_icon"
+    }
+  }
 }
 
 
