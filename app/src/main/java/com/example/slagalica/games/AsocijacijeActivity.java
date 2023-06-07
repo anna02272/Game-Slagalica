@@ -1,7 +1,10 @@
 package com.example.slagalica.games;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -14,8 +17,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
+import com.example.slagalica.MainActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -33,6 +40,7 @@ public class AsocijacijeActivity extends AppCompatActivity {
     private List<EditText> editText;
     private FirebaseDatabase firebaseDatabase;
     private Map<Button, String> buttonSteps;
+    private Map<EditText, String> editTexts;
     private Random random;
 
     private CountDownTimer countDownTimer;
@@ -42,16 +50,19 @@ public class AsocijacijeActivity extends AppCompatActivity {
     private int currentColumnIndex;
     private int currentScore;
     private int[] columnScores;
-
+    private int currentEnabledButtonIndex = 0;
+    private int numberField =0;
+    private int fieldPoints ;
+    private int counter =0;
     private EditText input;
     private EditText input1;
     private EditText input2;
     private EditText input3;
     private EditText input4;
-//    private String answer1;
-//    private String answer2;
-//    private String answer3;
-//    private String answer4;
+    private String answer1;
+    private String answer2;
+    private String answer3;
+    private String answer4;
     private String answer;
 
 
@@ -62,28 +73,52 @@ public class AsocijacijeActivity extends AppCompatActivity {
 
         timerTextView = findViewById(R.id.time);
         startTimer();
+        PlayersFragment playersFragment = PlayersFragment.newInstance(120);
+        playersFragment.setGameType("Asocijacija");
 
-//        PlayersFragment playersFragment = PlayersFragment.newInstance(120);
-//
-//        getSupportFragmentManager()
-//                .beginTransaction()
-//                .add(R.id.fragment_container, playersFragment)
-//                .commit();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.fragment_container, playersFragment)
+                .commit();
 
         Button buttonNext = findViewById(R.id.button_next);
-//        input1=findViewById(R.id.input1);
-//        input2=findViewById(R.id.input2);
-//        input3=findViewById(R.id.input3);
-//        input4=findViewById(R.id.input4);
+        input1=findViewById(R.id.input1);
+        input2=findViewById(R.id.input2);
+        input3=findViewById(R.id.input3);
+        input4=findViewById(R.id.input4);
         input=findViewById(R.id.input);
 
         buttonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(AsocijacijeActivity.this, SkockoActivity.class);
+                AlertDialog.Builder builder = new AlertDialog.Builder(AsocijacijeActivity.this);
+                builder.setTitle("Da li ste sigurni?")
+                        .setMessage("Da li zelite da izadjete iz igre?")
+                        .setPositiveButton("Da", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(AsocijacijeActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
 
-                startActivity(intent);
+                AlertDialog dialog = builder.show();
+
+                Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                Button negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+
+                int nightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+                if (nightMode == Configuration.UI_MODE_NIGHT_YES) {
+                    positiveButton.setTextColor(ContextCompat.getColor(AsocijacijeActivity.this, R.color.buttonTextColorDark));
+                    negativeButton.setTextColor(ContextCompat.getColor(AsocijacijeActivity.this, R.color.buttonTextColorDark));
+                } else {
+                    positiveButton.setTextColor(ContextCompat.getColor(AsocijacijeActivity.this, R.color.buttonTextColorLight));
+                    negativeButton.setTextColor(ContextCompat.getColor(AsocijacijeActivity.this, R.color.buttonTextColorLight));
+                }
             }
         });
 
@@ -91,6 +126,7 @@ public class AsocijacijeActivity extends AppCompatActivity {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                numberField+=1;
                 checkAnswer();
             }
         });
@@ -161,6 +197,7 @@ public class AsocijacijeActivity extends AppCompatActivity {
 
     private void retrieveStep(final DataSnapshot asociationSnapshot) {
         final String asociationKey = asociationSnapshot.getKey();
+
         firebaseDatabase.getReference("asocijacije/" + asociationKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -178,6 +215,10 @@ public class AsocijacijeActivity extends AppCompatActivity {
                         }
 
                         answer = asociationsMap.get("Finaly");
+                        answer1 = asociationsMap.get("A");
+                        answer2 = asociationsMap.get("B");
+                        answer3 = asociationsMap.get("C");
+                        answer4 = asociationsMap.get("D");
                     }
                 }
             }
@@ -203,20 +244,48 @@ public class AsocijacijeActivity extends AppCompatActivity {
     }
 
     private void checkAnswer() {
-        Log.d("MyTAG: " , "ovde");
         String userInput = input.getText().toString().trim();
-        Log.d("here", userInput);
+        String userInput1 = input1.getText().toString().trim();
+        String userInput2 = input2.getText().toString().trim();
+        String userInput3 = input3.getText().toString().trim();
+        String userInput4 = input4.getText().toString().trim();
 
-
-        if (answer != null && userInput.equalsIgnoreCase(answer)) {
+        if(answer1 !=null || answer2 !=null || answer3 !=null || answer3 !=null ){
+            if(answer1 != null && userInput1.equalsIgnoreCase(answer1)){
+                Log.d("TAG", answer1);
+//                fieldPoints=2+(4-numberField);
+//                updateGuestPoints(fieldPoints);
+                Toast.makeText(AsocijacijeActivity.this, "Tacan odgovor!", Toast.LENGTH_SHORT).show();
+                calculatePartScore();
+            }
+            else if (answer2 != null && userInput2.equalsIgnoreCase(answer2)) {
+                Toast.makeText(AsocijacijeActivity.this, "Tacan odgovor!", Toast.LENGTH_SHORT).show();
+                calculatePartScore();
+            } else if (answer3 != null && userInput3.equalsIgnoreCase(answer3)) {
+                Toast.makeText(AsocijacijeActivity.this, "Tacan odgovor!", Toast.LENGTH_SHORT).show();
+                calculatePartScore();
+            } else if (answer4 != null && userInput4.equalsIgnoreCase(answer4)) {
+                Toast.makeText(AsocijacijeActivity.this, "Tacan odgovor!", Toast.LENGTH_SHORT).show();
+                calculatePartScore();
+            } else{Toast.makeText(AsocijacijeActivity.this, "Netacan odgovor!", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if ( answer != null && userInput.equalsIgnoreCase(answer)) {
             Toast.makeText(AsocijacijeActivity.this, "Tacan odgovor!", Toast.LENGTH_SHORT).show();
+            calculateFinalScore();
             for (Button button : buttons) {
                 String step = buttonSteps.get(button);
                 if (step != null) {
                     button.setText(step);
                     button.setEnabled(false);
                 }
+                input.setText(answer);
+                input1.setText(answer1);
+                input2.setText(answer2);
+                input3.setText(answer3);
+                input4.setText(answer4);
             }
+
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
 
@@ -224,7 +293,7 @@ public class AsocijacijeActivity extends AppCompatActivity {
                 countDownTimer.cancel();
             }
 
-            Toast.makeText(AsocijacijeActivity.this, "Sledi igra MOJ BROJ!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AsocijacijeActivity.this, "Sledi igra SKOCKO!", Toast.LENGTH_SHORT).show();
 
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -247,7 +316,9 @@ public class AsocijacijeActivity extends AppCompatActivity {
                 unopenedFields++;
             }
         }
+        Log.d("TAG", String.valueOf(unopenedFields));
         return unopenedFields;
+
     }
 
     private void updateScore(int columnIndex, int score) {
@@ -289,23 +360,49 @@ public class AsocijacijeActivity extends AppCompatActivity {
             }
         }
     }
+    private int calculatePartScore() {
+
+        int partScore = 0;
+        for (int score : columnScores) {
+            partScore += score;
+        }
+        partScore += 2 + (4-((16-(counter*4))-countUnopenedFields()));
+        updateGuestPoints(partScore);
+        counter=+1;
+        return partScore;
+    }
+    private int countUnopenedField() {
+        int unopenedColumns = 0;
+        for (int i = 0; i < 4; i++) {
+            if (columnScores[i] == 0 ) {
+                unopenedColumns++;
+                Log.d("TAG", String.valueOf(unopenedColumns));
+            }
+        }
+        Log.d("TAG", String.valueOf(unopenedColumns));
+        return unopenedColumns;
+    }
 
     private int calculateFinalScore() {
+
         int finalScore = 0;
         for (int score : columnScores) {
             finalScore += score;
         }
         finalScore += 7 + 6 * countUnopenedColumns();
+        updateGuestPoints(finalScore-1);
         return finalScore;
     }
 
     private int countUnopenedColumns() {
         int unopenedColumns = 0;
         for (int i = 0; i < 4; i++) {
-            if (columnScores[i] == 0) {
+            if (columnScores[i] == 0 ) {
                 unopenedColumns++;
+                Log.d("TAG", String.valueOf(unopenedColumns));
             }
         }
+        Log.d("TAG", String.valueOf(unopenedColumns));
         return unopenedColumns;
     }
 
@@ -314,22 +411,32 @@ public class AsocijacijeActivity extends AppCompatActivity {
             @Override
             public void onTick(long millisUntilFinished) {
                 timeLeftInMillis = millisUntilFinished;
-                updateTimerText();
+//                updateTimerText();
             }
 
             @Override
             public void onFinish() {
-                // Timer finished, perform any necessary actions
-                // For example, you can show a message or end the game
+//                input.setText(answer);
+//                Toast.makeText(AsocijacijeActivity.this, "Vase vreme je isteklo, sledi igra SKOCKO!",
+//                        Toast.LENGTH_SHORT).show(); ;
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Intent intent = new Intent(AsocijacijeActivity.this, SkockoActivity.class);
+//                        startActivity(intent);
+//                    }
+//                }, 5000);
+
             }
+
         }.start();
     }
-    private void updateTimerText() {
-        int minutes = (int) (timeLeftInMillis / 1000) / 60;
-        int seconds = (int) (timeLeftInMillis / 1000) % 60;
-        String timeFormatted = String.format("%02d:%02d", minutes, seconds);
-        timerTextView.setText(timeFormatted);
-    }
+//    private void updateTimerText() {
+//        int minutes = (int) ( timeLeftInMillis/ 1000) / 60;
+//        int seconds = (int) (timeLeftInMillis / 1000) % 60;
+//        String timeFormatted = String.format("%02d:%02d", minutes, seconds);
+//        timerTextView.setText(timeFormatted);
+//    }
 
     @Override
     protected void onDestroy() {
@@ -344,5 +451,28 @@ public class AsocijacijeActivity extends AppCompatActivity {
         currentColumnIndex = 0;
         currentScore = 0;
         columnScores = new int[4];
+    }
+    private void updateGuestPoints(int fieldPoints) {
+        DatabaseReference guestPointsRef = firebaseDatabase.getReference("points/guest_points");
+
+        guestPointsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    int currentPoints = dataSnapshot.getValue(Integer.class);
+                    if(fieldPoints<30){
+                        int updatedPoints = currentPoints + fieldPoints;
+                        guestPointsRef.setValue(updatedPoints);}
+                    else{int updatedPoints = 30;
+                        guestPointsRef.setValue(updatedPoints);}
+                } else {
+                    guestPointsRef.setValue(fieldPoints);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 }
