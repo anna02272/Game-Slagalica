@@ -78,6 +78,7 @@
       "asociation_field1": "GLUMAC",
       "asociation_field11": "LANAC",
       "asociation_field10": "ALERGIJA",
+      "asociation_field11": "LANAC",
       "asociation_field12": "HEMIJA",
       "asociation_field13": "PESAK",
       "asociation_field14": "FIFA",
@@ -176,7 +177,8 @@
       "number4": "8",
       "number5": "10",
       "number6": "50",
-      "number7": "239"
+      "number7": "239",
+      "number8" : "(5 + 10) * (8 + 8) - 1 = 239"
     },
     "numbers2": {
       "number1": "4",
@@ -185,7 +187,8 @@
       "number4": "9",
       "number5": "15",
       "number6": "25",
-      "number7": "92"
+      "number7": "92",
+      "number8": "4 + 25 + 7 * 9 = 92"
     },
     "numbers3": {
       "number1": "6",
@@ -194,7 +197,8 @@
       "number4": "6",
       "number5": "10",
       "number6": "50",
-      "number7": "259"
+      "number7": "259",
+      "number8" : "6 / 6 + 6 * (50 - 7) = 259"
     },
     "numbers4": {
       "number1": "9",
@@ -203,7 +207,8 @@
       "number4": "5",
       "number5": "10",
       "number6": "50",
-      "number7": "756"
+      "number7": "756",
+      "number8" : "(2 + 5) * 9 * (10 + 50) / 5 = 756"
     },
     "numbers5": {
       "number1": "3",
@@ -212,7 +217,8 @@
       "number4": "3",
       "number5": "15",
       "number6": "50",
-      "number7": "846"
+      "number7": "846",
+      "number8" : "(9 + 9) * (50 - 3) = 846"
     },
     "operations": {
       "close": ")",
@@ -224,7 +230,7 @@
     }
   },
   "points": {
-    "guest_points": 0
+    "guest_points": 20
   },
   "skocko": {
     "combination 5": {
