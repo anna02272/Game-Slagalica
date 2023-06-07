@@ -1,16 +1,20 @@
 package com.example.slagalica.games;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.text.InputType;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -24,6 +28,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+
+import org.mozilla.javascript.Scriptable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +45,8 @@ public class MojBrojActivity extends AppCompatActivity {
     private int currentEnabledButtonIndex = 0;
     private String answer;
     private Button stopButton;
+
+    private Button buttonAnswer;
     private Button confirmButton;
     private CountDownTimer countDownTimer;
 
@@ -62,23 +70,49 @@ public class MojBrojActivity extends AppCompatActivity {
                 .commit();
 
 
+        buttonAnswer = findViewById(R.id.button_answer);
         Button buttonEnd = findViewById(R.id.button_end);
 
         buttonEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MojBrojActivity.this);
+                builder.setTitle("Da li ste sigurni?")
+                        .setMessage("Da li zelite da izadjete iz igre?")
+                        .setPositiveButton("Da", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(MojBrojActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
 
-                Intent intent = new Intent(MojBrojActivity.this, MainActivity.class);
+                AlertDialog dialog = builder.show();
 
-                startActivity(intent);
+                Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                Button negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+
+                int nightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+                if (nightMode == Configuration.UI_MODE_NIGHT_YES) {
+                    positiveButton.setTextColor(ContextCompat.getColor(MojBrojActivity.this, R.color.buttonTextColorDark));
+                    negativeButton.setTextColor(ContextCompat.getColor(MojBrojActivity.this, R.color.buttonTextColorDark));
+                } else {
+                    positiveButton.setTextColor(ContextCompat.getColor(MojBrojActivity.this, R.color.buttonTextColorLight));
+                    negativeButton.setTextColor(ContextCompat.getColor(MojBrojActivity.this, R.color.buttonTextColorLight));
+                }
             }
         });
+
          confirmButton = findViewById(R.id.button_confirm);
         stopButton = findViewById(R.id.button_stop);
 
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 checkAnswer();
             }
         });
@@ -90,6 +124,7 @@ public class MojBrojActivity extends AppCompatActivity {
                 showButtons();
             }
         });
+
 
         input = findViewById(R.id.input1);
         Drawable clearDrawable = getResources().getDrawable(R.drawable.game_clear);
@@ -107,7 +142,12 @@ public class MojBrojActivity extends AppCompatActivity {
                         return true;
                     }
                 }
-                return false;
+
+                int inType = input.getInputType();
+                input.setInputType(InputType.TYPE_NULL);
+                input.onTouchEvent(event);
+                input.setInputType(inType);
+                return true;
             }
         });
 
@@ -253,12 +293,33 @@ public class MojBrojActivity extends AppCompatActivity {
             return null;
         }
 
+    String getResult(String data){
+        try{
+            org.mozilla.javascript.Context context  = org.mozilla.javascript.Context.enter();
+            context.setOptimizationLevel(-1);
+            Scriptable scriptable = context.initStandardObjects();
+            String finalResult =  context.evaluateString(scriptable,data,"Javascript",1,null).toString();
+            if(finalResult.endsWith(".0")){
+                finalResult = finalResult.replace(".0","");
+            }
+            return finalResult;
+        }catch (Exception e){
+            return "Err";
+        }
+    }
+
     private void checkAnswer() {
         String userInput = input.getText().toString().trim();
-
-        if (answer != null && userInput.equalsIgnoreCase(answer)) {
+        if (userInput.isEmpty()) {
+            return;
+        }
+        String finalResult = getResult(userInput);
+        buttonAnswer.setText(finalResult);
+        if (answer != null && finalResult.equals(answer)) {
             updateGuestPoints(20);
-            Toast.makeText(MojBrojActivity.this, "Tacan odgovor!", Toast.LENGTH_SHORT).show();
+            if(!finalResult.equals("Err")){
+                Toast.makeText(MojBrojActivity.this, finalResult + " :  Tacan odgovor!", Toast.LENGTH_SHORT).show();
+            }
             Toast.makeText(MojBrojActivity.this, "Kraj igre!", Toast.LENGTH_SHORT).show();
             confirmButton.setEnabled(false);
 
@@ -271,7 +332,9 @@ public class MojBrojActivity extends AppCompatActivity {
                 }
             }, 5000);
         } else {
-            Toast.makeText(MojBrojActivity.this, "Netacan odgovor!", Toast.LENGTH_SHORT).show();
+            if (!finalResult.equals("Err")) {
+                Toast.makeText(MojBrojActivity.this, finalResult + " :  Netacan odgovor!", Toast.LENGTH_SHORT).show();
+            }
         }
     }
     private void updateGuestPoints(int pointsToAdd) {
