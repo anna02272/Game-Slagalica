@@ -140,7 +140,7 @@
                 android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/button_inputA"
+                    android:id="@+id/input1"
                     android:layout_width="150dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
@@ -152,7 +152,7 @@
                     android:padding="10dp"
                     android:textColorHint="@color/gray" />
                 <EditText
-                    android:id="@+id/button_inputB"
+                    android:id="@+id/input2"
                     android:layout_width="150dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
@@ -165,19 +165,34 @@
                     android:textColorHint="@color/gray" />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/button_input"
-                android:layout_width="320dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="10dp"
+                <EditText
+                    android:id="@+id/input"
+                    android:layout_width="280dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="10dp"
 
-                android:background="@drawable/login_edittext_bkg"
-                android:hint="@string/games_answer"
-                android:padding="15dp"
-                android:textColorHint="@color/gray" />
+                    android:background="@drawable/login_edittext_bkg"
+                    android:hint="@string/games_answer"
+                    android:padding="15dp"
+                    android:textColorHint="@color/gray" />
+                <Button
+                    android:id="@+id/confirm"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/games_confirm"
+
+                    />
+
+            </LinearLayout>
             <LinearLayout
                 android:id="@+id/linearLayout7"
                 android:layout_width="match_parent"
@@ -189,7 +204,7 @@
                 android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/button_inputC"
+                    android:id="@+id/input3"
                     android:layout_width="150dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
@@ -201,7 +216,7 @@
                     android:padding="10dp"
                     android:textColorHint="@color/gray" />
                 <EditText
-                    android:id="@+id/button_inputD"
+                    android:id="@+id/input4"
                     android:layout_width="150dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
