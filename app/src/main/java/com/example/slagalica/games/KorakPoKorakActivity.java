@@ -1,12 +1,8 @@
 package com.example.slagalica.games;
 
-import android.Manifest;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
+
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -17,9 +13,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,7 +34,6 @@ public class KorakPoKorakActivity extends AppCompatActivity {
     private Random random;
     private CountDownTimer countDownTimer;
     private int currentCount = 7;
-
     private String answer;
     private EditText input;
     private Handler buttonHandler;
@@ -263,10 +255,16 @@ public class KorakPoKorakActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
+                input.setText(answer);
                 Toast.makeText(KorakPoKorakActivity.this, "Vase vreme je isteklo, sledi igra MOJ BROJ!",
                         Toast.LENGTH_SHORT).show(); ;
-                Intent intent = new Intent(KorakPoKorakActivity.this, MojBrojActivity.class);
-                startActivity(intent);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(KorakPoKorakActivity.this, MojBrojActivity.class);
+                        startActivity(intent);
+                    }
+                }, 5000);
 
             }
         };
