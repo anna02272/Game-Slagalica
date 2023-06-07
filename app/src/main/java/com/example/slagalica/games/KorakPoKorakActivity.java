@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -189,11 +190,17 @@ public class KorakPoKorakActivity extends AppCompatActivity {
             }
         });
     }
+    private int getCurrentStep() {
+        int currentStep = currentButtonIndex ;
+        return currentStep < 0 ? 0 : currentStep;
+    }
+
     private void checkAnswer() {
         String userInput = input.getText().toString().trim();
 
         if (answer != null && userInput.equalsIgnoreCase(answer)) {
             Toast.makeText(KorakPoKorakActivity.this, "Tacan odgovor!", Toast.LENGTH_SHORT).show();
+
             for (Button button : buttons) {
                 String step = buttonSteps.get(button);
                 if (step != null) {
@@ -201,6 +208,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                     button.setEnabled(false);
                 }
             }
+
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
 
@@ -208,12 +216,17 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 countDownTimer.cancel();
             }
 
+            int currentStep = getCurrentStep();
+            int pointsToAdd = 20 - (2 * (currentStep - 1));
+
+            updateGuestPoints(pointsToAdd);
+
             Toast.makeText(KorakPoKorakActivity.this, "Sledi igra MOJ BROJ!", Toast.LENGTH_SHORT).show();
 
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                   Intent intent = new Intent(KorakPoKorakActivity.this, MojBrojActivity.class);
+                    Intent intent = new Intent(KorakPoKorakActivity.this, MojBrojActivity.class);
                     startActivity(intent);
                     finish();
                 }
@@ -223,6 +236,26 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         }
     }
 
+    private void updateGuestPoints(int pointsToAdd) {
+        DatabaseReference guestPointsRef = firebaseDatabase.getReference("points/guest_points");
+
+        guestPointsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    int currentPoints = dataSnapshot.getValue(Integer.class);
+                    int updatedPoints = currentPoints + pointsToAdd;
+                    guestPointsRef.setValue(updatedPoints);
+                } else {
+                    guestPointsRef.setValue(pointsToAdd);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
 
 
 
