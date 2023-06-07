@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 @Override
                 public void onClick(View v) {
                     firebaseDatabase.getReference("points/guest_points").setValue(0);
-                    Intent intent = new Intent(MainActivity.this, KorakPoKorakActivity.class);
+                    Intent intent = new Intent(MainActivity.this, AsocijacijeActivity.class);
 
                     startActivity(intent);
                 }
