@@ -1,9 +1,13 @@
 package com.example.slagalica.games;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -39,6 +43,18 @@ public class AsocijacijeActivity extends AppCompatActivity {
     private int currentScore;
     private int[] columnScores;
 
+    private EditText input;
+    private EditText input1;
+    private EditText input2;
+    private EditText input3;
+    private EditText input4;
+//    private String answer1;
+//    private String answer2;
+//    private String answer3;
+//    private String answer4;
+    private String answer;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +71,11 @@ public class AsocijacijeActivity extends AppCompatActivity {
 //                .commit();
 
         Button buttonNext = findViewById(R.id.button_next);
+//        input1=findViewById(R.id.input1);
+//        input2=findViewById(R.id.input2);
+//        input3=findViewById(R.id.input3);
+//        input4=findViewById(R.id.input4);
+        input=findViewById(R.id.input);
 
         buttonNext.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,28 +87,36 @@ public class AsocijacijeActivity extends AppCompatActivity {
             }
         });
 
+        Button confirmButton = findViewById(R.id.confirm);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkAnswer();
+            }
+        });
+
         buttons = new ArrayList<>();
         editText = new ArrayList<>();
         buttons.add(findViewById(R.id.button_1));
         buttons.add(findViewById(R.id.button_2));
         buttons.add(findViewById(R.id.button_3));
         buttons.add(findViewById(R.id.button_4));
-        editText.add(findViewById(R.id.button_inputA));
+        editText.add(findViewById(R.id.input1));
         buttons.add(findViewById(R.id.button_5));
         buttons.add(findViewById(R.id.button_6));
         buttons.add(findViewById(R.id.button_7));
         buttons.add(findViewById(R.id.button_8));
-        editText.add(findViewById(R.id.button_inputB));
+        editText.add(findViewById(R.id.input2));
         buttons.add(findViewById(R.id.button_9));
         buttons.add(findViewById(R.id.button_10));
         buttons.add(findViewById(R.id.button_11));
         buttons.add(findViewById(R.id.button_12));
-        editText.add(findViewById(R.id.button_inputC));
+        editText.add(findViewById(R.id.input3));
         buttons.add(findViewById(R.id.button_13));
         buttons.add(findViewById(R.id.button_14));
         buttons.add(findViewById(R.id.button_15));
         buttons.add(findViewById(R.id.button_16));
-        editText.add(findViewById(R.id.button_inputD));
+        editText.add(findViewById(R.id.input4));
         editText.add(findViewById(R.id.input));
 
 
@@ -147,6 +176,8 @@ public class AsocijacijeActivity extends AppCompatActivity {
                                 setButtonListener(button);
                             }
                         }
+
+                        answer = asociationsMap.get("Finaly");
                     }
                 }
             }
@@ -166,13 +197,49 @@ public class AsocijacijeActivity extends AppCompatActivity {
                 if (asociation != null) {
                     button.setText(asociation);
                     button.setEnabled(false);
-
-                    currentScore += 2 + countUnopenedFields();
-                    editText.get(currentColumnIndex).setEnabled(true);
                 }
             }
         });
     }
+
+    private void checkAnswer() {
+        Log.d("MyTAG: " , "ovde");
+        String userInput = input.getText().toString().trim();
+        Log.d("here", userInput);
+
+
+        if (answer != null && userInput.equalsIgnoreCase(answer)) {
+            Toast.makeText(AsocijacijeActivity.this, "Tacan odgovor!", Toast.LENGTH_SHORT).show();
+            for (Button button : buttons) {
+                String step = buttonSteps.get(button);
+                if (step != null) {
+                    button.setText(step);
+                    button.setEnabled(false);
+                }
+            }
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+
+            if (countDownTimer != null) {
+                countDownTimer.cancel();
+            }
+
+            Toast.makeText(AsocijacijeActivity.this, "Sledi igra MOJ BROJ!", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(AsocijacijeActivity.this, SkockoActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }, 5000);
+        } else{
+            Toast.makeText(AsocijacijeActivity.this, "Netacan odgovor!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
     private int countUnopenedFields() {
         int unopenedFields = 0;
         for (Button button : buttons) {
