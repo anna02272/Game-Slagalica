@@ -19,6 +19,7 @@ import androidx.fragment.app.FragmentManager;
 import com.example.slagalica.games.AsocijacijeActivity;
 import com.example.slagalica.games.KoZnaZnaActivity;
 import com.example.slagalica.games.KorakPoKorakActivity;
+import com.example.slagalica.games.MojBrojActivity;
 import com.example.slagalica.games.SpojniceActivity;
 import com.example.slagalica.login_registration.RegistrationLoginActivity;
 import com.example.slagalica.menu.FriendsFragment;
@@ -28,10 +29,12 @@ import com.example.slagalica.menu.ProfileFragment;
 import com.example.slagalica.menu.RangFragment;
 import com.example.slagalica.menu.SettingsFragment;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
 
+    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +56,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             buttonStartGame.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    Intent intent = new Intent(MainActivity.this, KorakPoKorakActivity.class);
+                    firebaseDatabase.getReference("points/guest_points").setValue(0);
+                    Intent intent = new Intent(MainActivity.this, AsocijacijeActivity.class);
 
                     startActivity(intent);
                 }

@@ -27,8 +27,7 @@
 
     <string name="games_player1">Igrač 1</string>
     <string name="games_player2">Igrač 2</string>
-    <string name="games_points">Poeni: 1</string>
-    <string name="games_time">10:00</string>
+    <string name="games_points">Poeni:</string>
     <string name="games_description">Ovde ide opis igre</string>
     <string name="games_next">Odustani od igre</string>
     <string name="games_spojnica">Spojnica</string>
@@ -86,6 +85,7 @@
     <string name="profile_pobeda">Pobeda:</string>
     <string name="profile_poraz">Poraz:</string>
     <string name="profile_procenat">\?%</string>
+    <string name="games_mojbroj_stop">STOP</string>
 
 
 </resources>
