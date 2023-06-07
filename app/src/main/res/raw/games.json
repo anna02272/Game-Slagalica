@@ -1,230 +1,237 @@
 {
-  "korak_po_korak" : {
+  "asocijacije": {
+    "asociations1": {
+      "A": "VINO",
+      "B": "SVEDSKA",
+      "C": "LAMPA",
+      "D": "OKRUGLI",
+      "Finaly": "STO",
+      "asociation_field1": "ISTINA",
+      "asociation_field10": "ALADIN",
+      "asociation_field11": "PETROLEJ",
+      "asociation_field12": "BATERIJA",
+      "asociation_field13": "ZAOKRUZEN",
+      "asociation_field14": "OBLI",
+      "asociation_field15": "LOPTA",
+      "asociation_field16": "ZAOKRUZEN",
+      "asociation_field2": "PODRUM",
+      "asociation_field3": "MUSICA",
+      "asociation_field4": "BURE",
+      "asociation_field5": "SKANDINAVIJA",
+      "asociation_field6": "KRALJEVINA",
+      "asociation_field7": "NOBEL",
+      "asociation_field8": "OSLO",
+      "asociation_field9": "SIGNAL"
+    },
+    "asociations2": {
+      "A": "FIAT",
+      "B": "SVADBA",
+      "C": "SKALA",
+      "D": "HIMNA",
+      "Finaly": "ZASTAVA",
+      "asociation_field1": "PANDA",
+      "asociation_field10": "STEPEN",
+      "asociation_field11": "ZEMLJA",
+      "asociation_field12": "TEMPERATURA",
+      "asociation_field13": "SVECANOST",
+      "asociation_field14": "STAJANJE",
+      "asociation_field15": "DRZAVNA",
+      "asociation_field16": "SV. SAVA",
+      "asociation_field2": "TORINO",
+      "asociation_field3": "FABRIKA",
+      "asociation_field4": "BRAVO",
+      "asociation_field5": "VESELJE",
+      "asociation_field6": "RUZMARIN",
+      "asociation_field7": "KUM",
+      "asociation_field8": "ZLATNA",
+      "asociation_field9": "OPERA"
+    },
+    "asociations3": {
+      "A": "VOCE",
+      "B": "SRBIJA",
+      "C": "DRVO",
+      "D": "RAKIJA",
+      "Finaly": "SLJIVA",
+      "asociation_field1": "SALATA",
+      "asociation_field10": "PRERADJIVAC",
+      "asociation_field11": "KOREN",
+      "asociation_field12": "GRADJA",
+      "asociation_field13": "ALKOHOL",
+      "asociation_field14": "KAJSIJA",
+      "asociation_field15": "DOMACA",
+      "asociation_field16": "JAKA",
+      "asociation_field2": "JUG",
+      "asociation_field3": "KIVI",
+      "asociation_field4": "MANGO",
+      "asociation_field5": "BEOGRAD",
+      "asociation_field6": "NOVI SAD",
+      "asociation_field7": "NIS",
+      "asociation_field8": "ZBOGOM",
+      "asociation_field9": "INDUSTRIJA"
+    },
+    "asociations4": {
+      "A": "FILM",
+      "B": "RAD",
+      "C": "REAKCIJA",
+      "D": "FUDBAL",
+      "Finaly": "AKCIJA",
+      "asociation_field1": "LANAC",
+      "asociation_field10": "ALERGIJA",
+      "asociation_field12": "HEMIJA",
+      "asociation_field13": "PESAK",
+      "asociation_field14": "FIFA",
+      "asociation_field15": "UEFA",
+      "asociation_field16": "STADION",
+      "asociation_field2": "MJUZIKL",
+      "asociation_field3": "TABLETA",
+      "asociation_field4": "FOTO-APARAT",
+      "asociation_field5": "ODELO",
+      "asociation_field6": "NAVIKA",
+      "asociation_field7": "BERZA",
+      "asociation_field8": "HONORAR",
+      "asociation_field9": "ODGOVOR"
+    },
+    "asociations5": {
+      "A": "PTICA",
+      "B": "RIBAR",
+      "C": "KRSTAS",
+      "D": "BELI",
+      "Finaly": "ORAO",
+      "asociation_field1": "NOC",
+      "asociation_field10": "KK RADNICKI",
+      "asociation_field11": "POHODI",
+      "asociation_field12": "RATOVI",
+      "asociation_field13": "LAVOVI",
+      "asociation_field14": "DVOR",
+      "asociation_field15": "UM",
+      "asociation_field16": "LUK",
+      "asociation_field2": "PEVACICA",
+      "asociation_field3": "PERSPEKTIVA",
+      "asociation_field4": "LET",
+      "asociation_field5": "KCI",
+      "asociation_field6": "CIZME",
+      "asociation_field7": "MREZA",
+      "asociation_field8": "LOLA",
+      "asociation_field9": "PAUK"
+    }
+  },
+  "korak_po_korak": {
     "steps1": {
+      "answer": "Tigar",
       "step1": "Ima veze s Malezijom",
       "step2": "Lik je Bate Zivojinovica u filmu 'Most'",
       "step3": "To je strip Junak Hobs",
       "step4": "Kod Dragane Mirkovic je animiran",
       "step5": "Ima svoju vrstu ajkule",
       "step6": "U naslovu filma je pritajen",
-      "step7": "Nazov je kompanije iz pirota",
-      "answer1": "Tigar"
+      "step7": "Nazov je kompanije iz pirota"
     },
     "steps2": {
+      "answer": "Tuca",
       "step1": "Ima veze s Nikolom Jokicem",
       "step2": "U hokeju je deo 'gordi hau het-trika'",
       "step3": "Moze da bude opsta",
       "step4": "Uz dodato slovo na kraju je deo cveta",
       "step5": "Sinonim je za padavinu grad",
       "step6": "Moze da bude kafanska",
-      "step7": "Medjusobno je udaranje dve ili vise osoba",
-      "answer2": "Tuca"
+      "step7": "Medjusobno je udaranje dve ili vise osoba"
     },
     "steps3": {
+      "answer": "Zubi",
       "step1": "Imaju mostove",
       "step2": "Mogu biti stalni",
       "step3": "Imaju svoj konac",
       "step4": "Neki ime duguju mleku",
       "step5": "Imaju ih testere",
       "step6": "Imaju svoju pastu",
-      "step7": "U izreci, poklonu se u njih ne gleda",
-      "answer3": "Zubi"
+      "step7": "U izreci, poklonu se u njih ne gleda"
     },
     "steps4": {
+      "answer": "Pas",
       "step1": "U izvesnom smislu moze da leti",
       "step2": "Moze imati veze sa zivotom",
       "step3": "U imenima je vise rasa",
       "step4": "Moze imati veze s morem",
       "step5": "U jednom domacem filmu je 'prokleti'",
       "step6": "... a u drugom je 'voleo vozove'",
-      "step7": "Ta zivotinja je 'covekov najbolji prijatelj'",
-      "answer4": "Pas"
+      "step7": "Ta zivotinja je 'covekov najbolji prijatelj'"
     },
     "steps5": {
+      "answer": "Osiguranje",
       "step1": "Ima veze sa Savom i Dunavom",
       "step2": "Svih devet slova ove reci je razlicito",
       "step3": "Ima veze sa zdravljem",
       "step4": "Moze se odnositi na zivot",
       "step5": "Ima svog agenta i svoju premiju",
       "step6": "Za vozilo je obavezno",
-      "step7": "Postoji i Kasko varijanta",
-      "answer5": "Osiguranje"
+      "step7": "Postoji i Kasko varijanta"
     }
   },
-
-"moj_broj" : {
-  "operations": {
-    "plus": "+",
-    "minus": "-",
-    "multiple": "*",
-    "divide": "/",
-    "opened": "(",
-    "closed": ")"
-  },
-  "numbers1": {
-    "number1": "8",
-    "number2": "5",
-    "number3": "1",
-    "number4": "8",
-    "number5": "10",
-    "number6": "50",
-    "final_number1": "239"
-  },
-  "numbers2": {
-    "number1": "4",
-    "number2": "5",
-    "number3": "7",
-    "number4": "9",
-    "number5": "15",
-    "number6": "25",
-    "final_number2": "92"
-  },
-  "numbers3": {
-    "number1": "6",
-    "number2": "7",
-    "number3": "6",
-    "number4": "6",
-    "number5": "10",
-    "number6": "50",
-    "final_number3": "259"
-  },
-  "numbers4": {
-    "number1": "9",
-    "number2": "2",
-    "number3": "5",
-    "number4": "5",
-    "number5": "10",
-    "number6": "50",
-    "final_number4": "756"
-  },
-  "numbers5": {
-    "number1": "3",
-    "number2": "9",
-    "number3": "9",
-    "number4": "3",
-    "number5": "15",
-    "number6": "50",
-    "final_number5": "846"
-  }
-},
-  "asocijacije" : {
-    "asociations1": {
-      "asociation_field1": "ISTINA",
-      "asociation_field2": "PODRUM",
-      "asociation_field3": "MUSICA",
-      "asociation_field4": "BURE",
-      "A": "VINO",
-      "asociation_field5": "SKANDINAVIJA",
-      "asociation_field6": "KRALJEVINA",
-      "asociation_field7": "NOBEL",
-      "asociation_field8": "OSLO",
-      "B": "SVEDSKA",
-      "asociation_field9": "SIGNAL",
-      "asociation_field10": "ALADIN",
-      "asociation_field11": "PETROLEJ",
-      "asociation_field12": "BATERIJA",
-      "C": "LAMPA",
-      "asociation_field13": "ZAOKRUZEN",
-      "asociation_field14": "OBLI",
-      "asociation_field15": "LOPTA",
-      "asociation_field16": "ZAOKRUZEN",
-      "D": "OKRUGLI",
-      "Finaly": "STO"
+  "moj_broj": {
+    "numbers1": {
+      "number1": "8",
+      "number2": "5",
+      "number3": "1",
+      "number4": "8",
+      "number5": "10",
+      "number6": "50",
+      "number7": "239"
     },
-    "asociations2": {
-      "asociation_field1": "PANDA",
-      "asociation_field2": "TORINO",
-      "asociation_field3": "FABRIKA",
-      "asociation_field4": "BRAVO",
-      "A": "FIAT",
-      "asociation_field5": "VESELJE",
-      "asociation_field6": "RUZMARIN",
-      "asociation_field7": "KUM",
-      "asociation_field8": "ZLATNA",
-      "B": "SVADBA",
-      "asociation_field9": "OPERA",
-      "asociation_field10": "STEPEN",
-      "asociation_field11": "ZEMLJA",
-      "asociation_field12": "TEMPERATURA",
-      "C": "SKALA",
-      "asociation_field13": "SVECANOST",
-      "asociation_field14": "STAJANJE",
-      "asociation_field15": "DRZAVNA",
-      "asociation_field16": "SV. SAVA",
-      "D": "HIMNA",
-      "Finaly": "ZASTAVA"
+    "numbers2": {
+      "number1": "4",
+      "number2": "5",
+      "number3": "7",
+      "number4": "9",
+      "number5": "15",
+      "number6": "25",
+      "number7": "92"
     },
-    "asociations3": {
-      "asociation_field1": "SALATA",
-      "asociation_field2": "JUG",
-      "asociation_field3": "KIVI",
-      "asociation_field4": "MANGO",
-      "A": "VOCE",
-      "asociation_field5": "BEOGRAD",
-      "asociation_field6": "NOVI SAD",
-      "asociation_field7": "NIS",
-      "asociation_field8": "ZBOGOM",
-      "B": "SRBIJA",
-      "asociation_field9": "INDUSTRIJA",
-      "asociation_field10": "PRERADJIVAC",
-      "asociation_field11": "KOREN",
-      "asociation_field12": "GRADJA",
-      "C": "DRVO",
-      "asociation_field13": "ALKOHOL",
-      "asociation_field14": "KAJSIJA",
-      "asociation_field15": "DOMACA",
-      "asociation_field16": "JAKA",
-      "D": "RAKIJA",
-      "Finaly": "SLJIVA"
+    "numbers3": {
+      "number1": "6",
+      "number2": "7",
+      "number3": "6",
+      "number4": "6",
+      "number5": "10",
+      "number6": "50",
+      "number7": "259"
     },
-    "asociations4": {
-      "asociation_field1": "FESTIVAL",
-      "asociation_field2": "MJUZIKL",
-      "asociation_field3": "TABLETA",
-      "asociation_field4": "FOTO-APARAT",
-      "A": "FILM",
-      "asociation_field5": "ODELO",
-      "asociation_field6": "NAVIKA",
-      "asociation_field7": "BERZA",
-      "asociation_field8": "HONORAR",
-      "B": "RAD",
-      "asociation_field9": "ODGOVOR",
-      "asociation_field10": "ALERGIJA",
-      "asociation_field1": "LANAC",
-      "asociation_field12": "HEMIJA",
-      "C": "REAKCIJA",
-      "asociation_field13": "PESAK",
-      "asociation_field14": "FIFA",
-      "asociation_field15": "UEFA",
-      "asociation_field16": "STADION",
-      "D": "FUDBAL",
-      "Finaly": "AKCIJA"
+    "numbers4": {
+      "number1": "9",
+      "number2": "2",
+      "number3": "5",
+      "number4": "5",
+      "number5": "10",
+      "number6": "50",
+      "number7": "756"
     },
-    "asociations5": {
-      "asociation_field1": "NOC",
-      "asociation_field2": "PEVACICA",
-      "asociation_field3": "PERSPEKTIVA",
-      "asociation_field4": "LET",
-      "A": "PTICA",
-      "asociation_field5": "KCI",
-      "asociation_field6": "CIZME",
-      "asociation_field7": "MREZA",
-      "asociation_field8": "LOLA",
-      "B": "RIBAR",
-      "asociation_field9": "PAUK",
-      "asociation_field10": "KK RADNICKI",
-      "asociation_field11": "POHODI",
-      "asociation_field12": "RATOVI",
-      "C": "KRSTAS",
-      "asociation_field13": "LAVOVI",
-      "asociation_field14": "DVOR",
-      "asociation_field15": "UM",
-      "asociation_field16": "LUK",
-      "D": "BELI",
-      "Finaly": "ORAO"
+    "numbers5": {
+      "number1": "3",
+      "number2": "9",
+      "number3": "9",
+      "number4": "3",
+      "number5": "15",
+      "number6": "50",
+      "number7": "846"
+    },
+    "operations": {
+      "close": ")",
+      "divide": "/",
+      "minus": "-",
+      "multiple": "*",
+      "open": "(",
+      "plus": "+"
     }
   },
-  "skocko" : {
+  "points": {
+    "guest_points": 0
+  },
+  "skocko": {
+    "combination 5": {
+      "icon1": "@+id/eve_icon",
+      "icon2": "@+id/boot_icon",
+      "icon3": "@+id/astronaut_icon",
+      "icon4": "@+id/leaf_icon"
+    },
     "combination1": {
       "icon1": "@+id/walle_icon",
       "icon2": "@+id/eve_icon",
@@ -248,16 +255,6 @@
       "icon2": "@+id/walle_icon",
       "icon3": "@+id/eve_icon",
       "icon4": "@+id/spaceship_icon"
-    },
-    "combination 5": {
-      "icon1": "@+id/eve_icon",
-      "icon2": "@+id/boot_icon",
-      "icon3": "@+id/astronaut_icon",
-      "icon4": "@+id/leaf_icon"
     }
   }
 }
-
-
-
-

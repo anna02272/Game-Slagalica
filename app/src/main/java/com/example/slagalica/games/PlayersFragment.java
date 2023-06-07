@@ -11,6 +11,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.slagalica.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class PlayersFragment extends Fragment {
 
@@ -18,6 +22,9 @@ public class PlayersFragment extends Fragment {
     private static final String ARG_GAME_TYPE = "game_type";
 
     private CountDownTimer countDownTimer;
+
+    private TextView player1PointsTextView;
+
     private int mTimerDuration;
     private String mGameType;
 
@@ -49,10 +56,28 @@ public class PlayersFragment extends Fragment {
         int timerDuration = getArguments().getInt(ARG_TIMER_DURATION);
         TextView timeTextView = rootView.findViewById(R.id.time);
         TextView descriptionTextView = rootView.findViewById(R.id.gameDescription);
+        player1PointsTextView = rootView.findViewById(R.id.player1Points);
         startTimer(timeTextView, timerDuration);
         setDescription(descriptionTextView);
+        setupFirebaseListener();
 
         return rootView;
+    }
+    private void setupFirebaseListener() {
+        FirebaseDatabase.getInstance().getReference("points/guest_points").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Long points = dataSnapshot.getValue(Long.class);
+                    player1PointsTextView.setText(String.valueOf(points));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle error
+            }
+        });
     }
 
     private void startTimer(TextView timeTextView, int timerDuration) {

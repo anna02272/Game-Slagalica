@@ -41,5 +41,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-firestore:24.6.0'
     implementation 'com.google.firebase:firebase-database:20.0.0'
-
+    implementation 'com.faendir.rhino:rhino-android:1.5.2'
 }

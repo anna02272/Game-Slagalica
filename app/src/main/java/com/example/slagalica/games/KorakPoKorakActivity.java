@@ -1,12 +1,12 @@
 package com.example.slagalica.games;
 
-import android.Manifest;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
+
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -17,12 +17,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
+import com.example.slagalica.MainActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -41,13 +41,14 @@ public class KorakPoKorakActivity extends AppCompatActivity {
     private Random random;
     private CountDownTimer countDownTimer;
     private int currentCount = 7;
-
     private String answer;
     private EditText input;
     private Handler buttonHandler;
     private Runnable buttonRunnable;
     private int currentEnabledButtonIndex = 0;
     private int currentButtonIndex = 1;
+
+    private Button confirmButton;
 
     @Override
     public void onBackPressed() {
@@ -74,13 +75,37 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         buttonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(KorakPoKorakActivity.this, MojBrojActivity.class);
-                startActivity(intent);
+                AlertDialog.Builder builder = new AlertDialog.Builder(KorakPoKorakActivity.this);
+                builder.setTitle("Da li ste sigurni?")
+                        .setMessage("Da li zelite da izadjete iz igre?")
+                        .setPositiveButton("Da", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(KorakPoKorakActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+
+                AlertDialog dialog = builder.show();
+
+                Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                Button negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+
+                int nightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+                if (nightMode == Configuration.UI_MODE_NIGHT_YES) {
+                    positiveButton.setTextColor(ContextCompat.getColor(KorakPoKorakActivity.this, R.color.buttonTextColorDark));
+                    negativeButton.setTextColor(ContextCompat.getColor(KorakPoKorakActivity.this, R.color.buttonTextColorDark));
+                } else {
+                    positiveButton.setTextColor(ContextCompat.getColor(KorakPoKorakActivity.this, R.color.buttonTextColorLight));
+                    negativeButton.setTextColor(ContextCompat.getColor(KorakPoKorakActivity.this, R.color.buttonTextColorLight));
+                }
             }
         });
 
-
-        Button confirmButton = findViewById(R.id.confirm);
+         confirmButton = findViewById(R.id.confirm);
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,6 +141,8 @@ public class KorakPoKorakActivity extends AppCompatActivity {
             Button button = buttons.get(i);
             button.setEnabled(false);
         }
+
+
         buttonHandler = new Handler();
         buttonRunnable = new Runnable() {
             @Override
@@ -197,11 +224,18 @@ public class KorakPoKorakActivity extends AppCompatActivity {
             }
         });
     }
+    private int getCurrentStep() {
+        int currentStep = currentButtonIndex ;
+        return currentStep < 0 ? 0 : currentStep;
+    }
+
     private void checkAnswer() {
         String userInput = input.getText().toString().trim();
 
         if (answer != null && userInput.equalsIgnoreCase(answer)) {
+            confirmButton.setEnabled(false);
             Toast.makeText(KorakPoKorakActivity.this, "Tacan odgovor!", Toast.LENGTH_SHORT).show();
+
             for (Button button : buttons) {
                 String step = buttonSteps.get(button);
                 if (step != null) {
@@ -209,6 +243,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                     button.setEnabled(false);
                 }
             }
+
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
 
@@ -216,21 +251,49 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 countDownTimer.cancel();
             }
 
+            int currentStep = getCurrentStep();
+            int pointsToAdd = 20 - (2 * (currentStep - 1));
+
+            updateGuestPoints(pointsToAdd);
+
             Toast.makeText(KorakPoKorakActivity.this, "Sledi igra MOJ BROJ!", Toast.LENGTH_SHORT).show();
 
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                   Intent intent = new Intent(KorakPoKorakActivity.this, MojBrojActivity.class);
+                    Intent intent = new Intent(KorakPoKorakActivity.this, MojBrojActivity.class);
                     startActivity(intent);
                     finish();
                 }
             }, 5000);
         } else {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+            input.setText("");
             Toast.makeText(KorakPoKorakActivity.this, "Netacan odgovor!", Toast.LENGTH_SHORT).show();
         }
     }
 
+    private void updateGuestPoints(int pointsToAdd) {
+        DatabaseReference guestPointsRef = firebaseDatabase.getReference("points/guest_points");
+
+        guestPointsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    int currentPoints = dataSnapshot.getValue(Integer.class);
+                    int updatedPoints = currentPoints + pointsToAdd;
+                    guestPointsRef.setValue(updatedPoints);
+                } else {
+                    guestPointsRef.setValue(pointsToAdd);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
 
 
 
@@ -263,10 +326,16 @@ public class KorakPoKorakActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
+                input.setText(answer);
                 Toast.makeText(KorakPoKorakActivity.this, "Vase vreme je isteklo, sledi igra MOJ BROJ!",
                         Toast.LENGTH_SHORT).show(); ;
-                Intent intent = new Intent(KorakPoKorakActivity.this, MojBrojActivity.class);
-                startActivity(intent);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(KorakPoKorakActivity.this, MojBrojActivity.class);
+                        startActivity(intent);
+                    }
+                }, 5000);
 
             }
         };
