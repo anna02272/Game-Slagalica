@@ -15,6 +15,8 @@ import android.os.Handler;
 import android.text.InputType;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -44,13 +46,17 @@ public class MojBrojActivity extends AppCompatActivity {
     private Random random;
     private int currentEnabledButtonIndex = 0;
     private String answer;
+
+    private String finalAnswer;
     private Button stopButton;
 
     private Button buttonAnswer;
     private Button confirmButton;
     private CountDownTimer countDownTimer;
-
     private EditText input;
+    private boolean isAnimationRunning = false;
+    private String[] numbers = {"1", "2", "3", "4", "5", "6"};
+
 
     @Override
     public void onBackPressed() {
@@ -251,6 +257,7 @@ public class MojBrojActivity extends AppCompatActivity {
                         }
                     }
                     answer = stepsMap.get("number7");
+                    finalAnswer = stepsMap.get("number8");
 
                     if (currentEnabledButtonIndex > 0) {
                         showButtons();
@@ -282,8 +289,6 @@ public class MojBrojActivity extends AppCompatActivity {
             stopButton.setEnabled(false);
         }
     }
-
-
     private Button getButtonByName(String name) {
             for (Button button : buttons) {
                 if (button.getResources().getResourceEntryName(button.getId()).equals("button_" + name)) {
@@ -318,8 +323,15 @@ public class MojBrojActivity extends AppCompatActivity {
         if (answer != null && finalResult.equals(answer)) {
             updateGuestPoints(20);
             if(!finalResult.equals("Err")){
-                Toast.makeText(MojBrojActivity.this, finalResult + " :  Tacan odgovor!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MojBrojActivity.this,  finalResult + " :  Tacan odgovor!", Toast.LENGTH_SHORT).show();
             }
+
+        } else {
+            if (!finalResult.equals("Err")) {
+                input.setText(finalAnswer);
+                Toast.makeText(MojBrojActivity.this, finalResult + " :  Netacan odgovor!", Toast.LENGTH_SHORT).show();
+            }
+        }
             Toast.makeText(MojBrojActivity.this, "Kraj igre!", Toast.LENGTH_SHORT).show();
             confirmButton.setEnabled(false);
 
@@ -331,12 +343,8 @@ public class MojBrojActivity extends AppCompatActivity {
                     finish();
                 }
             }, 5000);
-        } else {
-            if (!finalResult.equals("Err")) {
-                Toast.makeText(MojBrojActivity.this, finalResult + " :  Netacan odgovor!", Toast.LENGTH_SHORT).show();
-            }
         }
-    }
+
     private void updateGuestPoints(int pointsToAdd) {
         DatabaseReference guestPointsRef = firebaseDatabase.getReference("points/guest_points");
 
@@ -375,7 +383,7 @@ public class MojBrojActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                input.setText(answer);
+                input.setText(finalAnswer);
                 Toast.makeText(MojBrojActivity.this, "Vase vreme je isteklo, kraj igre",
                         Toast.LENGTH_SHORT).show(); ;
                 new Handler().postDelayed(new Runnable() {
