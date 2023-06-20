@@ -1,12 +1,8 @@
 package com.example.slagalica.games;
 
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -17,9 +13,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
-import com.example.slagalica.MainActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,7 +40,6 @@ public class KorakPoKorakActivity extends AppCompatActivity {
     private Runnable buttonRunnable;
     private int currentEnabledButtonIndex = 0;
     private int currentButtonIndex = 1;
-
     private Button confirmButton;
 
     @Override
@@ -75,33 +67,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         buttonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(KorakPoKorakActivity.this);
-                builder.setTitle("Da li ste sigurni?")
-                        .setMessage("Da li zelite da izadjete iz igre?")
-                        .setPositiveButton("Da", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(KorakPoKorakActivity.this, MainActivity.class);
-                                startActivity(intent);
-                            }
-                        })
-                        .setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        });
-
-                AlertDialog dialog = builder.show();
-
-                Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-                Button negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-
-                int nightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-                if (nightMode == Configuration.UI_MODE_NIGHT_YES) {
-                    positiveButton.setTextColor(ContextCompat.getColor(KorakPoKorakActivity.this, R.color.buttonTextColorDark));
-                    negativeButton.setTextColor(ContextCompat.getColor(KorakPoKorakActivity.this, R.color.buttonTextColorDark));
-                } else {
-                    positiveButton.setTextColor(ContextCompat.getColor(KorakPoKorakActivity.this, R.color.buttonTextColorLight));
-                    negativeButton.setTextColor(ContextCompat.getColor(KorakPoKorakActivity.this, R.color.buttonTextColorLight));
-                }
+                playersFragment.showExitConfirmationDialog();
             }
         });
 

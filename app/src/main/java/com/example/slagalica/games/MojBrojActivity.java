@@ -1,22 +1,18 @@
 package com.example.slagalica.games;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.text.InputType;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -24,6 +20,7 @@ import android.widget.Toast;
 import com.example.slagalica.MainActivity;
 
 import com.example.slagalica.R;
+import com.example.slagalica.ShakeDetector;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -54,9 +51,8 @@ public class MojBrojActivity extends AppCompatActivity {
     private Button confirmButton;
     private CountDownTimer countDownTimer;
     private EditText input;
-    private boolean isAnimationRunning = false;
-    private String[] numbers = {"1", "2", "3", "4", "5", "6"};
 
+    private ShakeDetector shakeDetector;
 
     @Override
     public void onBackPressed() {
@@ -75,6 +71,14 @@ public class MojBrojActivity extends AppCompatActivity {
                 .add(R.id.fragment_container, playersFragment)
                 .commit();
 
+        shakeDetector = new ShakeDetector();
+        shakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+            @Override
+            public void onShake() {
+                currentEnabledButtonIndex++;
+                showButtons();
+            }
+        });
 
         buttonAnswer = findViewById(R.id.button_answer);
         Button buttonEnd = findViewById(R.id.button_end);
@@ -82,33 +86,7 @@ public class MojBrojActivity extends AppCompatActivity {
         buttonEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MojBrojActivity.this);
-                builder.setTitle("Da li ste sigurni?")
-                        .setMessage("Da li zelite da izadjete iz igre?")
-                        .setPositiveButton("Da", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(MojBrojActivity.this, MainActivity.class);
-                                startActivity(intent);
-                            }
-                        })
-                        .setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        });
-
-                AlertDialog dialog = builder.show();
-
-                Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-                Button negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-
-                int nightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-                if (nightMode == Configuration.UI_MODE_NIGHT_YES) {
-                    positiveButton.setTextColor(ContextCompat.getColor(MojBrojActivity.this, R.color.buttonTextColorDark));
-                    negativeButton.setTextColor(ContextCompat.getColor(MojBrojActivity.this, R.color.buttonTextColorDark));
-                } else {
-                    positiveButton.setTextColor(ContextCompat.getColor(MojBrojActivity.this, R.color.buttonTextColorLight));
-                    negativeButton.setTextColor(ContextCompat.getColor(MojBrojActivity.this, R.color.buttonTextColorLight));
-                }
+                playersFragment.showExitConfirmationDialog();
             }
         });
 
@@ -271,24 +249,23 @@ public class MojBrojActivity extends AppCompatActivity {
             }
         });
     }
-
-
     private void showButtons() {
         if (currentEnabledButtonIndex == 1) {
             Button button7 = buttons.get(6);
             String buttonText7 = buttonSteps.get(button7);
             button7.setText(buttonText7);
-        } else if (currentEnabledButtonIndex == 2) {
-            for (int i = 0; i < buttons.size(); i++) {
-                Button button = buttons.get(i);
-                if (i != 6) {
-                    String buttonText = buttonSteps.get(button);
-                    button.setText(buttonText);
-                }
+        } else if (currentEnabledButtonIndex > 1 ) {
+            Button button = buttons.get(currentEnabledButtonIndex-2);
+            String buttonText = buttonSteps.get(button);
+            button.setText(buttonText);
+            if (currentEnabledButtonIndex == 7) {
+                stopButton.setEnabled(false);
             }
-            stopButton.setEnabled(false);
         }
     }
+
+
+
     private Button getButtonByName(String name) {
             for (Button button : buttons) {
                 if (button.getResources().getResourceEntryName(button.getId()).equals("button_" + name)) {
@@ -404,6 +381,10 @@ public class MojBrojActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Sensor accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorManager.registerListener(shakeDetector, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -425,11 +406,12 @@ public class MojBrojActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensorManager.unregisterListener(shakeDetector);
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
     }
-
 }
 
 

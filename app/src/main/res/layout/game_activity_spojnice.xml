@@ -9,9 +9,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-        <include layout="@layout/game_fragment_players"></include>
+        <include layout="@layout/game_fragment_players" android:id="@+id/fragment_container"></include>
 
-    <LinearLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="380dp"
             android:orientation="horizontal"

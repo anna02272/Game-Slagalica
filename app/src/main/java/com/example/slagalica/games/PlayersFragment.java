@@ -1,15 +1,22 @@
 package com.example.slagalica.games;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.slagalica.MainActivity;
 import com.example.slagalica.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -96,26 +103,55 @@ public class PlayersFragment extends Fragment {
 
         countDownTimer.start();
     }
+    void showExitConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        builder.setTitle("Da li ste sigurni?")
+                .setMessage("Da li želite da izađete iz igre?")
+                .setPositiveButton("Da", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(requireActivity(), MainActivity.class);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+
+        AlertDialog dialog = builder.show();
+
+        Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        Button negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+
+        int nightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (nightMode == Configuration.UI_MODE_NIGHT_YES) {
+            positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.buttonTextColorDark));
+            negativeButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.buttonTextColorDark));
+        } else {
+            positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.buttonTextColorLight));
+            negativeButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.buttonTextColorLight));
+        }
+    }
     private void setDescription(TextView descriptionTextView) {
         String description;
         switch (mGameType) {
             case "KorakPoKorak":
-                description = "Korak po korak";
+                description = "Korak po korak: Pronadji resenje na osnovu koraka";
                 break;
             case "MojBroj":
-                description = "Moj broj";
+                description = "Moj broj: Pronadji tacno resenje";
                 break;
             case "Asocijacije":
-                description = "Asocijacije";
+                description = "Asocijacije: Pronadji resenje asocijacije";
                 break;
-            case "Slagalica":
-                description = "Slagalica";
+            case "Skocko":
+                description = "Skocko: Pronadji resenje skocka";
                 break;
             case "Spojnice":
-                description = "Spojnice";
+                description = "Spojnice: Povezi pojmove";
                 break;
             case "KoZnaZna":
-                description = "Ko zna zna";
+                description = "Ko zna zna: Pronadji odgovor na pitanje";
                 break;
             default:
                 description = "";

@@ -263,5 +263,67 @@
       "icon3": "@+id/eve_icon",
       "icon4": "@+id/spaceship_icon"
     }
+  },
+  "spojnice": {
+    "spojnica1": {
+      "step1": "Ljudi govore",
+      "step2": "Orlovi rano lete",
+      "step3": "Sumnjivo lice",
+      "step4": "Koreni",
+      "step5": "Pop Cira i pop Spira",
+      "answer1": "Avangarda",
+      "answer2": "Knjizevnost za decu",
+      "answer3": "Moderna",
+      "answer4": "Savremena",
+      "answer5": "Realizam"
+    },
+    "spojnica2": {
+      "step1": "Vidovdan",
+      "step2": "Sveti Nikola",
+      "step3": "Petrovdan",
+      "step4": "Bogojavljenje",
+      "step5": "Sretenje",
+      "answer1": "28. jun",
+      "answer2": "19. decembar",
+      "answer3": "12. jul",
+      "answer4": "19. januar",
+      "answer5": "15. februar"
+    },
+    "spojnica3": {
+      "step1": "Srecni ljudi",
+      "step2": "Neki novi klinci",
+      "step3": "Budva na pjenu od mora",
+      "step4": "Gore dole",
+      "step5": "Pozoriste u kuci",
+      "answer1": "Sinisa Pavic",
+      "answer2": "Spomenka Kovac",
+      "answer3": "Stevan Koprivica",
+      "answer4": "Gordan Mihic",
+      "answer5": "Novak Novak"
+    },
+    "spojnica4": {
+      "step1": "Prolazak kroz crveno",
+      "step2": "Nasilnicka voznja",
+      "step3": "Voznja u pesackoj zoni",
+      "step4": "Veoma teska alkoholisanost",
+      "step5": "Voznja nocu bez svetala",
+      "answer1": "6 poena",
+      "answer2": "15 poena",
+      "answer3": "2 poena",
+      "answer4": "12 poena",
+      "answer5": "14 poena"
+    },
+    "spojnica5": {
+      "step1": "Djerdap",
+      "step2": "Kopaonik",
+      "step3": "Durmitor",
+      "step4": "Biogradska Gora",
+      "step5": "Mala Fatra",
+      "answer1": "Brus",
+      "answer2": "Donji Milanovac",
+      "answer3": "Ohrid",
+      "answer4": "Varin",
+      "answer5": "Zabljak"
+    }
   }
-}
+   }
