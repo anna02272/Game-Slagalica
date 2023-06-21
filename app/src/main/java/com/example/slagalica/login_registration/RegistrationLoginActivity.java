@@ -14,7 +14,6 @@ import com.example.slagalica.R;
 import com.google.android.material.tabs.TabLayout;
 
 public class RegistrationLoginActivity extends AppCompatActivity {
-
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
     private ViewPagerAdapter adapter;
@@ -23,7 +22,6 @@ public class RegistrationLoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity_registration_login);
-
 
         tabLayout = findViewById(R.id.tab_layout);
         viewPager2 = findViewById(R.id.view_pager);

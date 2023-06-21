@@ -20,7 +20,6 @@ import android.widget.Toast;
 import com.example.slagalica.MainActivity;
 
 import com.example.slagalica.R;
-import com.example.slagalica.ShakeDetector;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

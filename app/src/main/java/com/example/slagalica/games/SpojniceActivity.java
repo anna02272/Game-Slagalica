@@ -17,6 +17,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class SpojniceActivity extends AppCompatActivity {
     private Runnable buttonRunnable;
     private int currentEnabledButtonIndex = 0;
     private int currentButtonIndex = 1;
+    private Map<String, String> stepsMap;
 
 
     @Override
@@ -92,7 +94,8 @@ public class SpojniceActivity extends AppCompatActivity {
             @Override
             public void run() {
             }
-        };
+            };
+
     }
 
     private void retrieveSteps() {
@@ -126,11 +129,13 @@ public class SpojniceActivity extends AppCompatActivity {
     private void retrieveStep(final DataSnapshot stepSnapshot) {
         final String stepKey = stepSnapshot.getKey();
         currentEnabledButtonIndex = 0;
+
         firebaseDatabase.getReference("spojnice/" + stepKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String, String> stepsMap = (Map<String, String>) dataSnapshot.getValue();
+                Map<String, String> stepsMap = dataSnapshot.getValue(new GenericTypeIndicator<Map<String, String>>() {});
                 if (stepsMap != null && !stepsMap.isEmpty()) {
+                    SpojniceActivity.this.stepsMap = stepsMap;
                     List<Integer> stepIndices = new ArrayList<>();
                     List<Integer> answerIndices = new ArrayList<>();
 
@@ -150,6 +155,8 @@ public class SpojniceActivity extends AppCompatActivity {
                             button.setText(step);
                             buttonSteps.put(button, step);
                             setButtonListener(button);
+                            button.setEnabled(false);
+
                         }
                     }
 
@@ -179,16 +186,15 @@ public class SpojniceActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkAnswer();
+                checkAnswer(button);
             }
         });
     }
-    private void checkAnswer() {
+
+
+    private void checkAnswer(Button button) {
 
     }
-
-
-
 
 
     private void updateGuestPoints(int pointsToAdd) {
@@ -215,7 +221,7 @@ public class SpojniceActivity extends AppCompatActivity {
 
 
     private void startTimer() {
-        countDownTimer = new CountDownTimer(31000, 10000) {
+        countDownTimer = new CountDownTimer(91000, 10000) {
             private Context context = SpojniceActivity.this.getApplicationContext();
             @Override
             public void onTick(long millisUntilFinished) {

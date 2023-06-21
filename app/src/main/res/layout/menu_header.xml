@@ -15,6 +15,7 @@
         android:src="@drawable/pic_eve_icon_circle" />
 
     <TextView
+        android:id="@+id/header_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/menu_user"
@@ -24,6 +25,7 @@
         android:paddingBottom="3dp"/>
 
     <TextView
+        android:id="@+id/header_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"

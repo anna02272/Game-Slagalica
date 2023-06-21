@@ -1,11 +1,15 @@
 package com.example.slagalica;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,6 +33,8 @@ import com.example.slagalica.menu.ProfileFragment;
 import com.example.slagalica.menu.RangFragment;
 import com.example.slagalica.menu.SettingsFragment;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -41,9 +47,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+             FirebaseAuth auth = FirebaseAuth.getInstance();
             Button buttonRegister = findViewById(R.id.register);
+            Button buttonStartGameGuest = findViewById(R.id.startgameguest);
             Button buttonStartGame = findViewById(R.id.startgame);
+            View navView = findViewById(R.id.nav_view);
 
+            FirebaseUser currentUser = auth.getCurrentUser();
+            if (currentUser != null) {
+                buttonRegister.setVisibility(View.GONE);
+                buttonStartGameGuest.setVisibility(View.GONE);
+                buttonStartGame.setVisibility(View.VISIBLE);
+                navView.setVisibility(View.VISIBLE);
+            } else {
+                buttonRegister.setVisibility(View.VISIBLE);
+                buttonStartGameGuest.setVisibility(View.VISIBLE);
+                buttonStartGame.setVisibility(View.GONE);
+                navView.setVisibility(View.GONE);
+            }
             buttonRegister.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -53,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     startActivity(intent);
                 }
             });
-            buttonStartGame.setOnClickListener(new View.OnClickListener() {
+            buttonStartGameGuest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     firebaseDatabase.getReference("points/guest_points").setValue(0);
@@ -64,15 +85,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
             });
+            SharedPreferences preferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+            String username = preferences.getString("username", "");
+            String email = preferences.getString("email", "");
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+
+            Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+
+        TextView headerUsername = headerView.findViewById(R.id.header_username);
+        TextView headerEmail = headerView.findViewById(R.id.header_email);
+        headerUsername.setText(username);
+        headerEmail.setText(email);
+
+
         navigationView.setNavigationItemSelectedListener(this);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout,
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout,
                 toolbar, R.string.menu_open_nav, R.string.menu_close_nav);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
@@ -113,13 +146,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         (R.id.fragment_container, new SettingsFragment()).commit();
                 break;
             case R.id.menu_logout:
-                Toast.makeText(this, "Logout!", Toast.LENGTH_SHORT).show();
-                break;
+                FirebaseAuth.getInstance().signOut();
+
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                Toast.makeText(this, "Succesfully logged out!", Toast.LENGTH_SHORT).show();
+                return true;
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);
 
-        return true;
+        return false;
     }
 
     @Override

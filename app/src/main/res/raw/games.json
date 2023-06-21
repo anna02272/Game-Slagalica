@@ -117,6 +117,7 @@
       "asociation_field9": "PAUK"
     }
   },
+
   "korak_po_korak": {
     "steps1": {
       "answer": "Tigar",
@@ -169,6 +170,7 @@
       "step7": "Postoji i Kasko varijanta"
     }
   },
+
   "moj_broj": {
     "numbers1": {
       "number1": "8",
@@ -229,9 +231,11 @@
       "plus": "+"
     }
   },
+
   "points": {
-    "guest_points": 20
+    "guest_points": 0
   },
+
   "skocko": {
     "combination 5": {
       "icon1": "@+id/eve_icon",
@@ -264,6 +268,7 @@
       "icon4": "@+id/spaceship_icon"
     }
   },
+
   "spojnice": {
     "spojnica1": {
       "step1": "Ljudi govore",
