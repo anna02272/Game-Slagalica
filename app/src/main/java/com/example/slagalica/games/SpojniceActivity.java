@@ -41,7 +41,7 @@ public class SpojniceActivity extends AppCompatActivity {
     private int currentEnabledButtonIndex = 0;
     private int currentButtonIndex = 1;
     private Map<String, String> stepsMap;
-
+    private PlayersFragment playersFragment;
 
     @Override
     public void onBackPressed() {
@@ -53,7 +53,7 @@ public class SpojniceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity_spojnice);
 
-        PlayersFragment playersFragment = PlayersFragment.newInstance(31);
+         playersFragment = PlayersFragment.newInstance(31);
         playersFragment.setGameType("Spojnice");
 
         getSupportFragmentManager()
@@ -155,11 +155,10 @@ public class SpojniceActivity extends AppCompatActivity {
                             button.setText(step);
                             buttonSteps.put(button, step);
                             setButtonListener(button);
-                            button.setEnabled(false);
+//                            button.setEnabled(false);
 
                         }
                     }
-
                     for (int i = 0; i < 5; i++) {
                         int answerIndex = answerIndices.get(i);
                         String answer = stepsMap.get("answer" + answerIndex);
@@ -170,7 +169,6 @@ public class SpojniceActivity extends AppCompatActivity {
                             setButtonListener(button);
                         }
                     }
-
                 }
             }
 
@@ -191,34 +189,14 @@ public class SpojniceActivity extends AppCompatActivity {
         });
     }
 
-
     private void checkAnswer(Button button) {
 
     }
 
 
-    private void updateGuestPoints(int pointsToAdd) {
-        DatabaseReference guestPointsRef = firebaseDatabase.getReference("points/guest_points");
-
-        guestPointsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    int currentPoints = dataSnapshot.getValue(Integer.class);
-                    int updatedPoints = currentPoints + pointsToAdd;
-                    guestPointsRef.setValue(updatedPoints);
-                } else {
-                    guestPointsRef.setValue(pointsToAdd);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+    private void updatePoints(int points) {
+        playersFragment.updateGuestPoints(points);
     }
-
-
 
     private void startTimer() {
         countDownTimer = new CountDownTimer(91000, 10000) {
