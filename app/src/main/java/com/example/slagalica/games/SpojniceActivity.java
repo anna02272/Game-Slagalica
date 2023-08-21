@@ -42,6 +42,9 @@ public class SpojniceActivity extends AppCompatActivity {
     private int currentButtonIndex = 1;
     private Map<String, String> stepsMap;
     private PlayersFragment playersFragment;
+    private Button firstClickedButton = null;
+    private Button secondClickedButton = null;
+
 
     @Override
     public void onBackPressed() {
@@ -53,7 +56,7 @@ public class SpojniceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity_spojnice);
 
-         playersFragment = PlayersFragment.newInstance(31);
+        playersFragment = PlayersFragment.newInstance(31);
         playersFragment.setGameType("Spojnice");
 
         getSupportFragmentManager()
@@ -65,11 +68,11 @@ public class SpojniceActivity extends AppCompatActivity {
         Button buttonNext = findViewById(R.id.button_next);
         input = findViewById(R.id.input);
         buttonNext.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    playersFragment.showExitConfirmationDialog();
-                }
-            });
+            @Override
+            public void onClick(View v) {
+                playersFragment.showExitConfirmationDialog();
+            }
+        });
 
         buttons = new ArrayList<>();
         buttons.add(findViewById(R.id.button_1));
@@ -83,6 +86,10 @@ public class SpojniceActivity extends AppCompatActivity {
         buttons.add(findViewById(R.id.button_9));
         buttons.add(findViewById(R.id.button_10));
 
+        for (int i = 5; i < 10; i++) {
+            buttons.get(i).setEnabled(false);
+        }
+
         firebaseDatabase = FirebaseDatabase.getInstance();
         random = new Random();
         buttonSteps = new HashMap<>();
@@ -94,7 +101,7 @@ public class SpojniceActivity extends AppCompatActivity {
             @Override
             public void run() {
             }
-            };
+        };
 
     }
 
@@ -124,20 +131,19 @@ public class SpojniceActivity extends AppCompatActivity {
             }
         });
     }
-
-
+    List<Integer> stepIndices = new ArrayList<>();
+    List<Integer> answerIndices = new ArrayList<>();
     private void retrieveStep(final DataSnapshot stepSnapshot) {
         final String stepKey = stepSnapshot.getKey();
         currentEnabledButtonIndex = 0;
-
         firebaseDatabase.getReference("spojnice/" + stepKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String, String> stepsMap = dataSnapshot.getValue(new GenericTypeIndicator<Map<String, String>>() {});
+                Map<String, String> stepsMap = dataSnapshot.getValue(new GenericTypeIndicator<Map<String, String>>() {
+                });
                 if (stepsMap != null && !stepsMap.isEmpty()) {
                     SpojniceActivity.this.stepsMap = stepsMap;
-                    List<Integer> stepIndices = new ArrayList<>();
-                    List<Integer> answerIndices = new ArrayList<>();
+
 
                     for (int i = 1; i <= 5; i++) {
                         stepIndices.add(i);
@@ -151,11 +157,11 @@ public class SpojniceActivity extends AppCompatActivity {
                         int stepIndex = stepIndices.get(i);
                         String step = stepsMap.get("step" + stepIndex);
                         if (step != null) {
-                            Button button = buttons.get(i);
-                            button.setText(step);
-                            buttonSteps.put(button, step);
-                            setButtonListener(button);
-//                            button.setEnabled(false);
+                            Button stepButton = buttons.get(i);
+                            stepButton.setText(step);
+                            stepButton.setTag(stepIndex);
+                            buttonSteps.put(stepButton, step);
+                            setButtonListener(stepButton, step);
 
                         }
                     }
@@ -163,10 +169,12 @@ public class SpojniceActivity extends AppCompatActivity {
                         int answerIndex = answerIndices.get(i);
                         String answer = stepsMap.get("answer" + answerIndex);
                         if (answer != null) {
-                            Button button = buttons.get(i + 5);
-                            button.setText(answer);
-                            buttonSteps.put(button, answer);
-                            setButtonListener(button);
+                            Button answerButton = buttons.get(i + 5);
+                            answerButton.setText(answer);
+                            answerButton.setTag(answerIndex);
+                            buttonSteps.put(answerButton, answer);
+                            setButtonListener(answerButton, answer);
+
                         }
                     }
                 }
@@ -180,17 +188,74 @@ public class SpojniceActivity extends AppCompatActivity {
     }
 
 
-    private void setButtonListener(final Button button) {
+    private void setButtonListener(Button button,  final String text) {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                checkAnswer(button);
+            public void onClick(View v) {
+
+                if (firstClickedButton == null) {
+                    firstClickedButton = (Button) v;
+                    firstClickedButton.setTextColor(Color.parseColor("#FFFF00"));
+                    for (int i = 5; i < 10; i++) {
+                        buttons.get(i).setEnabled(true);
+                    }
+                } else if (secondClickedButton == null) {
+                    secondClickedButton = (Button) v;
+                    checkAnswer();
+                    for (int i = 5; i < 10; i++) {
+                        buttons.get(i).setEnabled(false);
+                    }
+                }
             }
         });
     }
 
-    private void checkAnswer(Button button) {
 
+    private void checkAnswer() {
+        if (firstClickedButton == null || secondClickedButton == null) {
+            return;
+        }
+        int clickedStepIndex = (Integer) firstClickedButton.getTag();
+        int clickedAnswerIndex = (Integer) secondClickedButton.getTag();
+
+        if (clickedStepIndex == clickedAnswerIndex) {
+            firstClickedButton.setTextColor(Color.parseColor("#00FF00"));
+            secondClickedButton.setTextColor(Color.parseColor("#00FF00"));
+            firstClickedButton.setClickable(false);
+            secondClickedButton.setClickable(false);
+            updatePoints(2);
+
+        } else {
+            firstClickedButton.setTextColor(Color.parseColor("#FF0000"));
+            firstClickedButton.setClickable(false);
+            secondClickedButton.setTextColor(Color.parseColor("#FF0000"));
+            checkIfGameIsFinished();
+        }
+
+        firstClickedButton = null;
+        secondClickedButton = null;
+    }
+    private void checkIfGameIsFinished() {
+        boolean allButtonsClickable = true;
+        for (int i = 0; i < 5; i++) {
+            if (buttons.get(i).isClickable()) {
+                allButtonsClickable = false;
+                break;
+            }
+        }
+
+        if (allButtonsClickable) {
+            Toast.makeText(SpojniceActivity.this, "Igra je gotova! Sledi igra ASOCIJACIJE!", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(SpojniceActivity.this, AsocijacijeActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }, 5000);
+        }
     }
 
 
@@ -199,7 +264,7 @@ public class SpojniceActivity extends AppCompatActivity {
     }
 
     private void startTimer() {
-        countDownTimer = new CountDownTimer(91000, 10000) {
+        countDownTimer = new CountDownTimer(31000, 10000) {
             private Context context = SpojniceActivity.this.getApplicationContext();
             @Override
             public void onTick(long millisUntilFinished) {
