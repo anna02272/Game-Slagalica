@@ -20,6 +20,7 @@ import com.example.slagalica.MainActivity;
 import com.example.slagalica.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -29,12 +30,12 @@ public class PlayersFragment extends Fragment {
     private static final String ARG_GAME_TYPE = "game_type";
 
     private CountDownTimer countDownTimer;
-
+    private FirebaseDatabase firebaseDatabase;
     private TextView player1PointsTextView;
 
     private int mTimerDuration;
     private String mGameType;
-
+    private DatabaseReference guestPointsRef;
     public PlayersFragment() {
     }
 
@@ -53,6 +54,9 @@ public class PlayersFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mTimerDuration = getArguments().getInt(ARG_TIMER_DURATION);
+            firebaseDatabase = FirebaseDatabase.getInstance();
+
+            guestPointsRef = firebaseDatabase.getReference("points/guest_points");
         }
     }
 
@@ -160,5 +164,24 @@ public class PlayersFragment extends Fragment {
         descriptionTextView.setText(description);
     }
 
+    void updateGuestPoints(int pointsToAdd) {
+        DatabaseReference guestPointsRef = firebaseDatabase.getReference("points/guest_points");
 
+        guestPointsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    int currentPoints = dataSnapshot.getValue(Integer.class);
+                    int updatedPoints = currentPoints + pointsToAdd;
+                    guestPointsRef.setValue(updatedPoints);
+                } else {
+                    guestPointsRef.setValue(pointsToAdd);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
 }

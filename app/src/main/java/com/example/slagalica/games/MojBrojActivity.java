@@ -50,8 +50,8 @@ public class MojBrojActivity extends AppCompatActivity {
     private Button confirmButton;
     private CountDownTimer countDownTimer;
     private EditText input;
-
     private ShakeDetector shakeDetector;
+    private PlayersFragment playersFragment;
 
     @Override
     public void onBackPressed() {
@@ -62,7 +62,7 @@ public class MojBrojActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity_moj_broj);
 
-        PlayersFragment playersFragment = PlayersFragment.newInstance(61);
+        playersFragment = PlayersFragment.newInstance(61);
         playersFragment.setGameType("MojBroj");
 
         getSupportFragmentManager()
@@ -89,7 +89,7 @@ public class MojBrojActivity extends AppCompatActivity {
             }
         });
 
-         confirmButton = findViewById(R.id.button_confirm);
+        confirmButton = findViewById(R.id.button_confirm);
         stopButton = findViewById(R.id.button_stop);
 
         confirmButton.setOnClickListener(new View.OnClickListener() {
@@ -122,6 +122,7 @@ public class MojBrojActivity extends AppCompatActivity {
                     if (event.getX() >= (v.getWidth() - v.getPaddingRight() - clearDrawable.getIntrinsicWidth())) {
                         input.setText("");
                         enableAllButtons();
+                        clickableButtons();
                         return true;
                     }
                 }
@@ -156,28 +157,92 @@ public class MojBrojActivity extends AppCompatActivity {
 
         retrieveNumbers();
 
+//        for (int i = 0; i < buttons.size(); i++) {
+//            final int buttonIndex = i;
+//            final Button button = buttons.get(i);
+//            button.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    if (buttonIndex != 6) {
+//                        String buttonText = buttonSteps.get(button);
+//                        String currentInput = input.getText().toString();
+//                        input.setText(currentInput + buttonText);
+//                    }
+//                    if (buttonIndex < 6) {
+//                        button.setEnabled(false);
+//                    }
+//                }
+//
+//            });
+//
+//        }
+//
+//    }
+
         for (int i = 0; i < buttons.size(); i++) {
             final int buttonIndex = i;
             final Button button = buttons.get(i);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    String currentInput = input.getText().toString();
+
                     if (buttonIndex != 6) {
                         String buttonText = buttonSteps.get(button);
-                        String currentInput = input.getText().toString();
+                        currentInput = input.getText().toString();
                         input.setText(currentInput + buttonText);
                     }
-                    if (buttonIndex < 6) {
+
+                    if (buttonIndex < 6 && button.isEnabled()) {
                         button.setEnabled(false);
+                        disableNumberButtons();
+                    } else if (buttonIndex >= 6) {
+                         currentInput = input.getText().toString();
+                        if (hasOperationInInput(currentInput)) {
+                            enablePreviouslyClickableButtons();
+                        } else {
+                            disableNumberButtons();
+                        }
                     }
                 }
             });
-
         }
-
     }
 
-        private void retrieveNumbers () {
+    private void disableNumberButtons() {
+        for (int i = 0; i < 6; i++) {
+            if (buttons.get(i).isClickable()) {
+                buttons.get(i).setClickable(false);
+            }
+        }
+    }
+
+    private void enablePreviouslyClickableButtons() {
+        for (int i = 0; i < 6; i++) {
+            if (!buttons.get(i).isClickable()) {
+                buttons.get(i).setClickable(true);
+            }
+        }
+    }
+
+    private void clickableButtons() {
+        for (Button button : buttons) {
+            button.setClickable(true);
+        }
+    }
+
+    private boolean hasOperationInInput(String input) {
+        String[] operations = { "+", "-", "*", "/" };
+        for (String operation : operations) {
+            if (input.contains(operation)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    private void retrieveNumbers () {
             firebaseDatabase.getReference("moj_broj").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -297,7 +362,7 @@ public class MojBrojActivity extends AppCompatActivity {
         String finalResult = getResult(userInput);
         buttonAnswer.setText(finalResult);
         if (answer != null && finalResult.equals(answer)) {
-            updateGuestPoints(20);
+            updatePoints(20);
             if(!finalResult.equals("Err")){
                 Toast.makeText(MojBrojActivity.this,  finalResult + " :  Tacan odgovor!", Toast.LENGTH_SHORT).show();
             }
@@ -321,26 +386,10 @@ public class MojBrojActivity extends AppCompatActivity {
             }, 5000);
         }
 
-    private void updateGuestPoints(int pointsToAdd) {
-        DatabaseReference guestPointsRef = firebaseDatabase.getReference("points/guest_points");
-
-        guestPointsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    int currentPoints = dataSnapshot.getValue(Integer.class);
-                    int updatedPoints = currentPoints + pointsToAdd;
-                    guestPointsRef.setValue(updatedPoints);
-                } else {
-                    guestPointsRef.setValue(pointsToAdd);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+    private void updatePoints(int points) {
+        playersFragment.updateGuestPoints(points);
     }
+
 
     private void enableAllButtons() {
         for (Button button : buttons) {

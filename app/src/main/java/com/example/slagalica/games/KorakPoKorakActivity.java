@@ -1,6 +1,5 @@
 package com.example.slagalica.games;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -42,6 +40,8 @@ public class KorakPoKorakActivity extends AppCompatActivity {
     private int currentButtonIndex = 1;
     private Button confirmButton;
 
+    private PlayersFragment playersFragment;
+
     @Override
     public void onBackPressed() {
         return;
@@ -52,7 +52,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity_korak_po_korak);
 
-        PlayersFragment playersFragment = PlayersFragment.newInstance(71);
+         playersFragment = PlayersFragment.newInstance(71);
         playersFragment.setGameType("KorakPoKorak");
 
         getSupportFragmentManager()
@@ -220,7 +220,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
             int currentStep = getCurrentStep();
             int pointsToAdd = 20 - (2 * (currentStep - 1));
 
-            updateGuestPoints(pointsToAdd);
+            updatePoints(pointsToAdd);
 
             Toast.makeText(KorakPoKorakActivity.this, "Sledi igra MOJ BROJ!", Toast.LENGTH_SHORT).show();
 
@@ -240,29 +240,9 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         }
     }
 
-    private void updateGuestPoints(int pointsToAdd) {
-        DatabaseReference guestPointsRef = firebaseDatabase.getReference("points/guest_points");
-
-        guestPointsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    int currentPoints = dataSnapshot.getValue(Integer.class);
-                    int updatedPoints = currentPoints + pointsToAdd;
-                    guestPointsRef.setValue(updatedPoints);
-                } else {
-                    guestPointsRef.setValue(pointsToAdd);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+    private void updatePoints(int points) {
+        playersFragment.updateGuestPoints(points);
     }
-
-
-
     private void setButtonListener(final Button button) {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
