@@ -1,11 +1,10 @@
 package com.example.slagalica;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -18,12 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentManager;
 
-import com.example.slagalica.games.AsocijacijeActivity;
-import com.example.slagalica.games.KoZnaZnaActivity;
-import com.example.slagalica.games.KorakPoKorakActivity;
-import com.example.slagalica.games.MojBrojActivity;
+import com.example.slagalica.config.SocketHandler;
 import com.example.slagalica.games.SpojniceActivity;
 import com.example.slagalica.login_registration.RegistrationLoginActivity;
 import com.example.slagalica.menu.FriendsFragment;
@@ -37,15 +32,23 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
+import io.socket.client.Socket;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
-
+    public static Socket socket;
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+            SocketHandler.setSocket();
+
+            socket = SocketHandler.getSocket();
+            Log.d("SocketHandler", "Socket instance: " + socket);
+            socket.connect();
 
              FirebaseAuth auth = FirebaseAuth.getInstance();
             Button buttonRegister = findViewById(R.id.register);
@@ -77,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             buttonStartGameGuest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    socket.emit("startGame");
                     firebaseDatabase.getReference("points/guest_points").setValue(0);
                     Intent intent = new Intent(MainActivity.this, SpojniceActivity.class);
 
@@ -151,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 finish();
-                Toast.makeText(this, "Succesfully logged out!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Successfully logged out!", Toast.LENGTH_SHORT).show();
                 return true;
         }
 

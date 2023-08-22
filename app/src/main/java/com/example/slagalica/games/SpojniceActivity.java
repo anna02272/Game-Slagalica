@@ -15,7 +15,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
@@ -35,7 +34,6 @@ public class SpojniceActivity extends AppCompatActivity {
     private Map<Button, String> buttonSteps;
     private Random random;
     private CountDownTimer countDownTimer;
-    private EditText input;
     private Handler buttonHandler;
     private Runnable buttonRunnable;
     private int currentEnabledButtonIndex = 0;
@@ -66,7 +64,7 @@ public class SpojniceActivity extends AppCompatActivity {
 
 
         Button buttonNext = findViewById(R.id.button_next);
-        input = findViewById(R.id.input);
+        EditText input = findViewById(R.id.input);
         buttonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

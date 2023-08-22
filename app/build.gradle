@@ -2,7 +2,11 @@ plugins {
     id 'com.android.application'
     id 'com.google.gms.google-services'
 }
-
+def getIpAddress() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("ip_addr");
+}
 android {
     namespace 'com.example.slagalica'
     compileSdk 33
@@ -13,7 +17,7 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
-
+        buildConfigField "String", "IP_ADDR", "\""+getIpAddress()+"\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -44,4 +48,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:20.0.0'
     implementation 'com.google.firebase:firebase-auth:21.0.1'
     implementation 'com.faendir.rhino:rhino-android:1.5.2'
+    implementation "org.mozilla:rhino:1.7.13"
+    implementation "com.squareup.okhttp3:okhttp:4.9.0"
+    implementation ('io.socket:socket.io-client:2.0.0') {
+        exclude group: 'org.json', module: 'json'
+    }
+
+
 }
