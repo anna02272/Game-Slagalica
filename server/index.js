@@ -12,10 +12,6 @@ const io = socket(server);
 io.on('connection', (socket) => {
     console.log("Player connected: " + socket.id);
 
-   socket.on('startGame', () => {
-           console.log("Game started for socket: " + socket.id);
-       });
-
     socket.on('disconnect',function(){
    		console.log("Player disconnected!");
    	});

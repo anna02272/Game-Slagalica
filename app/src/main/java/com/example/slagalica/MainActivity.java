@@ -19,6 +19,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.slagalica.config.SocketHandler;
+import com.example.slagalica.games.KoZnaZnaActivity;
 import com.example.slagalica.games.SpojniceActivity;
 import com.example.slagalica.login_registration.RegistrationLoginActivity;
 import com.example.slagalica.menu.FriendsFragment;
@@ -47,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             SocketHandler.setSocket();
 
             socket = SocketHandler.getSocket();
-            Log.d("SocketHandler", "Socket instance: " + socket);
             socket.connect();
 
              FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -80,9 +80,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             buttonStartGameGuest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    socket.emit("startGame");
                     firebaseDatabase.getReference("points/guest_points").setValue(0);
-                    Intent intent = new Intent(MainActivity.this, SpojniceActivity.class);
+                    Intent intent = new Intent(MainActivity.this, KoZnaZnaActivity.class);
 
                     startActivity(intent);
                 }

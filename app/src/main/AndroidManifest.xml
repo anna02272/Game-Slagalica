@@ -13,28 +13,29 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Slagalica"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
             android:name=".games.MojBrojActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".games.SkockoActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".games.SpojniceActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".games.KoZnaZnaActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".games.AsocijacijeActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".games.KorakPoKorakActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".login_registration.RegistrationLoginActivity"
-            android:exported="false"
+            android:exported="true"
             android:windowSoftInputMode="adjustPan"/>
 
         <activity
