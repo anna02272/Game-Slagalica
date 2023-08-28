@@ -1,6 +1,8 @@
 package com.example.slagalica.login_registration;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -64,20 +66,20 @@ public class RegistrationFragment extends Fragment {
                 String pass = signupPassword.getText().toString().trim();
                 String confirmPass = signupConfirmPass.getText().toString().trim();
                 if (email.isEmpty()) {
-                    signupEmail.setError("Email cannot be empty");
+                    signupEmail.setError("Email mora biti popunjen ");
                 } else if (!isValidEmail(email)) {
-                    signupEmail.setError("Invalid email format");
+                    signupEmail.setError("Pogrešan format email-a");
                 }
                 if (username.isEmpty()) {
-                    signupUsername.setError("Username cannot be empty");
+                    signupUsername.setError("Korisničko ime mora biti popunjeno");
                 }
                 if (pass.isEmpty()) {
-                    signupPassword.setError("Password cannot be empty");
+                    signupPassword.setError("Lozinka mora biti popunjena");
                 } else if (pass.length() < 8) {
-                    signupPassword.setError("Password must be at least 8 characters long");
+                    signupPassword.setError("Loyinka mora imati bar 8 karaktera");
                 }
                 if (confirmPass.isEmpty() || !confirmPass.equals(pass)){
-                    signupConfirmPass.setError("Confirm password must be same as password");
+                    signupConfirmPass.setError("Ponovljena lozinka nije ista");
                 } else {
                     auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
@@ -85,26 +87,32 @@ public class RegistrationFragment extends Fragment {
                             if (task.isSuccessful()) {
                                 FirebaseUser firebaseUser = auth.getCurrentUser();
                                 String userId = firebaseUser.getUid();
-
+                                int initialTokens = 5;
+                                int initialStars = 0;
 
                                 DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
-                                User user = new User(username);
+                                User user = new User(username, initialTokens, initialStars);
                                 usersRef.child(userId).setValue(user)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if (task.isSuccessful()) {
-                                                    Toast.makeText(getActivity(), "SignUp Successful", Toast.LENGTH_SHORT).show();
-                                                    startActivity(new Intent(getActivity(), RegistrationLoginActivity.class));
+                                                    Toast.makeText(getActivity(), "Registracija uspešna ", Toast.LENGTH_SHORT).show();
+                                                   startActivity(new Intent(getActivity(), RegistrationLoginActivity.class));
                                                 } else {
-                                                    Toast.makeText(getActivity(), "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(getActivity(), "Registracija neuspešna" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                         });
-                                Toast.makeText(getActivity(), "SignUp Successful", Toast.LENGTH_SHORT).show();
+//                                SharedPreferences preferences = getActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+//                                SharedPreferences.Editor editor = preferences.edit();
+//                                editor.putInt("tokens", initialTokens);
+//                                editor.putInt("stars", initialStars);
+//                                editor.apply();
+                                Toast.makeText(getActivity(), "Registracija uspešna", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(getActivity(), RegistrationLoginActivity.class));
                             } else {
-                                Toast.makeText(getActivity(), "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "Registracija neuspešna" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

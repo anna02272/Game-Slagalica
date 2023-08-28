@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.slagalica.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -26,9 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import com.example.slagalica.R;
-
-public class SpojniceActivity extends AppCompatActivity {
+public class SpojniceActivity extends AppCompatActivity  {
     private List<Button> buttons;
     private FirebaseDatabase firebaseDatabase;
     private Map<Button, String> buttonSteps;
@@ -42,7 +42,6 @@ public class SpojniceActivity extends AppCompatActivity {
     private PlayersFragment playersFragment;
     private Button firstClickedButton = null;
     private Button secondClickedButton = null;
-
 
     @Override
     public void onBackPressed() {
@@ -65,6 +64,9 @@ public class SpojniceActivity extends AppCompatActivity {
 
         Button buttonNext = findViewById(R.id.button_next);
         EditText input = findViewById(R.id.input);
+
+
+
         buttonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,6 +131,7 @@ public class SpojniceActivity extends AppCompatActivity {
             }
         });
     }
+
     List<Integer> stepIndices = new ArrayList<>();
     List<Integer> answerIndices = new ArrayList<>();
     private void retrieveStep(final DataSnapshot stepSnapshot) {
@@ -303,4 +306,5 @@ public class SpojniceActivity extends AppCompatActivity {
             countDownTimer.cancel();
         }
     }
+
 }
