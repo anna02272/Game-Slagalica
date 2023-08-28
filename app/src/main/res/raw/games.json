@@ -76,7 +76,6 @@
       "D": "FUDBAL",
       "Finaly": "AKCIJA",
       "asociation_field1": "GLUMAC",
-      "asociation_field11": "LANAC",
       "asociation_field10": "ALERGIJA",
       "asociation_field11": "LANAC",
       "asociation_field12": "HEMIJA",
@@ -117,7 +116,6 @@
       "asociation_field9": "PAUK"
     }
   },
-
   "korak_po_korak": {
     "steps1": {
       "answer": "Tigar",
@@ -170,7 +168,6 @@
       "step7": "Postoji i Kasko varijanta"
     }
   },
-
   "moj_broj": {
     "numbers1": {
       "number1": "8",
@@ -180,7 +177,7 @@
       "number5": "10",
       "number6": "50",
       "number7": "239",
-      "number8" : "(5 + 10) * (8 + 8) - 1 = 239"
+      "number8": "(5 + 10) * (8 + 8) - 1 = 239"
     },
     "numbers2": {
       "number1": "4",
@@ -200,7 +197,7 @@
       "number5": "10",
       "number6": "50",
       "number7": "259",
-      "number8" : "6 / 6 + 6 * (50 - 7) = 259"
+      "number8": "6 / 6 + 6 * (50 - 7) = 259"
     },
     "numbers4": {
       "number1": "9",
@@ -210,7 +207,7 @@
       "number5": "10",
       "number6": "50",
       "number7": "756",
-      "number8" : "(2 + 5) * 9 * (10 + 50) / 5 = 756"
+      "number8": "(2 + 5) * 9 * (10 + 50) / 5 = 756"
     },
     "numbers5": {
       "number1": "3",
@@ -220,7 +217,7 @@
       "number5": "15",
       "number6": "50",
       "number7": "846",
-      "number8" : "(9 + 9) * (50 - 3) = 846"
+      "number8": "(9 + 9) * (50 - 3) = 846"
     },
     "operations": {
       "close": ")",
@@ -231,11 +228,11 @@
       "plus": "+"
     }
   },
-
   "points": {
-    "guest_points": 0
+    "guest_points": 0,
+    "player1_points": 0,
+    "player2_points": 0
   },
-
   "skocko": {
     "combination 5": {
       "icon1": "@+id/eve_icon",
@@ -268,67 +265,66 @@
       "icon4": "@+id/spaceship_icon"
     }
   },
-
   "spojnice": {
     "spojnica1": {
-      "step1": "Ljudi govore",
-      "step2": "Orlovi rano lete",
-      "step3": "Sumnjivo lice",
-      "step4": "Koreni",
-      "step5": "Pop Cira i pop Spira",
       "answer1": "Avangarda",
       "answer2": "Knjizevnost za decu",
       "answer3": "Moderna",
       "answer4": "Savremena",
-      "answer5": "Realizam"
+      "answer5": "Realizam",
+      "step1": "Ljudi govore",
+      "step2": "Orlovi rano lete",
+      "step3": "Sumnjivo lice",
+      "step4": "Koreni",
+      "step5": "Pop Cira i pop Spira"
     },
     "spojnica2": {
-      "step1": "Vidovdan",
-      "step2": "Sveti Nikola",
-      "step3": "Petrovdan",
-      "step4": "Bogojavljenje",
-      "step5": "Sretenje",
       "answer1": "28. jun",
       "answer2": "19. decembar",
       "answer3": "12. jul",
       "answer4": "19. januar",
-      "answer5": "15. februar"
+      "answer5": "15. februar",
+      "step1": "Vidovdan",
+      "step2": "Sveti Nikola",
+      "step3": "Petrovdan",
+      "step4": "Bogojavljenje",
+      "step5": "Sretenje"
     },
     "spojnica3": {
-      "step1": "Srecni ljudi",
-      "step2": "Neki novi klinci",
-      "step3": "Budva na pjenu od mora",
-      "step4": "Gore dole",
-      "step5": "Pozoriste u kuci",
       "answer1": "Sinisa Pavic",
       "answer2": "Spomenka Kovac",
       "answer3": "Stevan Koprivica",
       "answer4": "Gordan Mihic",
-      "answer5": "Novak Novak"
+      "answer5": "Novak Novak",
+      "step1": "Srecni ljudi",
+      "step2": "Neki novi klinci",
+      "step3": "Budva na pjenu od mora",
+      "step4": "Gore dole",
+      "step5": "Pozoriste u kuci"
     },
     "spojnica4": {
-      "step1": "Prolazak kroz crveno",
-      "step2": "Nasilnicka voznja",
-      "step3": "Voznja u pesackoj zoni",
-      "step4": "Veoma teska alkoholisanost",
-      "step5": "Voznja nocu bez svetala",
       "answer1": "6 poena",
       "answer2": "15 poena",
       "answer3": "2 poena",
       "answer4": "12 poena",
-      "answer5": "14 poena"
+      "answer5": "14 poena",
+      "step1": "Prolazak kroz crveno",
+      "step2": "Nasilnicka voznja",
+      "step3": "Voznja u pesackoj zoni",
+      "step4": "Veoma teska alkoholisanost",
+      "step5": "Voznja nocu bez svetala"
     },
     "spojnica5": {
-      "step1": "Djerdap",
-      "step2": "Kopaonik",
-      "step3": "Durmitor",
-      "step4": "Biogradska Gora",
-      "step5": "Mala Fatra",
       "answer1": "Brus",
       "answer2": "Donji Milanovac",
       "answer3": "Ohrid",
       "answer4": "Varin",
-      "answer5": "Zabljak"
+      "answer5": "Zabljak",
+      "step1": "Djerdap",
+      "step2": "Kopaonik",
+      "step3": "Durmitor",
+      "step4": "Biogradska Gora",
+      "step5": "Mala Fatra"
     }
   }
-   }
+}

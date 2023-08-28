@@ -33,8 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_toEndOf="@id/player1Image"
-                android:text="@string/games_player1"
-                android:textSize="18sp"
+               android:textSize="18sp"
                 android:textStyle="bold"
                />
 
@@ -84,7 +83,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5dp"
                 android:layout_toStartOf="@id/player2Image"
-                android:text="@string/games_player2"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 

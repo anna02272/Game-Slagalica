@@ -1,5 +1,6 @@
 package com.example.slagalica.login_registration;
 
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 
+
 public class LoginFragment extends Fragment {
 
     public LoginFragment() {
@@ -39,7 +41,6 @@ public class LoginFragment extends Fragment {
     private EditText loginEmail, loginPassword;
     private Button loginButton;
     private FirebaseAuth auth;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,6 +65,7 @@ public class LoginFragment extends Fragment {
         loginButton = view.findViewById(R.id.login_button);
         auth = FirebaseAuth.getInstance();
 
+        //Dodati da login moze i sa username!
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,16 +109,16 @@ public class LoginFragment extends Fragment {
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(getActivity(), "Login Failed", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), "Prijava neuspešna", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                     } else {
-                        loginPassword.setError("Password cannot be empty");
+                        loginPassword.setError("Lozinka mora biti popunjena");
                     }
                 } else if (email.isEmpty()) {
-                    loginEmail.setError("Email cannot be empty");
+                    loginEmail.setError("Email mora biti popunjen");
                 } else {
-                    loginEmail.setError("Email is not correct");
+                    loginEmail.setError("Email nije tačan");
                 }
             }
         });

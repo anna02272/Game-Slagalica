@@ -1,9 +1,12 @@
 package com.example.slagalica.games;
 
+import static com.example.slagalica.MainActivity.socket;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -20,6 +23,8 @@ import android.widget.Toast;
 import com.example.slagalica.MainActivity;
 
 import com.example.slagalica.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,6 +32,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.mozilla.javascript.Scriptable;
 
 import java.util.ArrayList;
@@ -52,6 +59,8 @@ public class MojBrojActivity extends AppCompatActivity {
     private EditText input;
     private ShakeDetector shakeDetector;
     private PlayersFragment playersFragment;
+    private SharedPreferences preferences;
+    private FirebaseUser currentUser;
 
     @Override
     public void onBackPressed() {
@@ -61,7 +70,8 @@ public class MojBrojActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity_moj_broj);
-
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
         playersFragment = PlayersFragment.newInstance(61);
         playersFragment.setGameType("MojBroj");
 
@@ -157,28 +167,6 @@ public class MojBrojActivity extends AppCompatActivity {
 
         retrieveNumbers();
 
-//        for (int i = 0; i < buttons.size(); i++) {
-//            final int buttonIndex = i;
-//            final Button button = buttons.get(i);
-//            button.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    if (buttonIndex != 6) {
-//                        String buttonText = buttonSteps.get(button);
-//                        String currentInput = input.getText().toString();
-//                        input.setText(currentInput + buttonText);
-//                    }
-//                    if (buttonIndex < 6) {
-//                        button.setEnabled(false);
-//                    }
-//                }
-//
-//            });
-//
-//        }
-//
-//    }
-
         for (int i = 0; i < buttons.size(); i++) {
             final int buttonIndex = i;
             final Button button = buttons.get(i);
@@ -232,7 +220,7 @@ public class MojBrojActivity extends AppCompatActivity {
     }
 
     private boolean hasOperationInInput(String input) {
-        String[] operations = { "+", "-", "*", "/" };
+        String[] operations = { "+", "-", "*", "/", "(", ")" };
         for (String operation : operations) {
             if (input.contains(operation)) {
                 return true;
@@ -382,6 +370,17 @@ public class MojBrojActivity extends AppCompatActivity {
                     Intent intent = new Intent(MojBrojActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
+                    startActivity(intent);
+                    if (currentUser != null) {
+                    try {
+                        preferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+                        String username = preferences.getString("username", "");
+                                socket.emit("playerDisconnected", new JSONObject().put("username", username));
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+
                 }
             }, 5000);
         }
@@ -416,6 +415,15 @@ public class MojBrojActivity extends AppCompatActivity {
                     public void run() {
                         Intent intent = new Intent(MojBrojActivity.this, MainActivity.class);
                         startActivity(intent);
+                        if (currentUser != null) {
+                            try {
+                                preferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+                                String username = preferences.getString("username", "");
+                                socket.emit("playerDisconnected", new JSONObject().put("username", username));
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
                     }
                 }, 5000);
 
