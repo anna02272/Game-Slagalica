@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,8 @@ public class PlayersFragment extends Fragment {
     private FirebaseUser currentUser;
     private  TextView player1UsernameTextView;
     private  TextView player2UsernameTextView;
+    private  int timerDuration;
+    private  TextView timeTextView;
 
     public PlayersFragment() {
     }
@@ -99,8 +102,8 @@ public class PlayersFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.game_fragment_players, container, false);
 
-        int timerDuration = getArguments().getInt(ARG_TIMER_DURATION);
-        TextView timeTextView = rootView.findViewById(R.id.time);
+         timerDuration = getArguments().getInt(ARG_TIMER_DURATION);
+         timeTextView = rootView.findViewById(R.id.time);
         TextView descriptionTextView = rootView.findViewById(R.id.gameDescription);
         player1PointsTextView = rootView.findViewById(R.id.player1Points);
         player2PointsTextView = rootView.findViewById(R.id.player2Points);
@@ -137,6 +140,68 @@ public class PlayersFragment extends Fragment {
         return rootView;
     }
 
+    private void startTimer(TextView timeTextView, int timerDuration) {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+        if (currentUser != null) {
+            socket.on("syncTimer", onSyncTimer);
+        }
+        countDownTimer = new CountDownTimer(timerDuration * 1000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                int time = (int) (millisUntilFinished / 1000);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        timeTextView.setText(String.valueOf(time));
+                    }
+                });
+            }
+
+            @Override
+            public void onFinish() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        timeTextView.setText("0");
+                    }
+                });
+            }
+        };
+
+        countDownTimer.start();
+    }
+    private Emitter.Listener onSyncTimer = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            JSONObject timerData = (JSONObject) args[0];
+            int syncedDuration = 0;
+            try {
+                syncedDuration = timerData.getInt("duration");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            updateTimerDuration(syncedDuration);
+
+        }
+    };
+
+
+    public void updateTimerDuration(int newDuration) {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+        timerDuration = newDuration;
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("Timerko", "started in fragment");
+                startTimer(timeTextView, timerDuration);
+            }
+        });
+
+    }
     private void retrieveConnectedUsers() {
 
         if (playingUsernamesArray.length() >= 2) {
@@ -209,22 +274,7 @@ public class PlayersFragment extends Fragment {
 
     }
 
-    private void startTimer(TextView timeTextView, int timerDuration) {
-        CountDownTimer countDownTimer = new CountDownTimer(timerDuration * 1000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                int time = (int) (millisUntilFinished / 1000);
-                timeTextView.setText(String.valueOf(time));
-            }
 
-            @Override
-            public void onFinish() {
-                timeTextView.setText("0");
-            }
-        };
-
-        countDownTimer.start();
-    }
     void showExitConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setTitle("Da li ste sigurni?")

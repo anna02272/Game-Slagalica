@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     if (currentUser == null) {
                         firebaseDatabase.getReference("points/guest_points").setValue(0);
                     }
-                    Intent intent = new Intent(MainActivity.this, KoZnaZnaActivity.class);
+                    Intent intent = new Intent(MainActivity.this, SpojniceActivity.class);
                     startActivity(intent);
 
                 }
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             throw new RuntimeException(e);
                         }
 
-                        Intent intent = new Intent(MainActivity.this, KoZnaZnaActivity.class);
+                        Intent intent = new Intent(MainActivity.this, SpojniceActivity.class);
                         startActivity(intent);
 
 

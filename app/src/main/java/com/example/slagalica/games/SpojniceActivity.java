@@ -1,12 +1,17 @@
 package com.example.slagalica.games;
 
 
+import static com.example.slagalica.MainActivity.socket;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,11 +20,16 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.slagalica.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,12 +38,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class SpojniceActivity extends AppCompatActivity  {
+import io.socket.emitter.Emitter;
+
+public class SpojniceActivity extends AppCompatActivity {
     private List<Button> buttons;
     private FirebaseDatabase firebaseDatabase;
     private Map<Button, String> buttonSteps;
     private Random random;
-    private CountDownTimer countDownTimer;
     private Handler buttonHandler;
     private Runnable buttonRunnable;
     private int currentEnabledButtonIndex = 0;
@@ -42,6 +53,16 @@ public class SpojniceActivity extends AppCompatActivity  {
     private PlayersFragment playersFragment;
     private Button firstClickedButton = null;
     private Button secondClickedButton = null;
+    private FirebaseUser currentUser;
+    private boolean isPlayer1Turn = true;
+    private int roundsPlayed = 0;
+    private final int TOTAL_ROUNDS = 2;
+    private Button stepButton;
+    private Button answerButton;
+    private boolean allButtonsClickable;
+
+    private int roundsPlayedPlayer1 = 0;
+    private int roundsPlayedPlayer2 = 0;
 
     @Override
     public void onBackPressed() {
@@ -61,10 +82,11 @@ public class SpojniceActivity extends AppCompatActivity  {
                 .add(R.id.fragment_container, playersFragment)
                 .commit();
 
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
 
         Button buttonNext = findViewById(R.id.button_next);
         EditText input = findViewById(R.id.input);
-
 
 
         buttonNext.setOnClickListener(new View.OnClickListener() {
@@ -95,6 +117,64 @@ public class SpojniceActivity extends AppCompatActivity  {
         buttonSteps = new HashMap<>();
 
         retrieveSteps();
+
+        socket.on("stepChanged", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                int stepIndex = (int) args[0];
+                String step = (String) args[1];
+
+                Button stepButton = buttons.get(stepIndex - 1);
+                runOnUiThread(() -> {
+                    stepButton.setText(step);
+                    stepButton.setTag(stepIndex);
+                });
+            }
+        });
+
+        socket.on("answerChanged", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                int shuffledIndex = (int) args[0];
+                int answerIndex = (int) args[1];
+                String answer = (String) args[2];
+
+                Button answerButton = buttons.get(shuffledIndex + 5);
+                runOnUiThread(() -> {
+                    answerButton.setText(answer);
+                    answerButton.setTag(answerIndex);
+                });
+            }
+        });
+        socket.on("colorChange", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                if (args.length > 0) {
+                    JSONObject eventData = (JSONObject) args[0];
+                    try {
+                        int buttonTag = eventData.getInt("buttonTag");
+                        String color = eventData.getString("color");
+                        updateButtonColor(buttonTag, color);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        socket.on("message_received", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                if (args.length > 0) {
+                    JSONObject message = (JSONObject) args[0];
+                    try {
+                        handleSocketMessage(message);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
 
         buttonHandler = new Handler();
         buttonRunnable = new Runnable() {
@@ -134,6 +214,7 @@ public class SpojniceActivity extends AppCompatActivity  {
 
     List<Integer> stepIndices = new ArrayList<>();
     List<Integer> answerIndices = new ArrayList<>();
+
     private void retrieveStep(final DataSnapshot stepSnapshot) {
         final String stepKey = stepSnapshot.getKey();
         currentEnabledButtonIndex = 0;
@@ -158,11 +239,16 @@ public class SpojniceActivity extends AppCompatActivity  {
                         int stepIndex = stepIndices.get(i);
                         String step = stepsMap.get("step" + stepIndex);
                         if (step != null) {
-                            Button stepButton = buttons.get(i);
-                            stepButton.setText(step);
-                            stepButton.setTag(stepIndex);
+                            stepButton = buttons.get(i);
+                            if (currentUser == null) {
+                                stepButton.setText(step);
+                                stepButton.setTag(stepIndex);
+                            }
                             buttonSteps.put(stepButton, step);
-                            setButtonListener(stepButton, step);
+                            setButtonListener(stepButton);
+                            if (currentUser != null) {
+                                socket.emit("stepChanged", stepIndex, step);
+                            }
 
                         }
                     }
@@ -170,12 +256,16 @@ public class SpojniceActivity extends AppCompatActivity  {
                         int answerIndex = answerIndices.get(i);
                         String answer = stepsMap.get("answer" + answerIndex);
                         if (answer != null) {
-                            Button answerButton = buttons.get(i + 5);
-                            answerButton.setText(answer);
-                            answerButton.setTag(answerIndex);
+                            answerButton = buttons.get(i + 5);
+                            if (currentUser == null) {
+                                answerButton.setText(answer);
+                                answerButton.setTag(answerIndex);
+                            }
                             buttonSteps.put(answerButton, answer);
-                            setButtonListener(answerButton, answer);
-
+                            setButtonListener(answerButton);
+                            if (currentUser != null) {
+                                socket.emit("answerChanged", i, answerIndex, answer);
+                            }
                         }
                     }
                 }
@@ -189,30 +279,87 @@ public class SpojniceActivity extends AppCompatActivity  {
     }
 
 
-    private void setButtonListener(Button button,  final String text) {
+    private void setButtonListener(Button button) {
         button.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-
                 if (firstClickedButton == null) {
                     firstClickedButton = (Button) v;
-                    firstClickedButton.setTextColor(Color.parseColor("#FFFF00"));
-                    for (int i = 5; i < 10; i++) {
-                        buttons.get(i).setEnabled(true);
+
+                    if (currentUser != null) {
+                        emitColorChangeEvent((Integer) firstClickedButton.getTag(), "#FFFF00");
+                        emitButtonState(true);
+                    }
+                    if (currentUser == null) {
+                        firstClickedButton.setTextColor(Color.parseColor("#FFFF00"));
+                        for (int i = 5; i < 10; i++) {
+                            buttons.get(i).setEnabled(true);
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            buttons.get(i).setEnabled(false);
+                        }
                     }
                 } else if (secondClickedButton == null) {
                     secondClickedButton = (Button) v;
-                    checkAnswer();
-                    for (int i = 5; i < 10; i++) {
-                        buttons.get(i).setEnabled(false);
+                    try {
+                        checkAnswer();
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (currentUser != null) {
+                        emitButtonState(false);
+                    }
+                    if (currentUser == null) {
+                        for (int i = 5; i < 10; i++) {
+                            buttons.get(i).setEnabled(false);
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            buttons.get(i).setEnabled(true);
+                        }
                     }
                 }
             }
+
         });
+        socket.on("buttonStateChanged", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                boolean enableState = (boolean) args[0];
+
+                runOnUiThread(() -> {
+                    if (enableState) {
+                        for (int i = 5; i < 10; i++) {
+                            buttons.get(i).setEnabled(true);
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            buttons.get(i).setEnabled(false);
+                        }
+                    } else {
+                        for (int i = 5; i < 10; i++) {
+                            buttons.get(i).setEnabled(false);
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            buttons.get(i).setEnabled(true);
+                        }
+                    }
+                });
+            }
+        });
+
     }
 
+    private void emitButtonState(boolean enableState) {
+        JSONObject data = new JSONObject();
+        try {
+            data.put("enableState", enableState);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        socket.emit("buttonStateChanged", data);
+    }
 
-    private void checkAnswer() {
+    private void checkAnswer() throws JSONException {
         if (firstClickedButton == null || secondClickedButton == null) {
             return;
         }
@@ -222,79 +369,161 @@ public class SpojniceActivity extends AppCompatActivity  {
         if (clickedStepIndex == clickedAnswerIndex) {
             firstClickedButton.setTextColor(Color.parseColor("#00FF00"));
             secondClickedButton.setTextColor(Color.parseColor("#00FF00"));
+
             firstClickedButton.setClickable(false);
             secondClickedButton.setClickable(false);
+
+            if (currentUser != null) {
+                sendSocketMessage(firstClickedButton, "#00FF00", false);
+                sendSocketMessage(secondClickedButton, "#00FF00", false);
+            }
             updatePoints(2);
 
         } else {
             firstClickedButton.setTextColor(Color.parseColor("#FF0000"));
-            firstClickedButton.setClickable(false);
             secondClickedButton.setTextColor(Color.parseColor("#FF0000"));
+
+            firstClickedButton.setClickable(false);
+
+            if (currentUser != null) {
+                sendSocketMessage(firstClickedButton, "#FF0000", false);
+                sendSocketMessage(secondClickedButton, "#FF0000", true);
+            }
             checkIfGameIsFinished();
         }
 
         firstClickedButton = null;
         secondClickedButton = null;
     }
+
+    private void emitColorChangeEvent(int buttonTag, String color) {
+        JSONObject eventData = new JSONObject();
+        try {
+            eventData.put("buttonTag", buttonTag);
+            eventData.put("color", color);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        socket.emit("colorChange", eventData);
+    }
+
+    private void updateButtonColor(final int buttonTag, final String color) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 5; i++) {
+                    Button button = buttons.get(i);
+                    int tag = (Integer) button.getTag();
+                    if (tag == buttonTag) {
+                        button.setTextColor(Color.parseColor(color));
+                        break;
+                    }
+                }
+            }
+        });
+    }
+
+    void sendSocketMessage(Button button, String color, boolean clickable) throws JSONException {
+        JSONObject message = new JSONObject();
+        message.put("buttonId", button.getId());
+        message.put("color", color);
+        message.put("clickable", clickable);
+        socket.emit("message_received", message);
+    }
+
+    void handleSocketMessage(JSONObject message) throws JSONException {
+        int buttonId = message.getInt("buttonId");
+        String color = message.getString("color");
+        boolean clickable = message.getBoolean("clickable");
+
+        Button button = findViewById(buttonId);
+
+        runOnUiThread(() -> {
+            button.setTextColor(Color.parseColor(color));
+            button.setClickable(clickable);
+        });
+    }
+
     private void checkIfGameIsFinished() {
-        boolean allButtonsClickable = true;
+        allButtonsClickable = true;
         for (int i = 0; i < 5; i++) {
             if (buttons.get(i).isClickable()) {
                 allButtonsClickable = false;
                 break;
             }
         }
-
         if (allButtonsClickable) {
-            Toast.makeText(SpojniceActivity.this, "Igra je gotova! Sledi igra ASOCIJACIJE!", Toast.LENGTH_SHORT).show();
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(SpojniceActivity.this, AsocijacijeActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            }, 5000);
+            startNextGame();
         }
     }
 
+    private void resetButtons() {
+        for (Button button : buttons) {
+            button.setTextColor(Color.parseColor("#FFFFFF"));
+//            button.setClickable(true);
+            emitColorChangeEvent((Integer) button.getTag(), "#FFFFFF");
+
+        }
+//        emitButtonState(true);
+    }
 
     private void updatePoints(int points) {
+        if (currentUser != null) {
+            playersFragment.updatePlayer1Points(points);
+            playersFragment.updatePlayer2Points(points);
+        }
         playersFragment.updateGuestPoints(points);
     }
 
     private void startTimer() {
-        countDownTimer = new CountDownTimer(31000, 10000) {
+        if (currentUser != null) {
+            switchPlayersTurn();
+        }
+        CountDownTimer countDownTimer = new CountDownTimer(31000, 10000) {
             private Context context = SpojniceActivity.this.getApplicationContext();
+
             @Override
             public void onTick(long millisUntilFinished) {
-
             }
 
             @Override
             public void onFinish() {
-                Toast.makeText(SpojniceActivity.this, "Vase vreme je isteklo, sledi igra Asocijacije!",
-                        Toast.LENGTH_SHORT).show(); ;
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent(SpojniceActivity.this, AsocijacijeActivity.class);
-                        startActivity(intent);
+                startNextGame();
+                if (allButtonsClickable) {
+                    if (roundsPlayed == 1) {
+                        startTimer();
+                        JSONObject timerData = new JSONObject();
+                        try {
+                            timerData.put("duration", 30);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        socket.emit("startTimer", timerData);
+                    } else {
+                        startNextGame();
                     }
-                }, 5000);
-
+                }
             }
         };
 
         countDownTimer.start();
     }
 
+    private void switchPlayersTurn() {
+        isPlayer1Turn = !isPlayer1Turn;
+       roundsPlayed++;
+//        Toast.makeText(SpojniceActivity.this, "Runda " + roundsPlayed, Toast.LENGTH_SHORT).show();
 
+    }
+    private void showToastAndEmit(String message) {
+        Toast.makeText(SpojniceActivity.this, message, Toast.LENGTH_SHORT).show();
+        socket.emit("showToast", message);
+    }
     @Override
     protected void onResume() {
         super.onResume();
         startTimer();
+
         buttonHandler.postDelayed(buttonRunnable, 10000);
     }
 
@@ -302,9 +531,50 @@ public class SpojniceActivity extends AppCompatActivity  {
     protected void onPause() {
         super.onPause();
         buttonHandler.removeCallbacks(buttonRunnable);
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
     }
 
+    private void startNextGame() {
+        if (currentUser != null) {
+            JSONObject timerData = new JSONObject();
+            try {
+                timerData.put("duration", 6);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            socket.emit("startTimer", timerData);
+            socket.emit("startNextGame");
+            if (roundsPlayed == TOTAL_ROUNDS) {
+                showToastAndEmit("Igra je gotova! Sledi igra ASOCIJACIJE!");
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(SpojniceActivity.this, MojBrojActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                }, 5000);
+            } else {
+                showToastAndEmit("Runda 1 je gotova! Pocinje nova runda.");
+                retrieveSteps();
+                resetButtons();
+                startTimer();
+                try {
+                    timerData.put("duration", 30);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                socket.emit("startTimer", timerData);
+            }
+        } else {
+            showToastAndEmit("Igra je gotova! Sledi igra ASOCIJACIJE!");
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(SpojniceActivity.this, MojBrojActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }, 5000);
+        }
+    }
 }

@@ -13,26 +13,78 @@ const connectedUsers = {};
 const playingUsers = {};
 let userReadyCount = 0;
 let isGameStarting = false;
-
+const stepAndAnswerState = {};
 
 io.on('connection', (socket) => {
-//    console.log("Player connected: " + socket.id);
+//CONNECTION
 
      socket.on('userConnected', (userInfo) => {
             const { username } = userInfo;
             connectedUsers[socket.id] = { username: username, socket: socket };
-//            console.log(`User ${username} connected.`);
            const usernamesArray = Object.values(connectedUsers).map(user => user.username);
               io.emit('updateConnectedUsers', usernamesArray);
               console.log("Connected Users:",usernamesArray)
         });
          socket.on('userPlaying', (userInfo) => {
-                    const { username } = userInfo;
-                    playingUsers[socket.id] = { username: username, socket: socket };
-                   const playingUsernamesArray = Object.values(playingUsers).map(user => user.username);
-                      io.emit('updatePlayingUsers', playingUsernamesArray);
-                      console.log("Playing Users:",playingUsernamesArray)
+                const { username } = userInfo;
+                playingUsers[socket.id] = { username: username, socket: socket };
+                const playingUsernamesArray = Object.values(playingUsers).map(user => user.username);
+                io.emit('updatePlayingUsers', playingUsernamesArray);
+                console.log("Playing Users:",playingUsernamesArray)
+         });
+
+//START GAME
+         socket.on('startGame', () => {
+         userReadyCount++;
+         if (userReadyCount === 2 && !isGameStarting) {
+               isGameStarting = true;
+                io.emit('gameStarting');
+                 setTimeout(() => {
+                          io.emit('startActualGame');
+                           userReadyCount = 0;
+                           isGameStarting = false;
+                   }, 4000);
+                         }
+          });
+
+//TIMER
+        socket.on('startTimer', (timerData) => {
+                io.emit('syncTimer', timerData);
+            });
+
+//SPOJNICE
+           socket.on('stepChanged', (stepIndex, step) => {
+                   io.emit('stepChanged', stepIndex, step);
+               });
+
+            socket.on("answerChanged", ( shuffledIndex, answerIndex, answer) => {
+                              io.emit("answerChanged",shuffledIndex, answerIndex , answer);
+                        });
+
+            socket.on("buttonStateChanged", (data) => {
+                const enableState = data.enableState;
+                io.emit("buttonStateChanged", enableState);
+            });
+
+            socket.on('colorChange', (eventData) => {
+                   io.emit('colorChange', eventData);
+               });
+
+             socket.on("message_received", (message) => {
+                 io.emit('message_received', message);
+             });
+
+            socket.on('startNextGame', () => {
+                    io.emit('startNextGame');
                 });
+
+             socket.on('showToast', (message) => {
+               io.emit('showToast', message);
+             });
+
+
+
+//DISCONNECT
         socket.on('userDisconnected', (userInfo) => {
          const { username } = userInfo;
              delete connectedUsers[socket.id];
@@ -50,20 +102,8 @@ io.on('connection', (socket) => {
                           console.log("Playing Users:",playingUsernamesArray)
                          userReadyCount = 0;
                          isGameStarting = false;
-                });
 
-          socket.on('startGame', () => {
-                userReadyCount++;
-                if (userReadyCount === 2 && !isGameStarting) {
-                    isGameStarting = true;
-                    io.emit('gameStarting');
-                    setTimeout(() => {
-                        io.emit('startActualGame');
-                        userReadyCount = 0;
-                        isGameStarting = false;
-                    }, 4000);
-                }
-            });
+                });
 
     socket.on('disconnect', (userInfo) =>{
        delete connectedUsers[socket.id];
@@ -81,6 +121,6 @@ io.on('connection', (socket) => {
        isGameStarting = false;
    	});
 
-});
 
+});
 
