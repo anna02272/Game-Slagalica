@@ -48,7 +48,6 @@ public class SpojniceActivity extends AppCompatActivity {
     private Handler buttonHandler;
     private Runnable buttonRunnable;
     private int currentEnabledButtonIndex = 0;
-    private int currentButtonIndex = 1;
     private Map<String, String> stepsMap;
     private PlayersFragment playersFragment;
     private Button firstClickedButton = null;
@@ -60,6 +59,8 @@ public class SpojniceActivity extends AppCompatActivity {
     private Button stepButton;
     private Button answerButton;
     private boolean allButtonsClickable;
+    List<Integer> stepIndices = new ArrayList<>();
+    List<Integer> answerIndices = new ArrayList<>();
 
     private int roundsPlayedPlayer1 = 0;
     private int roundsPlayedPlayer2 = 0;
@@ -175,6 +176,57 @@ public class SpojniceActivity extends AppCompatActivity {
                 }
             }
         });
+        socket.on("reset_received", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                if (args.length > 0) {
+                    JSONObject reset = (JSONObject) args[0];
+                    try {
+                        handleResetButtonsSocket(reset);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        socket.on("buttonStateChanged", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                boolean enableState = (boolean) args[0];
+
+                runOnUiThread(() -> {
+                    if (enableState) {
+                        for (int i = 5; i < 10; i++) {
+                            buttons.get(i).setEnabled(true);
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            buttons.get(i).setEnabled(false);
+                        }
+                    } else {
+                        for (int i = 5; i < 10; i++) {
+                            buttons.get(i).setEnabled(false);
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            buttons.get(i).setEnabled(true);
+                        }
+                    }
+                });
+            }
+        });
+        socket.on("startNextGame", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                runOnUiThread(() -> {
+                    try {
+                        startNextGame();
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+        });
+
 
         buttonHandler = new Handler();
         buttonRunnable = new Runnable() {
@@ -211,9 +263,6 @@ public class SpojniceActivity extends AppCompatActivity {
             }
         });
     }
-
-    List<Integer> stepIndices = new ArrayList<>();
-    List<Integer> answerIndices = new ArrayList<>();
 
     private void retrieveStep(final DataSnapshot stepSnapshot) {
         final String stepKey = stepSnapshot.getKey();
@@ -278,7 +327,6 @@ public class SpojniceActivity extends AppCompatActivity {
         });
     }
 
-
     private void setButtonListener(Button button) {
         button.setOnClickListener(new View.OnClickListener() {
 
@@ -322,41 +370,7 @@ public class SpojniceActivity extends AppCompatActivity {
             }
 
         });
-        socket.on("buttonStateChanged", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                boolean enableState = (boolean) args[0];
 
-                runOnUiThread(() -> {
-                    if (enableState) {
-                        for (int i = 5; i < 10; i++) {
-                            buttons.get(i).setEnabled(true);
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            buttons.get(i).setEnabled(false);
-                        }
-                    } else {
-                        for (int i = 5; i < 10; i++) {
-                            buttons.get(i).setEnabled(false);
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            buttons.get(i).setEnabled(true);
-                        }
-                    }
-                });
-            }
-        });
-
-    }
-
-    private void emitButtonState(boolean enableState) {
-        JSONObject data = new JSONObject();
-        try {
-            data.put("enableState", enableState);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        socket.emit("buttonStateChanged", data);
     }
 
     private void checkAnswer() throws JSONException {
@@ -378,6 +392,7 @@ public class SpojniceActivity extends AppCompatActivity {
                 sendSocketMessage(secondClickedButton, "#00FF00", false);
             }
             updatePoints(2);
+            checkIfGameIsFinished();
 
         } else {
             firstClickedButton.setTextColor(Color.parseColor("#FF0000"));
@@ -396,17 +411,6 @@ public class SpojniceActivity extends AppCompatActivity {
         secondClickedButton = null;
     }
 
-    private void emitColorChangeEvent(int buttonTag, String color) {
-        JSONObject eventData = new JSONObject();
-        try {
-            eventData.put("buttonTag", buttonTag);
-            eventData.put("color", color);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        socket.emit("colorChange", eventData);
-    }
-
     private void updateButtonColor(final int buttonTag, final String color) {
         runOnUiThread(new Runnable() {
             @Override
@@ -423,6 +427,173 @@ public class SpojniceActivity extends AppCompatActivity {
         });
     }
 
+    private void updatePoints(int points) {
+        if (currentUser != null) {
+            playersFragment.updatePlayer1Points(points);
+            playersFragment.updatePlayer2Points(points);
+        }
+        playersFragment.updateGuestPoints(points);
+    }
+    private void switchPlayersTurn() {
+        isPlayer1Turn = !isPlayer1Turn;
+        roundsPlayed++;
+//        Toast.makeText(SpojniceActivity.this, "Runda " + roundsPlayed, Toast.LENGTH_SHORT).show();
+    }
+
+    private void checkIfGameIsFinished() throws JSONException {
+        allButtonsClickable = true;
+        for (int i = 0; i < 5; i++) {
+            if (buttons.get(i).isClickable()) {
+                allButtonsClickable = false;
+                break;
+            }
+        }
+        if (allButtonsClickable) {
+            if (currentUser == null){
+                startNextGame();
+            }else {
+                socket.emit("startNextGame");
+            }
+        }
+    }
+
+    private void startNextGame() throws JSONException {
+        if (currentUser != null) {
+            if (roundsPlayed == TOTAL_ROUNDS) {
+               endGame();
+            } else {
+                retrieveSteps();
+                resetButtons();
+                startTimer();
+                JSONObject timerData = new JSONObject();
+                try {
+                    timerData.put("duration", 30);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                socket.emit("startTimer", timerData);
+                showToastAndEmit("Runda 1 je gotova! Pocinje nova runda.");
+            }
+        }
+        else {
+            endGame();
+        }
+    }
+
+    private void endGame() throws JSONException {
+        if (currentUser != null) {
+            JSONObject timerData = new JSONObject();
+            try {
+                timerData.put("duration", 6);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            socket.emit("startTimer", timerData);
+            showToastAndEmit("Igra je gotova! Sledi igra ASOCIJACIJE!");
+        } else {
+            Toast.makeText(SpojniceActivity.this, "Igra je gotova! Sledi igra ASOCIJACIJE!", Toast.LENGTH_SHORT).show();
+        }
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(SpojniceActivity.this, MojBrojActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }, 5000);
+    }
+
+    private void startTimer() {
+        if (currentUser != null) {
+            switchPlayersTurn();
+        }
+        CountDownTimer countDownTimer = new CountDownTimer(31000, 10000) {
+            private Context context = SpojniceActivity.this.getApplicationContext();
+            @Override
+            public void onTick(long millisUntilFinished) {
+            }
+            @Override
+            public void onFinish() {
+                if (currentUser != null) {
+                    if (roundsPlayed == TOTAL_ROUNDS) {
+                        try {
+                            endGame();
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else {
+                        retrieveSteps();
+                        try {
+                            resetButtons();
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                        startTimer();
+                        JSONObject timerData = new JSONObject();
+                        try {
+                            timerData.put("duration", 30);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        socket.emit("startTimer", timerData);
+                        showToastAndEmit("Runda 1 je gotova! Pocinje nova runda.");
+                    }
+                } else {
+                    try {
+                        endGame();
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+            }
+        };
+
+        countDownTimer.start();
+    }
+    private void resetButtons() throws JSONException {
+        for (int i = 0; i < buttons.size(); i++) {
+            Button button = buttons.get(i);
+            button.getTag(i);
+            button.setTextColor(Color.parseColor("#FFFFFF"));
+            resetButtonsSocket(button, "#FFFFFF");
+        }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startTimer();
+
+        buttonHandler.postDelayed(buttonRunnable, 10000);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        buttonHandler.removeCallbacks(buttonRunnable);
+    }
+    private void showToastAndEmit(String message) {
+        Toast.makeText(SpojniceActivity.this, message, Toast.LENGTH_SHORT).show();
+        socket.emit("showToast", message);
+    }
+    private void emitButtonState(boolean enableState) {
+        JSONObject data = new JSONObject();
+        try {
+            data.put("enableState", enableState);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        socket.emit("buttonStateChanged", data);
+    }
+    private void emitColorChangeEvent(int buttonTag, String color) {
+        JSONObject eventData = new JSONObject();
+        try {
+            eventData.put("buttonTag", buttonTag);
+            eventData.put("color", color);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        socket.emit("colorChange", eventData);
+    }
     void sendSocketMessage(Button button, String color, boolean clickable) throws JSONException {
         JSONObject message = new JSONObject();
         message.put("buttonId", button.getId());
@@ -430,7 +601,6 @@ public class SpojniceActivity extends AppCompatActivity {
         message.put("clickable", clickable);
         socket.emit("message_received", message);
     }
-
     void handleSocketMessage(JSONObject message) throws JSONException {
         int buttonId = message.getInt("buttonId");
         String color = message.getString("color");
@@ -443,138 +613,23 @@ public class SpojniceActivity extends AppCompatActivity {
             button.setClickable(clickable);
         });
     }
+    void resetButtonsSocket(Button button, String color) throws JSONException {
+        JSONObject reset = new JSONObject();
+        reset.put("buttonId", button.getId());
+        reset.put("color", color);
+        socket.emit("reset_received", reset);
+    }
+    void handleResetButtonsSocket(JSONObject reset) throws JSONException {
+        int buttonId = reset.getInt("buttonId");
+        String color = reset.getString("color");
 
-    private void checkIfGameIsFinished() {
-        allButtonsClickable = true;
-        for (int i = 0; i < 5; i++) {
-            if (buttons.get(i).isClickable()) {
-                allButtonsClickable = false;
-                break;
-            }
-        }
-        if (allButtonsClickable) {
-            startNextGame();
-        }
+        Button button = findViewById(buttonId);
+
+        runOnUiThread(() -> {
+            button.setTextColor(Color.parseColor(color));
+        });
     }
 
-    private void resetButtons() {
-        for (Button button : buttons) {
-            button.setTextColor(Color.parseColor("#FFFFFF"));
-//            button.setClickable(true);
-            emitColorChangeEvent((Integer) button.getTag(), "#FFFFFF");
 
-        }
-//        emitButtonState(true);
-    }
-
-    private void updatePoints(int points) {
-        if (currentUser != null) {
-            playersFragment.updatePlayer1Points(points);
-            playersFragment.updatePlayer2Points(points);
-        }
-        playersFragment.updateGuestPoints(points);
-    }
-
-    private void startTimer() {
-        if (currentUser != null) {
-            switchPlayersTurn();
-        }
-        CountDownTimer countDownTimer = new CountDownTimer(31000, 10000) {
-            private Context context = SpojniceActivity.this.getApplicationContext();
-
-            @Override
-            public void onTick(long millisUntilFinished) {
-            }
-
-            @Override
-            public void onFinish() {
-                startNextGame();
-                if (allButtonsClickable) {
-                    if (roundsPlayed == 1) {
-                        startTimer();
-                        JSONObject timerData = new JSONObject();
-                        try {
-                            timerData.put("duration", 30);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        socket.emit("startTimer", timerData);
-                    } else {
-                        startNextGame();
-                    }
-                }
-            }
-        };
-
-        countDownTimer.start();
-    }
-
-    private void switchPlayersTurn() {
-        isPlayer1Turn = !isPlayer1Turn;
-       roundsPlayed++;
-//        Toast.makeText(SpojniceActivity.this, "Runda " + roundsPlayed, Toast.LENGTH_SHORT).show();
-
-    }
-    private void showToastAndEmit(String message) {
-        Toast.makeText(SpojniceActivity.this, message, Toast.LENGTH_SHORT).show();
-        socket.emit("showToast", message);
-    }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        startTimer();
-
-        buttonHandler.postDelayed(buttonRunnable, 10000);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        buttonHandler.removeCallbacks(buttonRunnable);
-    }
-
-    private void startNextGame() {
-        if (currentUser != null) {
-            JSONObject timerData = new JSONObject();
-            try {
-                timerData.put("duration", 6);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            socket.emit("startTimer", timerData);
-            socket.emit("startNextGame");
-            if (roundsPlayed == TOTAL_ROUNDS) {
-                showToastAndEmit("Igra je gotova! Sledi igra ASOCIJACIJE!");
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent(SpojniceActivity.this, MojBrojActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                }, 5000);
-            } else {
-                showToastAndEmit("Runda 1 je gotova! Pocinje nova runda.");
-                retrieveSteps();
-                resetButtons();
-                startTimer();
-                try {
-                    timerData.put("duration", 30);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                socket.emit("startTimer", timerData);
-            }
-        } else {
-            showToastAndEmit("Igra je gotova! Sledi igra ASOCIJACIJE!");
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(SpojniceActivity.this, MojBrojActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            }, 5000);
-        }
-    }
 }
+

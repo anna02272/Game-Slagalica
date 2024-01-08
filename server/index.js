@@ -52,6 +52,7 @@ io.on('connection', (socket) => {
                 io.emit('syncTimer', timerData);
             });
 
+
 //SPOJNICE
            socket.on('stepChanged', (stepIndex, step) => {
                    io.emit('stepChanged', stepIndex, step);
@@ -74,14 +75,17 @@ io.on('connection', (socket) => {
                  io.emit('message_received', message);
              });
 
-            socket.on('startNextGame', () => {
+             socket.on("reset_received", (reset) => {
+                io.emit('reset_received', reset);
+             });
+
+             socket.on('startNextGame', () => {
                     io.emit('startNextGame');
                 });
 
              socket.on('showToast', (message) => {
                io.emit('showToast', message);
              });
-
 
 
 //DISCONNECT

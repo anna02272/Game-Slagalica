@@ -114,28 +114,29 @@ public class PlayersFragment extends Fragment {
 
          player1UsernameTextView = rootView.findViewById(R.id.player1Username);
          player2UsernameTextView = rootView.findViewById(R.id.player2Username);
-        try {
-            socket.emit("userPlaying", new JSONObject().put("username", username));
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-        socket.on("updatePlayingUsers", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                playingUsernamesArray = (JSONArray) args[0];
-                retrieveConnectedUsers();
-                requireActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (player1Username != null && player2Username != null) {
-                            player1UsernameTextView.setText(player1Username);
-                            player2UsernameTextView.setText(player2Username);
-                        }
-                    }
-                });
+        if (currentUser != null) {
+            try {
+                socket.emit("userPlaying", new JSONObject().put("username", username));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
             }
-        });
-
+            socket.on("updatePlayingUsers", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    playingUsernamesArray = (JSONArray) args[0];
+                    retrieveConnectedUsers();
+                    requireActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (player1Username != null && player2Username != null) {
+                                player1UsernameTextView.setText(player1Username);
+                                player2UsernameTextView.setText(player2Username);
+                            }
+                        }
+                    });
+                }
+            });
+        }
 
         return rootView;
     }
@@ -196,7 +197,6 @@ public class PlayersFragment extends Fragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.d("Timerko", "started in fragment");
                 startTimer(timeTextView, timerDuration);
             }
         });
