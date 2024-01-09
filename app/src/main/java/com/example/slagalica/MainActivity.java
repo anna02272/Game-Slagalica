@@ -41,6 +41,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -156,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     if (currentUser == null) {
                         firebaseDatabase.getReference("points/guest_points").setValue(0);
                     }
-                    Intent intent = new Intent(MainActivity.this, KoZnaZnaActivity.class);
+                    Intent intent = new Intent(MainActivity.this, SpojniceActivity.class);
                     startActivity(intent);
 
                 }
@@ -177,13 +178,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     @Override
                     public void call(Object... args) {
+                        JSONObject data = (JSONObject) args[0];
                         try {
                             socket.emit("userDisconnected", new JSONObject().put("username", username));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
-
-                        Intent intent = new Intent(MainActivity.this, KoZnaZnaActivity.class);
+                        JSONArray playingUsernamesArray;
+                        try {
+                            playingUsernamesArray = data.getJSONArray("playingUsernamesArray");
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                        Intent intent = new Intent(MainActivity.this, SpojniceActivity.class);
+                        intent.putExtra("playingUsernamesArray", playingUsernamesArray.toString());
                         startActivity(intent);
 
 
