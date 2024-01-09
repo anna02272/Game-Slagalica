@@ -28,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -61,10 +62,12 @@ public class SpojniceActivity extends AppCompatActivity {
     private boolean allButtonsClickable;
     List<Integer> stepIndices = new ArrayList<>();
     List<Integer> answerIndices = new ArrayList<>();
-
-    private int roundsPlayedPlayer1 = 0;
-    private int roundsPlayedPlayer2 = 0;
-
+    private int currentPlayingUserIndex;
+    private  JSONArray playingUsernamesArray;
+    private  String currentPlayingUser;
+    private String player1Username;
+    private String player2Username;
+    private Map<String, Integer> userIdToPlayerNumberMap = new HashMap<>();
     @Override
     public void onBackPressed() {
         return;
@@ -74,6 +77,21 @@ public class SpojniceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity_spojnice);
+
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("playingUsernamesArray")) {
+            String playingUsernamesArrayString = intent.getStringExtra("playingUsernamesArray");
+            try {
+                playingUsernamesArray = new JSONArray(playingUsernamesArrayString);
+                if (playingUsernamesArray.length() > 0) {
+                    currentPlayingUserIndex = (currentPlayingUserIndex) % playingUsernamesArray.length();
+                    currentPlayingUser = playingUsernamesArray.getString(currentPlayingUserIndex);
+                    Toast.makeText(SpojniceActivity.this, "currentPlayingUser " + currentPlayingUser, Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
         playersFragment = PlayersFragment.newInstance(31);
         playersFragment.setGameType("Spojnice");
@@ -163,19 +181,6 @@ public class SpojniceActivity extends AppCompatActivity {
             }
         });
 
-        socket.on("message_received", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                if (args.length > 0) {
-                    JSONObject message = (JSONObject) args[0];
-                    try {
-                        handleSocketMessage(message);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
         socket.on("reset_received", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -189,7 +194,6 @@ public class SpojniceActivity extends AppCompatActivity {
                 }
             }
         });
-
         socket.on("buttonStateChanged", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -226,7 +230,6 @@ public class SpojniceActivity extends AppCompatActivity {
                 });
             }
         });
-
 
         buttonHandler = new Handler();
         buttonRunnable = new Runnable() {
@@ -388,10 +391,12 @@ public class SpojniceActivity extends AppCompatActivity {
             secondClickedButton.setClickable(false);
 
             if (currentUser != null) {
-                sendSocketMessage(firstClickedButton, "#00FF00", false);
-                sendSocketMessage(secondClickedButton, "#00FF00", false);
+                resetButtonsSocket(firstClickedButton, "#00FF00");
+                resetButtonsSocket(secondClickedButton, "#00FF00");
+                updatePoints(currentPlayingUserIndex + 1, 2);
+              } else {
+                updatePoints(2);
             }
-            updatePoints(2);
             checkIfGameIsFinished();
 
         } else {
@@ -401,8 +406,8 @@ public class SpojniceActivity extends AppCompatActivity {
             firstClickedButton.setClickable(false);
 
             if (currentUser != null) {
-                sendSocketMessage(firstClickedButton, "#FF0000", false);
-                sendSocketMessage(secondClickedButton, "#FF0000", true);
+                resetButtonsSocket(firstClickedButton, "#FF0000");
+                resetButtonsSocket(secondClickedButton, "#FF0000");
             }
             checkIfGameIsFinished();
         }
@@ -427,13 +432,18 @@ public class SpojniceActivity extends AppCompatActivity {
         });
     }
 
-    private void updatePoints(int points) {
+    private void updatePoints(int currentPlayerNumber, int points) {
         if (currentUser != null) {
-            playersFragment.updatePlayer1Points(points);
-            playersFragment.updatePlayer2Points(points);
+          if (currentPlayerNumber > 0) {
+                playersFragment.updatePlayerPoints(currentPlayerNumber, points);
+            }
         }
         playersFragment.updateGuestPoints(points);
     }
+    private void updatePoints(int points) {
+        playersFragment.updateGuestPoints(points);
+    }
+
     private void switchPlayersTurn() {
         isPlayer1Turn = !isPlayer1Turn;
         roundsPlayed++;
@@ -462,6 +472,12 @@ public class SpojniceActivity extends AppCompatActivity {
             if (roundsPlayed == TOTAL_ROUNDS) {
                endGame();
             } else {
+                if (playingUsernamesArray.length() > 0) {
+                    currentPlayingUserIndex = (currentPlayingUserIndex + 1) % playingUsernamesArray.length();
+                    currentPlayingUser = playingUsernamesArray.getString(currentPlayingUserIndex);
+                    Log.d("currentPlayingUser", "currentPlayingUser: " + currentPlayingUser + ", currentPlayingUserIndex: " + currentPlayingUserIndex);
+                    Toast.makeText(SpojniceActivity.this, "currentPlayingUser " + currentPlayingUser, Toast.LENGTH_SHORT).show();
+                }
                 retrieveSteps();
                 resetButtons();
                 startTimer();
@@ -522,6 +538,15 @@ public class SpojniceActivity extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
                     } else {
+                        if (playingUsernamesArray.length() > 0) {
+                            currentPlayingUserIndex = 1;
+                            try {
+                                currentPlayingUser = playingUsernamesArray.getString(1);
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+                            Toast.makeText(SpojniceActivity.this, "currentPlayingUser " + currentPlayingUser, Toast.LENGTH_SHORT).show();
+                        }
                         retrieveSteps();
                         try {
                             resetButtons();
@@ -559,6 +584,13 @@ public class SpojniceActivity extends AppCompatActivity {
             resetButtonsSocket(button, "#FFFFFF");
         }
     }
+    private void disableAllButtons() throws JSONException {
+        for (int i = 0; i < buttons.size(); i++) {
+            Button button = buttons.get(i);
+            button.getTag(i);
+            button.setClickable(false);
+        }
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -593,25 +625,6 @@ public class SpojniceActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         socket.emit("colorChange", eventData);
-    }
-    void sendSocketMessage(Button button, String color, boolean clickable) throws JSONException {
-        JSONObject message = new JSONObject();
-        message.put("buttonId", button.getId());
-        message.put("color", color);
-        message.put("clickable", clickable);
-        socket.emit("message_received", message);
-    }
-    void handleSocketMessage(JSONObject message) throws JSONException {
-        int buttonId = message.getInt("buttonId");
-        String color = message.getString("color");
-        boolean clickable = message.getBoolean("clickable");
-
-        Button button = findViewById(buttonId);
-
-        runOnUiThread(() -> {
-            button.setTextColor(Color.parseColor(color));
-            button.setClickable(clickable);
-        });
     }
     void resetButtonsSocket(Button button, String color) throws JSONException {
         JSONObject reset = new JSONObject();

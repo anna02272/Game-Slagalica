@@ -188,7 +188,6 @@ public class PlayersFragment extends Fragment {
         }
     };
 
-
     public void updateTimerDuration(int newDuration) {
         if (countDownTimer != null) {
             countDownTimer.cancel();
@@ -360,46 +359,26 @@ public class PlayersFragment extends Fragment {
             }
         });
     }
-    void updatePlayer1Points(int pointsToAdd) {
-        DatabaseReference player1PointsRef = firebaseDatabase.getReference("points/player1_points");
 
-        player1PointsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+    void updatePlayerPoints(int playerNumber, int pointsToAdd) {
+        DatabaseReference playerPointsRef = firebaseDatabase.getReference("points/player" + playerNumber + "_points");
+
+        playerPointsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     int currentPoints = dataSnapshot.getValue(Integer.class);
                     int updatedPoints = currentPoints + pointsToAdd;
-                    player1PointsRef.setValue(updatedPoints);
+                    playerPointsRef.setValue(updatedPoints);
                 } else {
-                    player1PointsRef.setValue(pointsToAdd);
+                    playerPointsRef.setValue(pointsToAdd);
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                // Handle error
             }
         });
     }
-    void updatePlayer2Points(int pointsToAdd) {
-        DatabaseReference player2PointsRef = firebaseDatabase.getReference("points/player2_points");
-
-        player2PointsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    int currentPoints = dataSnapshot.getValue(Integer.class);
-                    int updatedPoints = currentPoints + pointsToAdd;
-                    player2PointsRef.setValue(updatedPoints);
-                } else {
-                    player2PointsRef.setValue(pointsToAdd);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-    }
-
-
     }

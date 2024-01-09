@@ -14,6 +14,7 @@ const playingUsers = {};
 let userReadyCount = 0;
 let isGameStarting = false;
 const stepAndAnswerState = {};
+let playingUsernamesArray =  [];
 
 io.on('connection', (socket) => {
 //CONNECTION
@@ -28,7 +29,7 @@ io.on('connection', (socket) => {
          socket.on('userPlaying', (userInfo) => {
                 const { username } = userInfo;
                 playingUsers[socket.id] = { username: username, socket: socket };
-                const playingUsernamesArray = Object.values(playingUsers).map(user => user.username);
+                playingUsernamesArray = Object.values(playingUsers).map(user => user.username);
                 io.emit('updatePlayingUsers', playingUsernamesArray);
                 console.log("Playing Users:",playingUsernamesArray)
          });
@@ -40,7 +41,7 @@ io.on('connection', (socket) => {
                isGameStarting = true;
                 io.emit('gameStarting');
                  setTimeout(() => {
-                          io.emit('startActualGame');
+                           io.emit('startActualGame', { playingUsernamesArray: playingUsernamesArray });
                            userReadyCount = 0;
                            isGameStarting = false;
                    }, 4000);
@@ -70,10 +71,6 @@ io.on('connection', (socket) => {
             socket.on('colorChange', (eventData) => {
                    io.emit('colorChange', eventData);
                });
-
-             socket.on("message_received", (message) => {
-                 io.emit('message_received', message);
-             });
 
              socket.on("reset_received", (reset) => {
                 io.emit('reset_received', reset);
