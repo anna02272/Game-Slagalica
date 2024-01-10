@@ -16,6 +16,7 @@ let isGameStarting = false;
 let playingUsernamesArray =  [];
 let usernamesArray =  [];
 let socketsArray =  [];
+let roundIndex = 0;
 
 io.on('connection', (socket) => {
 //CONNECTION
@@ -85,6 +86,10 @@ io.on('connection', (socket) => {
                 io.emit('reset_received', reset);
              });
 
+            socket.on("message_received", (message) => {
+                 io.emit('message_received', message);
+             });
+
              socket.on('startNextGame', () => {
                     io.emit('startNextGame');
                 });
@@ -107,6 +112,15 @@ io.on('connection', (socket) => {
                 io.to(targetSocketId).emit('touchEnabled');
             });
 
+            socket.on('incrementRoundIndex', () => {
+                roundIndex++;
+                io.emit('updateRoundIndex', roundIndex);
+              });
+
+              socket.on('decrementRoundIndex', () => {
+                roundIndex--;
+                io.emit('updateRoundIndex', roundIndex);
+              });
 
 
 //DISCONNECT
