@@ -1,4 +1,4 @@
-package com.example.slagalica.games;
+package com.example.slagalica.game_helpers;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
