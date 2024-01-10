@@ -13,8 +13,9 @@ const connectedUsers = {};
 const playingUsers = {};
 let userReadyCount = 0;
 let isGameStarting = false;
-const stepAndAnswerState = {};
 let playingUsernamesArray =  [];
+let usernamesArray =  [];
+let socketsArray =  [];
 
 io.on('connection', (socket) => {
 //CONNECTION
@@ -22,7 +23,8 @@ io.on('connection', (socket) => {
      socket.on('userConnected', (userInfo) => {
             const { username } = userInfo;
             connectedUsers[socket.id] = { username: username, socket: socket };
-           const usernamesArray = Object.values(connectedUsers).map(user => user.username);
+            usernamesArray = Object.values(connectedUsers).map(user => user.username);
+            socketsArray = Object.values(connectedUsers).map(user => user.socket.id);
               io.emit('updateConnectedUsers', usernamesArray);
               console.log("Connected Users:",usernamesArray)
         });
@@ -30,7 +32,9 @@ io.on('connection', (socket) => {
                 const { username } = userInfo;
                 playingUsers[socket.id] = { username: username, socket: socket };
                 playingUsernamesArray = Object.values(playingUsers).map(user => user.username);
+                playingSocketsArray = Object.values(playingUsers).map(user => user.socket.id);
                 io.emit('updatePlayingUsers', playingUsernamesArray);
+                console.log("playingSocketsArray",playingSocketsArray)
                 console.log("Playing Users:",playingUsernamesArray)
          });
 
@@ -39,9 +43,14 @@ io.on('connection', (socket) => {
          userReadyCount++;
          if (userReadyCount === 2 && !isGameStarting) {
                isGameStarting = true;
+                playingUsernamesArray = [];
+                playingSocketsArray = [];
                 io.emit('gameStarting');
                  setTimeout(() => {
-                           io.emit('startActualGame', { playingUsernamesArray: playingUsernamesArray });
+                           io.emit('startActualGame', {
+                           playingUsernamesArray: usernamesArray,
+                           playingSocketsArray: socketsArray
+                           });
                            userReadyCount = 0;
                            isGameStarting = false;
                    }, 4000);
@@ -80,16 +89,31 @@ io.on('connection', (socket) => {
                     io.emit('startNextGame');
                 });
 
+             socket.on('continueGame', () => {
+                     io.emit('continueGame');
+            });
+
              socket.on('showToast', (message) => {
                io.emit('showToast', message);
              });
+
+            socket.on('disableTouch', (targetSocketId) => {
+                console.log(`Disabling touch for socket ID: ${targetSocketId}`);
+                io.to(targetSocketId).emit('touchDisabled');
+            });
+
+            socket.on('enableTouch', (targetSocketId) => {
+                console.log(`Enabling touch for socket ID: ${targetSocketId}`);
+                io.to(targetSocketId).emit('touchEnabled');
+            });
+
 
 
 //DISCONNECT
         socket.on('userDisconnected', (userInfo) => {
          const { username } = userInfo;
              delete connectedUsers[socket.id];
-            const usernamesArray = Object.values(connectedUsers).map(user => user.username);
+             usernamesArray = Object.values(connectedUsers).map(user => user.username);
                io.emit('updateConnectedUsers', usernamesArray);
                  console.log("Connected Users:",usernamesArray)
                  userReadyCount = 0;
@@ -98,9 +122,10 @@ io.on('connection', (socket) => {
            socket.on('playerDisconnected', (userInfo) => {
                  const { username } = userInfo;
                       delete playingUsers[socket.id];
-                    const playingUsernamesArray = Object.values(playingUsers).map(user => user.username);
+                     playingUsernamesArray = Object.values(playingUsers).map(user => user.username);
                           io.emit('updatePlayingUsers', playingUsernamesArray);
                           console.log("Playing Users:",playingUsernamesArray)
+                     playingSocketsArray = Object.values(playingUsers).map(user => user.socket.id);
                          userReadyCount = 0;
                          isGameStarting = false;
 
@@ -110,11 +135,12 @@ io.on('connection', (socket) => {
        delete connectedUsers[socket.id];
        delete playingUsers[socket.id];
 
-       const usernamesArray = Object.values(connectedUsers).map(user => user.username);
+        usernamesArray = Object.values(connectedUsers).map(user => user.username);
        io.emit('updateConnectedUsers', usernamesArray);
    	   console.log("Connected Users:",usernamesArray)
 
-   	    const playingUsernamesArray = Object.values(playingUsers).map(user => user.username);
+   	     playingUsernamesArray = Object.values(playingUsers).map(user => user.username);
+   	      playingSocketsArray = Object.values(playingUsers).map(user => user.socket.id);
         io.emit('updatePlayingUsers', playingUsernamesArray);
         console.log("Playing Users:",playingUsernamesArray)
 

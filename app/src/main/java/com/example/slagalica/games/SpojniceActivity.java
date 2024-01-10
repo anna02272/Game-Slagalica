@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.slagalica.R;
+import com.example.slagalica.game_helpers.DisableTouchActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -55,7 +56,7 @@ public class SpojniceActivity extends AppCompatActivity {
     private Button secondClickedButton = null;
     private FirebaseUser currentUser;
     private boolean isPlayer1Turn = true;
-    private int roundsPlayed = 0;
+    private int roundsPlayed = 1;
     private final int TOTAL_ROUNDS = 2;
     private Button stepButton;
     private Button answerButton;
@@ -63,12 +64,15 @@ public class SpojniceActivity extends AppCompatActivity {
     List<Integer> stepIndices = new ArrayList<>();
     List<Integer> answerIndices = new ArrayList<>();
     private int currentPlayingUserIndex;
+    private int currentNotPlayingUserIndex;
+    private String currentPlayingUserSocketId;
+    private String currentNotPlayingUserSocketId;
     private  JSONArray playingUsernamesArray;
+    private  JSONArray playingSocketsArray;
     private  String currentPlayingUser;
-    private String player1Username;
-    private String player2Username;
-    private Map<String, Integer> userIdToPlayerNumberMap = new HashMap<>();
-    @Override
+
+    private DisableTouchActivity disableTouchActivity;
+   @Override
     public void onBackPressed() {
         return;
     }
@@ -78,18 +82,33 @@ public class SpojniceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity_spojnice);
 
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("playingUsernamesArray")) {
-            String playingUsernamesArrayString = intent.getStringExtra("playingUsernamesArray");
-            try {
-                playingUsernamesArray = new JSONArray(playingUsernamesArrayString);
-                if (playingUsernamesArray.length() > 0) {
-                    currentPlayingUserIndex = (currentPlayingUserIndex) % playingUsernamesArray.length();
-                    currentPlayingUser = playingUsernamesArray.getString(currentPlayingUserIndex);
-                    Toast.makeText(SpojniceActivity.this, "currentPlayingUser " + currentPlayingUser, Toast.LENGTH_SHORT).show();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
+        disableTouchActivity = new DisableTouchActivity(SpojniceActivity.this);
+
+        if (currentUser != null) {
+            Intent intent = getIntent();
+            if (intent != null) {
+                String playingUsernamesArrayString = intent.getStringExtra("playingUsernamesArray");
+                String playingSocketsArrayString = intent.getStringExtra("playingSocketsArray");
+
+                try {
+                    playingUsernamesArray = new JSONArray(playingUsernamesArrayString);
+                    playingSocketsArray = new JSONArray(playingSocketsArrayString);
+
+                    if (playingUsernamesArray.length() > 0) {
+                        currentPlayingUserIndex = (currentPlayingUserIndex) % playingUsernamesArray.length();
+                        currentPlayingUser = playingUsernamesArray.getString(currentPlayingUserIndex);
+                        Toast.makeText(SpojniceActivity.this, "currentPlayingUser " + currentPlayingUser, Toast.LENGTH_SHORT).show();
+                    }
+                    if (playingSocketsArray.length() > 0) {
+                        currentNotPlayingUserIndex = (currentNotPlayingUserIndex + 1) % playingSocketsArray.length();
+                        currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex );
+                        socket.emit("disableTouch", currentNotPlayingUserSocketId);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
         }
 
@@ -100,9 +119,6 @@ public class SpojniceActivity extends AppCompatActivity {
                 .beginTransaction()
                 .add(R.id.fragment_container, playersFragment)
                 .commit();
-
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        currentUser = auth.getCurrentUser();
 
         Button buttonNext = findViewById(R.id.button_next);
         EditText input = findViewById(R.id.input);
@@ -180,7 +196,6 @@ public class SpojniceActivity extends AppCompatActivity {
                 }
             }
         });
-
         socket.on("reset_received", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -230,6 +245,41 @@ public class SpojniceActivity extends AppCompatActivity {
                 });
             }
         });
+        socket.on("continueGame", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                runOnUiThread(() -> {
+                    try {
+                        continueGame();
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+        });
+        socket.on("touchDisabled", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        disableTouchActivity.disableTouch();
+                    }
+                });
+            }
+        });
+        socket.on("touchEnabled", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        disableTouchActivity.enableTouch();
+                    }
+                });
+            }
+        });
+
 
         buttonHandler = new Handler();
         buttonRunnable = new Runnable() {
@@ -239,7 +289,6 @@ public class SpojniceActivity extends AppCompatActivity {
         };
 
     }
-
     private void retrieveSteps() {
         firebaseDatabase.getReference("spojnice").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -459,10 +508,17 @@ public class SpojniceActivity extends AppCompatActivity {
             }
         }
         if (allButtonsClickable) {
-            if (currentUser == null){
+            if (currentUser == null) {
                 startNextGame();
-            }else {
-                socket.emit("startNextGame");
+            } else {
+//                for (int i = 0; i < 10; i++) {
+//                    if (buttons.get(i).getCurrentTextColor() == Color.parseColor("#00FF00")) {
+//                        //green = all answers are correct
+                        socket.emit("startNextGame");
+//                    } else {
+//                        socket.emit("continueGame");
+//                    }
+//                }
             }
         }
     }
@@ -475,11 +531,19 @@ public class SpojniceActivity extends AppCompatActivity {
                 if (playingUsernamesArray.length() > 0) {
                     currentPlayingUserIndex = (currentPlayingUserIndex + 1) % playingUsernamesArray.length();
                     currentPlayingUser = playingUsernamesArray.getString(currentPlayingUserIndex);
-                    Log.d("currentPlayingUser", "currentPlayingUser: " + currentPlayingUser + ", currentPlayingUserIndex: " + currentPlayingUserIndex);
-                    Toast.makeText(SpojniceActivity.this, "currentPlayingUser " + currentPlayingUser, Toast.LENGTH_SHORT).show();
+                   Toast.makeText(SpojniceActivity.this, "currentPlayingUser " + currentPlayingUser, Toast.LENGTH_SHORT).show();
                 }
-                retrieveSteps();
+                if (playingSocketsArray.length() > 0) {
+                    currentNotPlayingUserIndex = (currentNotPlayingUserIndex + 1) % playingSocketsArray.length();
+                    currentPlayingUserIndex = (currentPlayingUserIndex) % playingSocketsArray.length();
+                    currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex );
+                    currentPlayingUserSocketId = playingSocketsArray.getString(currentPlayingUserIndex);
+                    socket.emit("enableTouch", currentPlayingUserSocketId);
+                    socket.emit("disableTouch", currentNotPlayingUserSocketId);
+                }
                 resetButtons();
+                switchPlayersTurn();
+                retrieveSteps();
                 startTimer();
                 JSONObject timerData = new JSONObject();
                 try {
@@ -493,6 +557,31 @@ public class SpojniceActivity extends AppCompatActivity {
         }
         else {
             endGame();
+        }
+    }
+    private void continueGame() throws JSONException {
+            if (playingUsernamesArray.length() > 0) {
+                currentPlayingUserIndex = (currentPlayingUserIndex + 1) % playingUsernamesArray.length();
+                currentPlayingUser = playingUsernamesArray.getString(currentPlayingUserIndex);
+                Toast.makeText(SpojniceActivity.this, "currentPlayingUser " + currentPlayingUser, Toast.LENGTH_SHORT).show();
+            }
+
+            for (int i = 0; i < 10; i++) {
+            if (buttons.get(i).getCurrentTextColor() != Color.parseColor("#00FF00")) {
+                Button button = buttons.get(i);
+                button.setTextColor(Color.parseColor("#FFFFFF"));
+                button.setClickable(true);
+                resetButtonsSocket(button, "#FFFFFF");
+            }
+            startTimer();
+            JSONObject timerData = new JSONObject();
+            try {
+                timerData.put("duration", 30);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            socket.emit("startTimer", timerData);
+            showToastAndEmit("Drugi igrač dobija šansu da poveže nepovezane pojmove!");
         }
     }
 
@@ -512,7 +601,10 @@ public class SpojniceActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Intent intent = new Intent(SpojniceActivity.this, MojBrojActivity.class);
+                    Intent intent = new Intent(SpojniceActivity.this, KorakPoKorakActivity.class);
+                    if (currentUser != null) {
+                        intent.putExtra("playingUsernamesArray", playingUsernamesArray.toString());
+                    }
                     startActivity(intent);
                     finish();
                 }
@@ -520,9 +612,6 @@ public class SpojniceActivity extends AppCompatActivity {
     }
 
     private void startTimer() {
-        if (currentUser != null) {
-            switchPlayersTurn();
-        }
         CountDownTimer countDownTimer = new CountDownTimer(31000, 10000) {
             private Context context = SpojniceActivity.this.getApplicationContext();
             @Override
@@ -547,12 +636,25 @@ public class SpojniceActivity extends AppCompatActivity {
                             }
                             Toast.makeText(SpojniceActivity.this, "currentPlayingUser " + currentPlayingUser, Toast.LENGTH_SHORT).show();
                         }
+                        if (playingSocketsArray.length() > 0) {
+                            currentNotPlayingUserIndex = (currentNotPlayingUserIndex + 1) % playingSocketsArray.length();
+                            currentPlayingUserIndex = (currentPlayingUserIndex) % playingSocketsArray.length();
+                            try {
+                                currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex );
+                                currentPlayingUserSocketId = playingSocketsArray.getString(currentPlayingUserIndex);
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+                            socket.emit("enableTouch", currentPlayingUserSocketId);
+                            socket.emit("disableTouch", currentNotPlayingUserSocketId);
+                        }
                         retrieveSteps();
                         try {
                             resetButtons();
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
+                        switchPlayersTurn();
                         startTimer();
                         JSONObject timerData = new JSONObject();
                         try {
@@ -584,13 +686,7 @@ public class SpojniceActivity extends AppCompatActivity {
             resetButtonsSocket(button, "#FFFFFF");
         }
     }
-    private void disableAllButtons() throws JSONException {
-        for (int i = 0; i < buttons.size(); i++) {
-            Button button = buttons.get(i);
-            button.getTag(i);
-            button.setClickable(false);
-        }
-    }
+
     @Override
     protected void onResume() {
         super.onResume();

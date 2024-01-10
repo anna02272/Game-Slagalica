@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +22,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.slagalica.config.SocketHandler;
 import com.example.slagalica.games.KoZnaZnaActivity;
+import com.example.slagalica.games.KorakPoKorakActivity;
 import com.example.slagalica.games.SpojniceActivity;
 import com.example.slagalica.games.StartMultiplayerGameActivity;
 import com.example.slagalica.login_registration.RegistrationLoginActivity;
@@ -185,13 +187,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             throw new RuntimeException(e);
                         }
                         JSONArray playingUsernamesArray;
+                        JSONArray playingSocketsArray;
                         try {
                             playingUsernamesArray = data.getJSONArray("playingUsernamesArray");
+                            playingSocketsArray = data.getJSONArray("playingSocketsArray");
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
                         Intent intent = new Intent(MainActivity.this, SpojniceActivity.class);
                         intent.putExtra("playingUsernamesArray", playingUsernamesArray.toString());
+                        intent.putExtra("playingSocketsArray", playingSocketsArray.toString());
                         startActivity(intent);
 
 

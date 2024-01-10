@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.example.slagalica.MainActivity;
 import com.example.slagalica.R;
@@ -153,21 +154,22 @@ public class PlayersFragment extends Fragment {
             public void onTick(long millisUntilFinished) {
                 int time = (int) (millisUntilFinished / 1000);
                 getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        timeTextView.setText(String.valueOf(time));
-                    }
-                });
-            }
+                        @Override
+                        public void run() {
+                            timeTextView.setText(String.valueOf(time));
+                        }
+                    });
+                }
+
 
             @Override
             public void onFinish() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        timeTextView.setText("0");
-                    }
-                });
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            timeTextView.setText("0");
+                        }
+                    });
             }
         };
 
@@ -193,14 +195,13 @@ public class PlayersFragment extends Fragment {
             countDownTimer.cancel();
         }
         timerDuration = newDuration;
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                startTimer(timeTextView, timerDuration);
-            }
-        });
-
-    }
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    startTimer(timeTextView, timerDuration);
+                }
+            });
+        }
     private void retrieveConnectedUsers() {
 
         if (playingUsernamesArray.length() >= 2) {
