@@ -398,6 +398,9 @@ public class MojBrojActivity extends AppCompatActivity {
 
 
     private void startTimer() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
         countDownTimer = new CountDownTimer(61000, 10000) {
             private Context context = MojBrojActivity.this.getApplicationContext();
             @Override

@@ -71,7 +71,7 @@ public class SpojniceActivity extends AppCompatActivity {
     private  JSONArray playingSocketsArray;
     private  String currentPlayingUser;
     private int roundIndex;
-
+    private CountDownTimer countDownTimer;
     private DisableTouchActivity disableTouchActivity;
    @Override
     public void onBackPressed() {
@@ -87,38 +87,6 @@ public class SpojniceActivity extends AppCompatActivity {
         currentUser = auth.getCurrentUser();
         disableTouchActivity = new DisableTouchActivity(SpojniceActivity.this);
 
-        if (currentUser != null) {
-            Intent intent = getIntent();
-            if (intent != null) {
-                String playingUsernamesArrayString = intent.getStringExtra("playingUsernamesArray");
-                String playingSocketsArrayString = intent.getStringExtra("playingSocketsArray");
-
-                try {
-                    playingUsernamesArray = new JSONArray(playingUsernamesArrayString);
-                    playingSocketsArray = new JSONArray(playingSocketsArrayString);
-
-                    if (playingUsernamesArray.length() > 1) {
-                        currentPlayingUserIndex = (currentPlayingUserIndex) % playingUsernamesArray.length();
-                        currentPlayingUser = playingUsernamesArray.getString(currentPlayingUserIndex);
-                       showToastAndEmit("Playing User: " + currentPlayingUser);
-                    }
-                    if (playingSocketsArray.length() > 1) {
-                        currentNotPlayingUserIndex = (currentNotPlayingUserIndex + 1) % playingSocketsArray.length();
-                        currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex );
-                        socket.emit("disableTouch", currentNotPlayingUserSocketId);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-//        JSONObject timerData = new JSONObject();
-//        try {
-//            timerData.put("duration", 30);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        socket.emit("startTimer", timerData);
         playersFragment = PlayersFragment.newInstance(31);
         playersFragment.setGameType("Spojnice");
 
@@ -160,6 +128,37 @@ public class SpojniceActivity extends AppCompatActivity {
 
         retrieveSteps();
 
+        socket.on("updatePlayingUsers", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                if (args.length >= 2) {
+                    playingUsernamesArray = (JSONArray) args[0];
+                    playingSocketsArray = (JSONArray) args[1];
+                    try {
+                        retrieveConnectedUsers();
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+//                if (playingUsernamesArray.length() < 1) {
+//                    //User left the game
+//                    currentPlayingUserIndex = (currentPlayingUserIndex) % playingUsernamesArray.length();
+//                    try {
+//                        currentPlayingUser = playingUsernamesArray.getString(currentPlayingUserIndex);
+//                    } catch (JSONException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                    currentNotPlayingUserIndex = (currentNotPlayingUserIndex + 1) % playingSocketsArray.length();
+//                    try {
+//                        currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex );
+//                    } catch (JSONException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                    socket.emit("enableTouch", currentNotPlayingUserSocketId);
+//                currentUser = null;
+//                }
+            }
+        });
         socket.on("stepChanged", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -173,7 +172,6 @@ public class SpojniceActivity extends AppCompatActivity {
                 });
             }
         });
-
         socket.on("answerChanged", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -264,6 +262,32 @@ public class SpojniceActivity extends AppCompatActivity {
                 });
             }
         });
+        socket.on("endGame", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                runOnUiThread(() -> {
+                    try {
+                        endGame();
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+        });
+        socket.on("startActivity", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                runOnUiThread(() -> {
+                    Intent intent = new Intent(SpojniceActivity.this, KorakPoKorakActivity.class);
+                    if (currentUser != null) {
+                        intent.putExtra("playingUsernamesArray", playingUsernamesArray.toString());
+                        intent.putExtra("playingSocketsArray", playingSocketsArray.toString());
+                    }
+                    startActivity(intent);
+                    finish();
+                });
+            }
+        });
         socket.on("touchDisabled", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -286,17 +310,6 @@ public class SpojniceActivity extends AppCompatActivity {
                 });
             }
         });
-//        socket.on("syncTimer", new Emitter.Listener() {
-//            @Override
-//            public void call(Object... args) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        startTimer();
-//                    }
-//                });
-//            }
-//        });
         socket.on("message_received", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -310,13 +323,53 @@ public class SpojniceActivity extends AppCompatActivity {
                 }
             }
         });
-
         socket.on("updateRoundIndex", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 roundIndex = (int) args[0];
             }
         });
+        socket.on("timerStarted", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (countDownTimer != null) {
+                            countDownTimer.cancel();
+                        }
+                            countDownTimer = new CountDownTimer(31000, 10000) {
+                                private Context context = SpojniceActivity.this.getApplicationContext();
+                                @Override
+                                public void onTick(long millisUntilFinished) {
+                                }
+                                @Override
+                                public void onFinish() {
+                                    if (currentUser != null) {
+                                            if (roundIndex == 1) {
+                                                socket.emit("startNextGame");
+                                                socket.emit("decrementRoundIndex");
+                                            } else {
+                                                socket.emit("continueGame");
+                                                socket.emit("incrementRoundIndex");
+                                            }
+                                    } else {
+                                        try {
+                                            endGame();
+                                        } catch (JSONException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    }
+
+                                }
+                            };
+
+                            countDownTimer.start();
+                    }
+                });
+            }
+        });
+
         buttonHandler = new Handler();
         buttonRunnable = new Runnable() {
             @Override
@@ -324,6 +377,33 @@ public class SpojniceActivity extends AppCompatActivity {
             }
         };
 
+    }
+    private void retrieveConnectedUsers() throws JSONException {
+        if (playingUsernamesArray.length() >= 2) {
+            currentPlayingUserIndex = (currentPlayingUserIndex) % playingUsernamesArray.length();
+            currentPlayingUser = playingUsernamesArray.getString(currentPlayingUserIndex);
+        }
+        if (playingSocketsArray.length() >= 2) {
+            currentNotPlayingUserIndex = (currentNotPlayingUserIndex + 1) % playingSocketsArray.length();
+            currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex );
+             socket.emit("disableTouch", currentNotPlayingUserSocketId);
+            socket.emit("timerStart", currentNotPlayingUserSocketId);
+            JSONObject timerData = new JSONObject();
+            try {
+                timerData.put("duration", 30);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            socket.emit("startTimer", timerData);
+        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (currentPlayingUser != null) {
+                    showToastAndEmit("Playing User: " + currentPlayingUser);
+                }
+            }
+        });
     }
     private void retrieveSteps() {
         firebaseDatabase.getReference("spojnice").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -410,7 +490,6 @@ public class SpojniceActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Handle error
             }
         });
     }
@@ -480,7 +559,12 @@ public class SpojniceActivity extends AppCompatActivity {
                 resetButtonsSocket(secondClickedButton, "#00FF00");
                 updatePoints(currentPlayingUserIndex + 1, 2);
               } else {
-                updatePoints(2);
+//                if (currentPlayingUserIndex == 0){
+//                    Log.d("currentPlayingUserIndex", "currentPlayingUserIndex: " + currentPlayingUserIndex);
+//                    updatePoints(currentPlayingUserIndex + 1, 2);
+//                } else {
+                    updatePoints(2);
+//                }
             }
             checkIfGameIsFinished();
 
@@ -523,7 +607,10 @@ public class SpojniceActivity extends AppCompatActivity {
                 playersFragment.updatePlayerPoints(currentPlayerNumber, points);
             }
         }
-        playersFragment.updateGuestPoints(points);
+//        if (currentPlayerNumber >= 0) {
+//            Log.d("currentPlayingUserIndex", "currentPlayerNumber: " + currentPlayerNumber +" points: " + points);
+//            playersFragment.updatePlayerPoints(currentPlayerNumber, points);
+//        }
     }
     private void updatePoints(int points) {
         playersFragment.updateGuestPoints(points);
@@ -532,7 +619,6 @@ public class SpojniceActivity extends AppCompatActivity {
     private void switchPlayersTurn() {
         isPlayer1Turn = !isPlayer1Turn;
         roundsPlayed++;
-//        Toast.makeText(SpojniceActivity.this, "Runda " + roundsPlayed, Toast.LENGTH_SHORT).show();
     }
 
     private void checkIfGameIsFinished() throws JSONException {
@@ -551,7 +637,7 @@ public class SpojniceActivity extends AppCompatActivity {
         }
         if (allButtonsClickable) {
             if (currentUser == null) {
-                startNextGame();
+                endGame();
             } else {
                 if (allButtonsAreCorrect) {
                     // Green: all answers are correct
@@ -571,7 +657,7 @@ public class SpojniceActivity extends AppCompatActivity {
     private void startNextGame() throws JSONException {
         if (currentUser != null) {
             if (roundsPlayed == TOTAL_ROUNDS) {
-               endGame();
+                socket.emit("endGame");
             } else {
                 if (playingUsernamesArray.length() > 0) {
                     currentPlayingUserIndex = (currentPlayingUserIndex ) % playingUsernamesArray.length();
@@ -586,10 +672,9 @@ public class SpojniceActivity extends AppCompatActivity {
                     socket.emit("enableTouch", currentPlayingUserSocketId);
                     socket.emit("disableTouch", currentNotPlayingUserSocketId);
                 }
-                resetButtons();
+
                 switchPlayersTurn();
-                retrieveSteps();
-                startTimer();
+                socket.emit("timerStart", currentPlayingUserSocketId);
                 JSONObject timerData = new JSONObject();
                 try {
                     timerData.put("duration", 30);
@@ -598,6 +683,8 @@ public class SpojniceActivity extends AppCompatActivity {
                 }
                 socket.emit("startTimer", timerData);
                 showToastAndEmit("Runda 1 je gotova! Pocinje nova runda.");
+                resetButtons();
+                retrieveSteps();
             }
         }
         else {
@@ -605,7 +692,6 @@ public class SpojniceActivity extends AppCompatActivity {
         }
     }
     private void continueGame() throws JSONException {
-        Log.d("roundIndex" , "roundIndex: "+ roundIndex);
         if (playingUsernamesArray.length() > 0) {
             currentPlayingUserIndex = (currentPlayingUserIndex + 1) % playingUsernamesArray.length();
             currentPlayingUser = playingUsernamesArray.getString(currentPlayingUserIndex);
@@ -634,7 +720,7 @@ public class SpojniceActivity extends AppCompatActivity {
                     }
                 }
             }
-            startTimer();
+        socket.emit("timerStart", currentPlayingUserSocketId);
             JSONObject timerData = new JSONObject();
             try {
                 timerData.put("duration", 30);
@@ -661,82 +747,45 @@ public class SpojniceActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    if (currentUser != null) {
+                        socket.emit("startActivity");
+                    } else {
                     Intent intent = new Intent(SpojniceActivity.this, KorakPoKorakActivity.class);
                     if (currentUser != null) {
                         intent.putExtra("playingUsernamesArray", playingUsernamesArray.toString());
+                        intent.putExtra("playingSocketsArray", playingSocketsArray.toString());
                     }
                     startActivity(intent);
                     finish();
+                    }
                 }
             }, 5000);
     }
 
     private void startTimer() {
-        CountDownTimer countDownTimer = new CountDownTimer(31000, 10000) {
-            private Context context = SpojniceActivity.this.getApplicationContext();
-            @Override
-            public void onTick(long millisUntilFinished) {
-            }
-            @Override
-            public void onFinish() {
-                if (currentUser != null) {
-                    if (roundsPlayed == TOTAL_ROUNDS) {
-                        try {
-                            endGame();
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
-                    } else {
-                        if (playingUsernamesArray.length() > 0) {
-                            currentPlayingUserIndex = 1;
-                            try {
-                                currentPlayingUser = playingUsernamesArray.getString(1);
-                            } catch (JSONException e) {
-                                throw new RuntimeException(e);
-                            }
-                            showToastAndEmit("Playing User: " + currentPlayingUser);
-                              }
-                        if (playingSocketsArray.length() > 0) {
-                            currentNotPlayingUserIndex = (currentNotPlayingUserIndex + 1) % playingSocketsArray.length();
-                            currentPlayingUserIndex = (currentPlayingUserIndex) % playingSocketsArray.length();
-                            try {
-                                currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex );
-                                currentPlayingUserSocketId = playingSocketsArray.getString(currentPlayingUserIndex);
-                            } catch (JSONException e) {
-                                throw new RuntimeException(e);
-                            }
-                            socket.emit("enableTouch", currentPlayingUserSocketId);
-                            socket.emit("disableTouch", currentNotPlayingUserSocketId);
-                        }
-                        retrieveSteps();
-                        try {
-                            resetButtons();
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
-                        switchPlayersTurn();
-                        startTimer();
-                        JSONObject timerData = new JSONObject();
-                        try {
-                            timerData.put("duration", 30);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        socket.emit("startTimer", timerData);
-                        showToastAndEmit("Runda 1 je gotova! Pocinje nova runda.");
-                    }
-                } else {
-                    try {
-                        endGame();
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+       if (currentUser == null) {
+           if (countDownTimer != null) {
+           countDownTimer.cancel();
+       }
+           countDownTimer = new CountDownTimer(31000, 10000) {
+               private Context context = SpojniceActivity.this.getApplicationContext();
 
-            }
-        };
+               @Override
+               public void onTick(long millisUntilFinished) {
+               }
 
-        countDownTimer.start();
+               @Override
+               public void onFinish() {
+                   try {
+                       endGame();
+                   } catch (JSONException e) {
+                       throw new RuntimeException(e);
+                   }
+               }
+           };
+
+           countDownTimer.start();
+       }
     }
     private void resetButtons() throws JSONException {
         for (int i = 0; i < buttons.size(); i++) {
@@ -750,20 +799,11 @@ public class SpojniceActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        if (currentUser == null)
-//        {
-            startTimer();
-//        } else {
-//            JSONObject timerData = new JSONObject();
-//            try {
-//                timerData.put("duration", 30);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            socket.emit("startTimer", timerData);
-
-//        }
-
+        if (currentUser == null) {
+           startTimer();
+        } else {
+            socket.emit("timerStart", currentPlayingUserSocketId);
+        }
 
         buttonHandler.postDelayed(buttonRunnable, 10000);
     }

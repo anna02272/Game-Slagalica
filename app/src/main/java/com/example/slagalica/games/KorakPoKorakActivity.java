@@ -257,6 +257,9 @@ public class KorakPoKorakActivity extends AppCompatActivity {
     }
 
     private void startTimer() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
         countDownTimer = new CountDownTimer(71000, 10000) {
             private Context context = KorakPoKorakActivity.this.getApplicationContext();
             @Override

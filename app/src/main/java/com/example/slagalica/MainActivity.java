@@ -180,23 +180,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     @Override
                     public void call(Object... args) {
-                        JSONObject data = (JSONObject) args[0];
                         try {
                             socket.emit("userDisconnected", new JSONObject().put("username", username));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
-                        JSONArray playingUsernamesArray;
-                        JSONArray playingSocketsArray;
-                        try {
-                            playingUsernamesArray = data.getJSONArray("playingUsernamesArray");
-                            playingSocketsArray = data.getJSONArray("playingSocketsArray");
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
                         Intent intent = new Intent(MainActivity.this, SpojniceActivity.class);
-                        intent.putExtra("playingUsernamesArray", playingUsernamesArray.toString());
-                        intent.putExtra("playingSocketsArray", playingSocketsArray.toString());
                         startActivity(intent);
 
 
