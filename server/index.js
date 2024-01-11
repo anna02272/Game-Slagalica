@@ -67,6 +67,45 @@ io.on('connection', (socket) => {
                   io.to(targetSocketId).emit('timerStarted');
          });
 
+//GAMES
+            socket.on('startNextGame', () => {
+                    io.emit('startNextGame');
+                });
+
+             socket.on('continueGame', () => {
+                     io.emit('continueGame');
+            });
+              socket.on('endGame', () => {
+                   io.emit('endGame');
+              });
+               socket.on('startActivity', () => {
+                    io.emit('startActivity');
+               });
+
+             socket.on('showToast', (message) => {
+               io.emit('showToast', message);
+             });
+
+             socket.on('disableTouch', (targetSocketId) => {
+             console.log("disabled", targetSocketId)
+                io.to(targetSocketId).emit('touchDisabled');
+            });
+
+            socket.on('enableTouch', (targetSocketId) => {
+                io.to(targetSocketId).emit('touchEnabled');
+            });
+
+            socket.on('incrementRoundIndex', () => {
+                roundIndex++;
+                console.log("inc ", roundIndex)
+                io.emit('updateRoundIndex', roundIndex);
+              });
+
+              socket.on('decrementRoundIndex', () => {
+                roundIndex--;
+                console.log("dec ", roundIndex)
+                io.emit('updateRoundIndex', roundIndex);
+              });
 
 //SPOJNICE
            socket.on('stepChanged', (stepIndex, step) => {
@@ -94,44 +133,20 @@ io.on('connection', (socket) => {
                  io.emit('message_received', message);
              });
 
-             socket.on('startNextGame', () => {
-                    io.emit('startNextGame');
-                });
-
-             socket.on('continueGame', () => {
-                     io.emit('continueGame');
-            });
-              socket.on('endGame', () => {
-                   io.emit('endGame');
-              });
-               socket.on('startActivity', () => {
-                    io.emit('startActivity');
+//KORAK PO KORAK
+            socket.on('stepChange', ( buttonId, step, answer) => {
+                   io.emit('stepChange', buttonId, step, answer);
                });
 
-             socket.on('showToast', (message) => {
-               io.emit('showToast', message);
+            socket.on("answer", (answer) => {
+                  io.emit("answer", answer);
+           });
+            socket.on('timerText', (buttonIndex, text) => {
+                   io.emit('timerText', buttonIndex, text);
+               });
+             socket.on('buttonText', (buttonId, enabled, step) => {
+                    io.emit('buttonText', buttonId, enabled, step);
              });
-
-            socket.on('disableTouch', (targetSocketId) => {
-                io.to(targetSocketId).emit('touchDisabled');
-            });
-
-            socket.on('enableTouch', (targetSocketId) => {
-                io.to(targetSocketId).emit('touchEnabled');
-            });
-
-            socket.on('incrementRoundIndex', () => {
-                roundIndex++;
-                console.log("inc ", roundIndex)
-                io.emit('updateRoundIndex', roundIndex);
-              });
-
-              socket.on('decrementRoundIndex', () => {
-                roundIndex--;
-                console.log("dec ", roundIndex)
-                io.emit('updateRoundIndex', roundIndex);
-              });
-
 
 //DISCONNECT
         socket.on('userDisconnected', (userInfo) => {

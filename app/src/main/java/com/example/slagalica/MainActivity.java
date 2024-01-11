@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
-                        Intent intent = new Intent(MainActivity.this, SpojniceActivity.class);
+                        Intent intent = new Intent(MainActivity.this, KorakPoKorakActivity.class);
                         startActivity(intent);
 
 

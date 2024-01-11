@@ -279,10 +279,8 @@ public class SpojniceActivity extends AppCompatActivity {
             public void call(Object... args) {
                 runOnUiThread(() -> {
                     Intent intent = new Intent(SpojniceActivity.this, KorakPoKorakActivity.class);
-                    if (currentUser != null) {
                         intent.putExtra("playingUsernamesArray", playingUsernamesArray.toString());
                         intent.putExtra("playingSocketsArray", playingSocketsArray.toString());
-                    }
                     startActivity(intent);
                     finish();
                 });
@@ -672,7 +670,7 @@ public class SpojniceActivity extends AppCompatActivity {
                     socket.emit("enableTouch", currentPlayingUserSocketId);
                     socket.emit("disableTouch", currentNotPlayingUserSocketId);
                 }
-
+                resetButtons();
                 switchPlayersTurn();
                 socket.emit("timerStart", currentPlayingUserSocketId);
                 JSONObject timerData = new JSONObject();
@@ -683,7 +681,6 @@ public class SpojniceActivity extends AppCompatActivity {
                 }
                 socket.emit("startTimer", timerData);
                 showToastAndEmit("Runda 1 je gotova! Pocinje nova runda.");
-                resetButtons();
                 retrieveSteps();
             }
         }
@@ -751,10 +748,6 @@ public class SpojniceActivity extends AppCompatActivity {
                         socket.emit("startActivity");
                     } else {
                     Intent intent = new Intent(SpojniceActivity.this, KorakPoKorakActivity.class);
-                    if (currentUser != null) {
-                        intent.putExtra("playingUsernamesArray", playingUsernamesArray.toString());
-                        intent.putExtra("playingSocketsArray", playingSocketsArray.toString());
-                    }
                     startActivity(intent);
                     finish();
                     }
@@ -790,7 +783,6 @@ public class SpojniceActivity extends AppCompatActivity {
     private void resetButtons() throws JSONException {
         for (int i = 0; i < buttons.size(); i++) {
             Button button = buttons.get(i);
-            button.getTag(i);
             button.setTextColor(Color.parseColor("#FFFFFF"));
             resetButtonsSocket(button, "#FFFFFF");
         }
