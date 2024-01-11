@@ -126,15 +126,17 @@ public class PlayersFragment extends Fragment {
                 public void call(Object... args) {
                     playingUsernamesArray = (JSONArray) args[0];
                     retrieveConnectedUsers();
-                    requireActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (player1Username != null && player2Username != null) {
-                                player1UsernameTextView.setText(player1Username);
-                                player2UsernameTextView.setText(player2Username);
+                    if (requireActivity() != null) {
+                        requireActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (player1Username != null && player2Username != null) {
+                                    player1UsernameTextView.setText(player1Username);
+                                    player2UsernameTextView.setText(player2Username);
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             });
         }
@@ -153,23 +155,26 @@ public class PlayersFragment extends Fragment {
             @Override
             public void onTick(long millisUntilFinished) {
                 int time = (int) (millisUntilFinished / 1000);
-                getActivity().runOnUiThread(new Runnable() {
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             timeTextView.setText(String.valueOf(time));
                         }
                     });
                 }
-
+            }
 
             @Override
             public void onFinish() {
+                if (getActivity() != null) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             timeTextView.setText("0");
                         }
                     });
+                }
             }
         };
 
@@ -195,12 +200,14 @@ public class PlayersFragment extends Fragment {
             countDownTimer.cancel();
         }
         timerDuration = newDuration;
+        if (getActivity() != null) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     startTimer(timeTextView, timerDuration);
                 }
             });
+        }
         }
     private void retrieveConnectedUsers() {
 
