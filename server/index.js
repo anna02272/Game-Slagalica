@@ -17,6 +17,8 @@ let playingUsernamesArray =  [];
 let usernamesArray =  [];
 let socketsArray =  [];
 let roundIndex = 0;
+let answerIndex = 0;
+let isContinued;
 
 io.on('connection', (socket) => {
 //CONNECTION
@@ -67,6 +69,10 @@ io.on('connection', (socket) => {
                   io.to(targetSocketId).emit('timerStarted');
          });
 
+          socket.on('timerStart10', (targetSocketId) => {
+                           io.to(targetSocketId).emit('timerStarted10');
+                  });
+
 //GAMES
             socket.on('startNextGame', () => {
                     io.emit('startNextGame');
@@ -87,7 +93,6 @@ io.on('connection', (socket) => {
              });
 
              socket.on('disableTouch', (targetSocketId) => {
-             console.log("disabled", targetSocketId)
                 io.to(targetSocketId).emit('touchDisabled');
             });
 
@@ -97,13 +102,11 @@ io.on('connection', (socket) => {
 
             socket.on('incrementRoundIndex', () => {
                 roundIndex++;
-                console.log("inc ", roundIndex)
                 io.emit('updateRoundIndex', roundIndex);
               });
 
               socket.on('decrementRoundIndex', () => {
                 roundIndex--;
-                console.log("dec ", roundIndex)
                 io.emit('updateRoundIndex', roundIndex);
               });
 
@@ -147,6 +150,31 @@ io.on('connection', (socket) => {
              socket.on('buttonText', (buttonId, enabled, step) => {
                     io.emit('buttonText', buttonId, enabled, step);
              });
+              socket.on('buttonClickable', (buttonId, clickable, step) => {
+                  io.emit('buttonClickable', buttonId, clickable, step);
+             });
+
+            socket.on('incrementAnswerIndex', () => {
+                answerIndex++;
+                console.log(answerIndex);
+                io.emit('updateAnswerIndex', answerIndex);
+              });
+
+              socket.on('decrementAnswerIndex', () => {
+                answerIndex--;
+                console.log(answerIndex);
+                io.emit('updateAnswerIndex', answerIndex);
+              });
+
+              socket.on('continuedTrue', () => {
+                isContinued = true;
+                io.emit('updateContinued', isContinued);
+              });
+
+              socket.on('continuedFalse', () => {
+                isContinued = false;
+                io.emit('updateContinued', isContinued);
+              });
 
 //DISCONNECT
         socket.on('userDisconnected', (userInfo) => {
@@ -158,6 +186,7 @@ io.on('connection', (socket) => {
                  userReadyCount = 0;
                  isGameStarting = false;
                  roundIndex = 0;
+                 answerIndex = 0;
         });
            socket.on('playerDisconnected', (userInfo) => {
                  const { username } = userInfo;
@@ -170,6 +199,7 @@ io.on('connection', (socket) => {
                          userReadyCount = 0;
                          isGameStarting = false;
                          roundIndex = 0;
+                         answerIndex = 0;
 
                 });
 
@@ -189,6 +219,7 @@ io.on('connection', (socket) => {
    	   userReadyCount = 0;
        isGameStarting = false;
        roundIndex = 0;
+       answerIndex = 0;
    	});
 
 

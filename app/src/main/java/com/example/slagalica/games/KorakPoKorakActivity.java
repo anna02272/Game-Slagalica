@@ -45,13 +45,14 @@ public class KorakPoKorakActivity extends AppCompatActivity {
     private Map<Button, String> buttonSteps;
     private Random random;
     private CountDownTimer countDownTimer;
-    private int currentCount = 7;
+    private int currentCount;
     private String answer;
     private EditText input;
     private Handler buttonHandler;
     private Runnable buttonRunnable;
     private int currentEnabledButtonIndex = 0;
     private int currentButtonIndex = 1;
+    private int currentStep ;
     private Button confirmButton;
     private PlayersFragment playersFragment;
     private FirebaseUser currentUser;
@@ -65,8 +66,10 @@ public class KorakPoKorakActivity extends AppCompatActivity {
     private String currentNotPlayingUserSocketId;
     private int roundsPlayed = 1;
     private int roundIndex;
+    private int answerIndex;
     private final int TOTAL_ROUNDS = 2;
     private int buttonId;
+    private boolean isContinued;
     @Override
     public void onBackPressed() {
         return;
@@ -179,6 +182,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        currentCount = 7;
                         if (countDownTimer != null) {
                             countDownTimer.cancel();
                         }
@@ -204,15 +208,42 @@ public class KorakPoKorakActivity extends AppCompatActivity {
 
                             @Override
                             public void onFinish() {
-                                socket.emit("answer", answer);
-                                showToastAndEmit("Vase vreme je isteklo, sledi igra MOJ BROJ!");
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        socket.emit("startActivity");
-                                    }
-                                }, 5000);
+                                socket.emit("continueGame");
+                            }
+                        };
 
+                        countDownTimer.start();
+                    }
+                });
+            }
+        });
+        socket.on("timerStarted10", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (countDownTimer != null) {
+                            countDownTimer.cancel();
+                        }
+                        countDownTimer = new CountDownTimer(16000, 10000) {
+                            private Context context = KorakPoKorakActivity.this.getApplicationContext();
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                            }
+                            @Override
+                            public void onFinish() {
+                                if (answerIndex == 1) {
+                                    socket.emit("decrementAnswerIndex");
+                                    socket.emit("endGame");
+                                    socket.emit("continuedFalse");
+                                } else {
+                                    socket.emit("incrementAnswerIndex");
+                                    socket.emit("incrementRoundIndex");
+                                    socket.emit("startNextGame");
+                                    socket.emit("continuedFalse");
+
+                                }
                             }
                         };
 
@@ -228,9 +259,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 String step = (String) args[1];
                 String stepAnswer = (String) args[2];
                 answer = stepAnswer;
-                Log.d("Answeer", "stepAnswer" + stepAnswer);
-                Log.d("Answeer", "answer" + answer);
-                Button stepButton = findViewById(buttonId);
+                  Button stepButton = findViewById(buttonId);
                 runOnUiThread(() -> {
                     buttonSteps.put(stepButton, step);
                 });
@@ -271,6 +300,23 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                     if (button != null) {
                         button.setText(step);
                         button.setEnabled(enabled);
+                    }
+                });
+
+            }
+        });
+        socket.on("buttonClickable", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                int buttonId = (int) args[0];
+                boolean clickable = (boolean) args[1];
+                String step = (String) args[2];
+
+                runOnUiThread(() -> {
+                    Button button = findViewById(buttonId);
+                    if (button != null) {
+                        button.setText(step);
+                        button.setClickable(clickable);
                     }
                 });
 
@@ -319,6 +365,25 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 });
             }
         });
+        socket.on("updateRoundIndex", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                roundIndex = (int) args[0];
+            }
+        });
+        socket.on("updateAnswerIndex", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                answerIndex = (int) args[0];
+            }
+        });
+        socket.on("updateContinued", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                isContinued = (boolean) args[0];
+            }
+        });
+
         buttonHandler = new Handler();
         buttonRunnable = new Runnable() {
             @Override
@@ -326,7 +391,6 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 Button button = buttons.get(currentButtonIndex);
                 button.setEnabled(true);
                 currentButtonIndex++;
-
                 Button button1 = buttons.get(currentEnabledButtonIndex);
                 String step = buttonSteps.get(button1);
                 if (step != null) {
@@ -340,12 +404,6 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 }
             }
         };
-        socket.on("updateRoundIndex", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                roundIndex = (int) args[0];
-            }
-        });
 
     }
     private void retrieveConnectedUsers() throws JSONException {
@@ -438,7 +496,8 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         });
     }
     private int getCurrentStep() {
-        int currentStep = currentButtonIndex ;
+         currentStep = currentButtonIndex ;
+        //int currentStep = currentButtonIndex ;
         return currentStep < 0 ? 0 : currentStep;
     }
 
@@ -475,15 +534,31 @@ public class KorakPoKorakActivity extends AppCompatActivity {
             int currentStep = getCurrentStep();
             int pointsToAdd = 20 - (2 * (currentStep - 1));
             if (currentUser != null) {
-                //if roundIndex = 1 updatePoints(5)
                 updatePoints(currentPlayingUserIndex + 1, pointsToAdd);
                 socket.emit("answer", "");
-                if (roundIndex == 1) {
-                   socket.emit("decrementRoundIndex");
-                    socket.emit("endGame");
+
+                if (isContinued == true) {
+                    if (answerIndex == 1) {
+                        socket.emit("endGame");
+                        socket.emit("decrementAnswerIndex");
+                         updatePoints(currentPlayingUserIndex + 1, 5);
+                    } else {
+                        socket.emit("startNextGame");
+                        socket.emit("incrementAnswerIndex");
+                        socket.emit("incrementRoundIndex");
+                        socket.emit("continuedTrue");
+                        updatePoints(currentPlayingUserIndex + 1, 5);
+                    }
                 } else {
-                    socket.emit("incrementRoundIndex");
-                    socket.emit("startNextGame");
+                    if (roundIndex == 1) {
+                        socket.emit("decrementRoundIndex");
+                        socket.emit("endGame");
+                    } else {
+                        socket.emit("incrementAnswerIndex");
+                        socket.emit("incrementRoundIndex");
+                        socket.emit("startNextGame");
+                        //socket.emit("continuedTrue");
+                    }
                 }
             } else {
                 updatePoints(pointsToAdd);
@@ -496,6 +571,18 @@ public class KorakPoKorakActivity extends AppCompatActivity {
             if (currentUser != null){
                 socket.emit("answer", "");
                 showToastAndEmit("Netacan odgovor!");
+
+                if (isContinued == true) {
+                    if (answerIndex == 1) {
+                        socket.emit("decrementAnswerIndex");
+                        socket.emit("endGame");
+                        socket.emit("continuedFalse");
+                    } else {
+                        socket.emit("incrementAnswerIndex");
+                        socket.emit("startNextGame");
+                        socket.emit("continuedFalse");
+                    }
+                }
             }
             input.setText("");
             Toast.makeText(KorakPoKorakActivity.this, "Netacan odgovor!", Toast.LENGTH_SHORT).show();
@@ -505,6 +592,9 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+             if (countDownTimer != null) {
+                countDownTimer.cancel();
+             }
                 if (currentUser != null) {
                     showToastAndEmit("Igra je gotova! Sledi igra MOJ BROJ!");
                 } else {
@@ -513,7 +603,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 if (currentUser != null) {
                     socket.emit("startActivity");
                 } else {
-                    Intent intent = new Intent(KorakPoKorakActivity.this, MojBrojActivity.class);
+                     Intent intent = new Intent(KorakPoKorakActivity.this, MojBrojActivity.class);
                     startActivity(intent);
                     finish();
                 }
@@ -521,37 +611,71 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         }, 5000);
     }
     private void startNextGame() throws JSONException {
-//            if (roundsPlayed == TOTAL_ROUNDS) {
-//                socket.emit("endGame");
-//            } else {
-                if (playingUsernamesArray.length() > 0) {
-                    currentPlayingUserIndex = (currentPlayingUserIndex + 1) % playingUsernamesArray.length();
-                    currentPlayingUser = playingUsernamesArray.getString(currentPlayingUserIndex);
-                    showToastAndEmit("Playing User: " + currentPlayingUser);
+        if (isContinued == true) {
+            if (playingUsernamesArray.length() > 0) {
+                currentPlayingUserIndex = (currentPlayingUserIndex ) % playingUsernamesArray.length();
+                currentPlayingUser = playingUsernamesArray.getString(currentPlayingUserIndex);
+                showToastAndEmit("Playing User: " + currentPlayingUser);
+            }
+            if (playingSocketsArray.length() > 0) {
+                currentNotPlayingUserIndex = (currentNotPlayingUserIndex) % playingSocketsArray.length();
+                currentPlayingUserIndex = (currentPlayingUserIndex) % playingSocketsArray.length();
+                currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex);
+                currentPlayingUserSocketId = playingSocketsArray.getString(currentPlayingUserIndex);
+                socket.emit("enableTouch", currentPlayingUserSocketId);
+                socket.emit("disableTouch", currentNotPlayingUserSocketId);
+            }
+            socket.emit("continuedFalse");
+        } else {
+            if (playingUsernamesArray.length() > 0) {
+            currentPlayingUserIndex = (currentPlayingUserIndex + 1) % playingUsernamesArray.length();
+            currentPlayingUser = playingUsernamesArray.getString(currentPlayingUserIndex);
+            showToastAndEmit("Playing User: " + currentPlayingUser);
+            }
+            if (playingSocketsArray.length() > 0) {
+                currentNotPlayingUserIndex = (currentNotPlayingUserIndex + 1) % playingSocketsArray.length();
+                currentPlayingUserIndex = (currentPlayingUserIndex) % playingSocketsArray.length();
+                currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex);
+                currentPlayingUserSocketId = playingSocketsArray.getString(currentPlayingUserIndex);
+                socket.emit("enableTouch", currentPlayingUserSocketId);
+                socket.emit("disableTouch", currentNotPlayingUserSocketId);
+            }
+         }
+                for (int i = 0; i < 1; i++) {
+                    Button button = buttons.get(i);
+                    int buttonId = button.getId();
+                    socket.emit("buttonText", buttonId, true,  "Korak");
                 }
-                if (playingSocketsArray.length() > 0) {
-                    currentNotPlayingUserIndex = (currentNotPlayingUserIndex + 1) % playingSocketsArray.length();
-                    currentPlayingUserIndex = (currentPlayingUserIndex) % playingSocketsArray.length();
-                    currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex );
-                    currentPlayingUserSocketId = playingSocketsArray.getString(currentPlayingUserIndex);
-                    socket.emit("enableTouch", currentPlayingUserSocketId);
-                    socket.emit("disableTouch", currentNotPlayingUserSocketId);
+                for (int i = 1; i <  7; i++) {
+                    Button button = buttons.get(i);
+                    int buttonId = button.getId();
+                    socket.emit("buttonText", buttonId, false, "Korak");
                 }
-//                resetButtons();
+                for (int i = 7; i <  buttons.size(); i++) {
+                    Button button = buttons.get(i);
+                    int buttonId = button.getId();
+                    socket.emit("buttonClickable", buttonId, false, "");
+                }
+
                 switchPlayersTurn();
-                socket.emit("timerStart", currentPlayingUserSocketId);
+                currentButtonIndex = 1;
+                currentEnabledButtonIndex = 0;
+                currentStep = currentButtonIndex;
                 JSONObject timerData = new JSONObject();
                 try {
-                    timerData.put("duration", 30);
+                    timerData.put("duration", 70);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 socket.emit("startTimer", timerData);
+                socket.emit("timerStart", currentPlayingUserSocketId);
                 showToastAndEmit("Runda 1 je gotova! Pocinje nova runda.");
                 retrieveSteps();
+                buttonHandler.postDelayed(buttonRunnable, 10000);
     }
 
     private void continueGame() throws JSONException {
+        socket.emit("continuedTrue");
         if (playingUsernamesArray.length() > 0) {
             currentPlayingUserIndex = (currentPlayingUserIndex + 1) % playingUsernamesArray.length();
             currentPlayingUser = playingUsernamesArray.getString(currentPlayingUserIndex);
@@ -565,25 +689,10 @@ public class KorakPoKorakActivity extends AppCompatActivity {
             socket.emit("enableTouch", currentPlayingUserSocketId);
             socket.emit("disableTouch", currentNotPlayingUserSocketId);
         }
-//        Button button;
-//        for (int i = 0; i < 10; i++) {
-//            if (buttons.get(i).getCurrentTextColor() != Color.parseColor("#00FF00")) {
-//                button = buttons.get(i);
-//                button.setTextColor(Color.parseColor("#FFFFFF"));
-//                button.setClickable(true);
-//                resetButtonsSocket(button, "#FFFFFF");
-//            } else {
-//                if (buttons.get(i).getCurrentTextColor() != Color.parseColor("#FF0000")) {
-//                    button = buttons.get(i);
-//                    button.setEnabled(false);
-//                    enableMessage(button, false, false);
-//                }
-//            }
-//        }
-        socket.emit("timerStart", currentPlayingUserSocketId);
+        socket.emit("timerStart10", currentPlayingUserSocketId);
         JSONObject timerData = new JSONObject();
         try {
-            timerData.put("duration", 30);
+            timerData.put("duration", 15);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -623,6 +732,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
     }
 
     private void startTimer() {
+        currentCount = 7;
         if (currentUser == null) {
             if (countDownTimer != null) {
                 countDownTimer.cancel();
@@ -644,16 +754,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 @Override
                 public void onFinish() {
                     input.setText(answer);
-                    Toast.makeText(KorakPoKorakActivity.this, "Vase vreme je isteklo, sledi igra MOJ BROJ!",
-                            Toast.LENGTH_SHORT).show();
-                    ;
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Intent intent = new Intent(KorakPoKorakActivity.this, MojBrojActivity.class);
-                            startActivity(intent);
-                        }
-                    }, 5000);
+                    endGame();
 
                 }
             };

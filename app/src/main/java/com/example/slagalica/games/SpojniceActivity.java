@@ -744,12 +744,15 @@ public class SpojniceActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    if (countDownTimer != null) {
+                        countDownTimer.cancel();
+                    }
                     if (currentUser != null) {
                         socket.emit("startActivity");
                     } else {
-                    Intent intent = new Intent(SpojniceActivity.this, KorakPoKorakActivity.class);
-                    startActivity(intent);
-                    finish();
+                        Intent intent = new Intent(SpojniceActivity.this, KorakPoKorakActivity.class);
+                        startActivity(intent);
+                        finish();
                     }
                 }
             }, 5000);
