@@ -126,17 +126,15 @@ public class PlayersFragment extends Fragment {
                 public void call(Object... args) {
                     playingUsernamesArray = (JSONArray) args[0];
                     retrieveConnectedUsers();
-                    if (requireActivity() != null) {
-                        requireActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (player1Username != null && player2Username != null) {
-                                    player1UsernameTextView.setText(player1Username);
-                                    player2UsernameTextView.setText(player2Username);
-                                }
+                    requireActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (player1Username != null && player2Username != null) {
+                                player1UsernameTextView.setText(player1Username);
+                                player2UsernameTextView.setText(player2Username);
                             }
-                        });
-                    }
+                        }
+                    });
                 }
             });
         }
