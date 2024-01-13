@@ -673,7 +673,6 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 retrieveSteps();
                 buttonHandler.postDelayed(buttonRunnable, 10000);
     }
-
     private void continueGame() throws JSONException {
         socket.emit("continuedTrue");
         if (playingUsernamesArray.length() > 0) {
