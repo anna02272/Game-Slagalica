@@ -176,6 +176,31 @@ io.on('connection', (socket) => {
                 io.emit('updateContinued', isContinued);
               });
 
+//MOJ BROJ
+            socket.on('numberChange', ( buttonId, number) => {
+                io.emit('numberChange', buttonId, number);
+            });
+
+           socket.on('answerChange', ( answer, finalAnswer) => {
+                 io.emit('answerChange', answer, finalAnswer);
+           });
+
+            socket.on('setButtonText', (buttonId, buttonText) => {
+               io.emit('setButtonText', buttonId, buttonText);
+            });
+
+            socket.on('buttonEnabled', (buttonId, enabled) => {
+                io.emit('buttonEnabled', buttonId, enabled);
+            });
+
+            socket.on('buttonsClickable', (buttonId, clickable) => {
+               io.emit('buttonsClickable', buttonId, clickable);
+            });
+
+            socket.on("inputText", (text) => {
+                    console.log(text);
+                  io.emit("inputText", text);
+           });
 //DISCONNECT
         socket.on('userDisconnected', (userInfo) => {
          const { username } = userInfo;

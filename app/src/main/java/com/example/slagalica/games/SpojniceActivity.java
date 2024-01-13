@@ -6,6 +6,7 @@ import static com.example.slagalica.MainActivity.socket;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -73,6 +74,8 @@ public class SpojniceActivity extends AppCompatActivity {
     private int roundIndex;
     private CountDownTimer countDownTimer;
     private DisableTouchActivity disableTouchActivity;
+    private String username;
+    private SharedPreferences preferences;
    @Override
     public void onBackPressed() {
         return;
@@ -83,6 +86,8 @@ public class SpojniceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity_spojnice);
 
+        preferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        username = preferences.getString("username", "");
         FirebaseAuth auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
         disableTouchActivity = new DisableTouchActivity(SpojniceActivity.this);
@@ -279,8 +284,6 @@ public class SpojniceActivity extends AppCompatActivity {
             public void call(Object... args) {
                 runOnUiThread(() -> {
                     Intent intent = new Intent(SpojniceActivity.this, KorakPoKorakActivity.class);
-                        intent.putExtra("playingUsernamesArray", playingUsernamesArray.toString());
-                        intent.putExtra("playingSocketsArray", playingSocketsArray.toString());
                     startActivity(intent);
                     finish();
                 });
@@ -730,13 +733,6 @@ public class SpojniceActivity extends AppCompatActivity {
 
     private void endGame() throws JSONException {
         if (currentUser != null) {
-            JSONObject timerData = new JSONObject();
-            try {
-                timerData.put("duration", 6);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            socket.emit("startTimer", timerData);
             showToastAndEmit("Igra je gotova! Sledi igra ASOCIJACIJE!");
         } else {
             Toast.makeText(SpojniceActivity.this, "Igra je gotova! Sledi igra ASOCIJACIJE!", Toast.LENGTH_SHORT).show();
@@ -748,6 +744,7 @@ public class SpojniceActivity extends AppCompatActivity {
                         countDownTimer.cancel();
                     }
                     if (currentUser != null) {
+                        socket.emit("enableTouch", currentNotPlayingUserSocketId);
                         socket.emit("startActivity");
                     } else {
                         Intent intent = new Intent(SpojniceActivity.this, KorakPoKorakActivity.class);
@@ -806,6 +803,11 @@ public class SpojniceActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         buttonHandler.removeCallbacks(buttonRunnable);
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
     }
     private void showToastAndEmit(String message) {
         Toast.makeText(SpojniceActivity.this, message, Toast.LENGTH_SHORT).show();
