@@ -89,6 +89,7 @@ public class MojBrojActivity extends AppCompatActivity {
     private final int TOTAL_CONFIRM = 1;
     private int buttonId;
     private String number;
+    private String SocketIdFromPlayerThatClicked;
 
     @Override
     public void onBackPressed() {
@@ -134,36 +135,50 @@ public class MojBrojActivity extends AppCompatActivity {
         confirmButton = findViewById(R.id.button_confirm);
         stopButton = findViewById(R.id.button_stop);
 
-        confirmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getPlayersSocketId(new OnSocketIdReceivedListener() {
-                    @Override
-                    public void onSocketIdReceived(String socketId) {
-                        Log.d("Socket", "SocketIdFromPlayerThatClicked: " + socketId);
-                    }
-                });
-            }
-        });
-
 //        confirmButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                if (currentUser != null){
-//                    if (confirmClicked == TOTAL_CONFIRM) {
-//                        Log.d("Here", "confirmClicked: " + confirmClicked);
-//                        socket.emit("checkTwoAnswers");
-//                    } else{
-//                        socket.emit("incrementConfirmCount");
-//                        Log.d("Here", "wait for other user to finish");
-//                        // show toast to user that clicked button to
-//                        // wait for other user to finish
-//                    }
+//                if (currentUser != null) {
+//                    getPlayersSocketId(new OnSocketIdReceivedListener() {
+//                        @Override
+//                        public void onSocketIdReceived(String socketId) {
+//                            SocketIdFromPlayerThatClicked = socketId;
+//                            if (confirmClicked == TOTAL_CONFIRM) {
+//                                Log.d("Here", "confirmClicked: " + confirmClicked);
+//                                socket.emit("checkTwoAnswers");
+//                            } else{
+//                                socket.emit("incrementConfirmCount");
+//                                Log.d("Here", "wait for other user to finish");
+//                                // show toast to user that clicked button to
+//                                // wait for other user to finish
+//                            }
+//                            Log.d("SocketIdFromPlayerThatClicked", "SocketIdFromPlayerThatClicked: " + socketId);
+//                        }
+//                    });
 //                } else {
 //                    checkAnswer();
 //                }
 //            }
 //        });
+
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentUser != null){
+                    if (confirmClicked == TOTAL_CONFIRM) {
+                        Log.d("Here", "confirmClicked: " + confirmClicked);
+                        socket.emit("checkTwoAnswers");
+                    } else{
+                        socket.emit("incrementConfirmCount");
+                        Log.d("Here", "wait for other user to finish");
+                        // show toast to user that clicked button to
+                        // wait for other user to finish
+                    }
+                } else {
+                    checkAnswer();
+                }
+            }
+        });
 
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -250,6 +265,69 @@ public class MojBrojActivity extends AppCompatActivity {
         for (int i = 0; i < buttons.size(); i++) {
             final int buttonIndex = i;
             final Button button = buttons.get(i);
+
+            button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentUser != null) {
+                    getPlayersSocketId(new OnSocketIdReceivedListener() {
+                        @Override
+                        public void onSocketIdReceived(String socketId) {
+                            SocketIdFromPlayerThatClicked = socketId;
+                            Log.d("SocketIdFromPlayerThatClicked", "SocketIdFromPlayerThatClicked: " + socketId);
+                            String currentInput = input.getText().toString();
+                            String currentInput2 = input2.getText().toString();
+                            if (buttonIndex != 6) {
+                                String buttonText = buttonSteps.get(button);
+                                currentInput = input.getText().toString();
+                                socket.emit("input1Text", currentInput + buttonText, SocketIdFromPlayerThatClicked);
+                                Log.d("SocketIdFromPlayerThatClicked", "SocketIdFromPlayerThatClicked1: " + SocketIdFromPlayerThatClicked);
+                                currentInput2 = input2.getText().toString();
+                                socket.emit("input2Text", currentInput2 + buttonText, SocketIdFromPlayerThatClicked);
+                                Log.d("SocketIdFromPlayerThatClicked", "SocketIdFromPlayerThatClicked2: " + SocketIdFromPlayerThatClicked);
+                            }
+
+                            if (buttonIndex < 6 && button.isEnabled()) {
+                                button.setEnabled(false);
+                                disableNumberButtons();
+                            } else if (buttonIndex >= 6) {
+                                currentInput = input.getText().toString();
+                                if (hasOperationInInput(currentInput)) {
+                                    enablePreviouslyClickableButtons();
+                                } else {
+                                    disableNumberButtons();
+                                }
+                                    currentInput2 = input2.getText().toString();
+                                    if (hasOperationInInput(currentInput2)) {
+                                        enablePreviouslyClickableButtons();
+                                    } else {
+                                        disableNumberButtons();
+                                    }
+                            }
+                        }
+                    });
+                } else {
+                    String currentInput = input.getText().toString();
+                    if (buttonIndex != 6) {
+                        String buttonText = buttonSteps.get(button);
+                        currentInput = input.getText().toString();
+                        input.setText(currentInput + buttonText);
+                    }
+                    if (buttonIndex < 6 && button.isEnabled()) {
+                        button.setEnabled(false);
+                        disableNumberButtons();
+                    } else if (buttonIndex >= 6) {
+                        currentInput = input.getText().toString();
+                        if (hasOperationInInput(currentInput)) {
+                            enablePreviouslyClickableButtons();
+                        } else {
+                            disableNumberButtons();
+                        }
+                    }
+                }
+            }
+        });
+
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -260,11 +338,12 @@ public class MojBrojActivity extends AppCompatActivity {
                         String buttonText = buttonSteps.get(button);
                         if (currentUser != null) {
                             currentInput = input.getText().toString();
-                            socket.emit("input1Text", currentInput + buttonText, currentPlayingUserSocketId);
+                            socket.emit("input1Text", currentInput + buttonText, SocketIdFromPlayerThatClicked);
+                            Log.d("SocketIdFromPlayerThatClicked", "SocketIdFromPlayerThatClicked1: " + SocketIdFromPlayerThatClicked);
                             currentInput2 = input2.getText().toString();
-                            socket.emit("input2Text", currentInput2 + buttonText, currentNotPlayingUserSocketId);
-//
-//                            input2.setText(currentInput2 + buttonText);
+                            socket.emit("input2Text", currentInput2 + buttonText, SocketIdFromPlayerThatClicked);
+                         Log.d("SocketIdFromPlayerThatClicked", "SocketIdFromPlayerThatClicked2: " + SocketIdFromPlayerThatClicked);
+
                              } else {
                             currentInput = input.getText().toString();
                             input.setText(currentInput + buttonText);
