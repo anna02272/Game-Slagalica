@@ -198,24 +198,10 @@ io.on('connection', (socket) => {
                 io.emit('buttonEnabled', buttonId, enabled);
             });
 
-
-
-           socket.on('inputGone', (targetSocketId) => {
-               io.to(targetSocketId).emit('inputGone');
-           });
-
-          socket.on('input2Gone', (targetSocketId) => {
-                io.to(targetSocketId).emit('input2Gone');
-          });
           socket.on("inputText", (text) => {
                 io.emit("inputText", text);
           });
-           socket.on("input1Text", (text, targetSocketId) => {
-                   io.to(targetSocketId).emit("input1Text", text);
-           });
-           socket.on("input2Text", (text, targetSocketId) => {
-                 io.to(targetSocketId).emit("input2Text", text);
-           });
+
           socket.on('showToast', (message, targetSocketId) => {
                    io.to(targetSocketId).emit('showToast', message);
           });

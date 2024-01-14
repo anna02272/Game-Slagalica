@@ -93,23 +93,6 @@
                 android:drawableRight="@drawable/game_clear"
                 android:drawableTint="@color/dark_pruple"
                 />
-            <EditText
-                android:id="@+id/input2"
-                android:layout_width="320dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:background="@drawable/login_edittext_bkg"
-                android:drawablePadding="8dp"
-                android:hint="@string/games_answer"
-                android:padding="8dp"
-                android:textColorHint="@color/gray"
-                android:drawableRight="@drawable/game_clear"
-                android:drawableTint="@color/dark_pruple"
-                />
-
 
         </LinearLayout>
         <LinearLayout

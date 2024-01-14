@@ -54,6 +54,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import io.socket.client.Ack;
 import io.socket.emitter.Emitter;
 
 public class MojBrojActivity extends AppCompatActivity {
@@ -70,7 +71,6 @@ public class MojBrojActivity extends AppCompatActivity {
     private Button confirmButton;
     private CountDownTimer countDownTimer;
     private EditText input;
-    private EditText input2;
     private ShakeDetector shakeDetector;
     private PlayersFragment playersFragment;
     private SharedPreferences preferences;
@@ -86,11 +86,11 @@ public class MojBrojActivity extends AppCompatActivity {
     private String socketIdFromPlayerThatClicked;
     private int roundIndex;
     private int confirmClicked;
-    private final int TOTAL_CONFIRM = 1;
     private int buttonId;
     private String number;
     private String SocketIdFromPlayerThatClicked;
 
+//    private String currentInput;
     @Override
     public void onBackPressed() {
         return;
@@ -135,46 +135,19 @@ public class MojBrojActivity extends AppCompatActivity {
         confirmButton = findViewById(R.id.button_confirm);
         stopButton = findViewById(R.id.button_stop);
 
-//        confirmButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (currentUser != null) {
-//                    getPlayersSocketId(new OnSocketIdReceivedListener() {
-//                        @Override
-//                        public void onSocketIdReceived(String socketId) {
-//                            SocketIdFromPlayerThatClicked = socketId;
-//                            if (confirmClicked == TOTAL_CONFIRM) {
-//                                Log.d("Here", "confirmClicked: " + confirmClicked);
-//                                socket.emit("checkTwoAnswers");
-//                            } else{
-//                                socket.emit("incrementConfirmCount");
-//                                Log.d("Here", "wait for other user to finish");
-//                                // show toast to user that clicked button to
-//                                // wait for other user to finish
-//                            }
-//                            Log.d("SocketIdFromPlayerThatClicked", "SocketIdFromPlayerThatClicked: " + socketId);
-//                        }
-//                    });
-//                } else {
-//                    checkAnswer();
-//                }
-//            }
-//        });
-
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentUser != null){
-                    if (confirmClicked == TOTAL_CONFIRM) {
-                        Log.d("Here", "confirmClicked: " + confirmClicked);
-                        socket.emit("checkTwoAnswers");
-                    } else{
-                        socket.emit("incrementConfirmCount");
-                        Log.d("Here", "wait for other user to finish");
-                        // show toast to user that clicked button to
-                        // wait for other user to finish
-                    }
-                } else {
+                if (currentUser != null) {
+                    getPlayersSocketId(new OnSocketIdReceivedListener() {
+                        @Override
+                        public void onSocketIdReceived(String socketId) {
+//                            socket.emit("checkTwoAnswers");
+                            checkTwoAnswers();
+                        }
+                    });
+                }
+                else {
                     checkAnswer();
                 }
             }
@@ -189,18 +162,11 @@ public class MojBrojActivity extends AppCompatActivity {
         });
 
         input = findViewById(R.id.input1);
-        input2 = findViewById(R.id.input2);
-
-        if (currentUser == null) {
-            input2.setVisibility(View.GONE);
-        }
 
         Drawable clearDrawable = getResources().getDrawable(R.drawable.game_clear);
 
         clearDrawable.setBounds(0, 0, clearDrawable.getIntrinsicWidth(), clearDrawable.getIntrinsicHeight());
         input.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, clearDrawable, null);
-        input2.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, clearDrawable, null);
-
         input.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -217,25 +183,6 @@ public class MojBrojActivity extends AppCompatActivity {
                 input.setInputType(InputType.TYPE_NULL);
                 input.onTouchEvent(event);
                 input.setInputType(inType);
-                return true;
-            }
-        });
-        input2.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    if (event.getX() >= (v.getWidth() - v.getPaddingRight() - clearDrawable.getIntrinsicWidth())) {
-                        input2.setText("");
-                        enableAllButtons();
-                        clickableButtons();
-                        return true;
-                    }
-                }
-
-                int inType = input2.getInputType();
-                input2.setInputType(InputType.TYPE_NULL);
-                input2.onTouchEvent(event);
-                input2.setInputType(inType);
                 return true;
             }
         });
@@ -273,36 +220,25 @@ public class MojBrojActivity extends AppCompatActivity {
                     getPlayersSocketId(new OnSocketIdReceivedListener() {
                         @Override
                         public void onSocketIdReceived(String socketId) {
-                            SocketIdFromPlayerThatClicked = socketId;
-                            Log.d("SocketIdFromPlayerThatClicked", "SocketIdFromPlayerThatClicked: " + socketId);
                             String currentInput = input.getText().toString();
-                            String currentInput2 = input2.getText().toString();
+
                             if (buttonIndex != 6) {
                                 String buttonText = buttonSteps.get(button);
                                 currentInput = input.getText().toString();
-                                socket.emit("input1Text", currentInput + buttonText, SocketIdFromPlayerThatClicked);
-                                Log.d("SocketIdFromPlayerThatClicked", "SocketIdFromPlayerThatClicked1: " + SocketIdFromPlayerThatClicked);
-                                currentInput2 = input2.getText().toString();
-                                socket.emit("input2Text", currentInput2 + buttonText, SocketIdFromPlayerThatClicked);
-                                Log.d("SocketIdFromPlayerThatClicked", "SocketIdFromPlayerThatClicked2: " + SocketIdFromPlayerThatClicked);
+                                input.setText(currentInput + buttonText);
                             }
-
                             if (buttonIndex < 6 && button.isEnabled()) {
                                 button.setEnabled(false);
                                 disableNumberButtons();
-                            } else if (buttonIndex >= 6) {
+                            }
+                            else if (buttonIndex >= 6) {
                                 currentInput = input.getText().toString();
-                                if (hasOperationInInput(currentInput)) {
+                               if (hasOperationInInput(currentInput)) {
                                     enablePreviouslyClickableButtons();
                                 } else {
                                     disableNumberButtons();
                                 }
-                                    currentInput2 = input2.getText().toString();
-                                    if (hasOperationInInput(currentInput2)) {
-                                        enablePreviouslyClickableButtons();
-                                    } else {
-                                        disableNumberButtons();
-                                    }
+
                             }
                         }
                     });
@@ -312,6 +248,7 @@ public class MojBrojActivity extends AppCompatActivity {
                         String buttonText = buttonSteps.get(button);
                         currentInput = input.getText().toString();
                         input.setText(currentInput + buttonText);
+
                     }
                     if (buttonIndex < 6 && button.isEnabled()) {
                         button.setEnabled(false);
@@ -323,55 +260,11 @@ public class MojBrojActivity extends AppCompatActivity {
                         } else {
                             disableNumberButtons();
                         }
+
                     }
                 }
             }
         });
-
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                     String currentInput = input.getText().toString();
-                     String currentInput2 = input2.getText().toString();
-
-                    if (buttonIndex != 6) {
-                        String buttonText = buttonSteps.get(button);
-                        if (currentUser != null) {
-                            currentInput = input.getText().toString();
-                            socket.emit("input1Text", currentInput + buttonText, SocketIdFromPlayerThatClicked);
-                            Log.d("SocketIdFromPlayerThatClicked", "SocketIdFromPlayerThatClicked1: " + SocketIdFromPlayerThatClicked);
-                            currentInput2 = input2.getText().toString();
-                            socket.emit("input2Text", currentInput2 + buttonText, SocketIdFromPlayerThatClicked);
-                         Log.d("SocketIdFromPlayerThatClicked", "SocketIdFromPlayerThatClicked2: " + SocketIdFromPlayerThatClicked);
-
-                             } else {
-                            currentInput = input.getText().toString();
-                            input.setText(currentInput + buttonText);
-                        }
-
-                    }
-
-                    if (buttonIndex < 6 && button.isEnabled()) {
-                            button.setEnabled(false);
-                        disableNumberButtons();
-                    } else if (buttonIndex >= 6) {
-                        currentInput = input.getText().toString();
-                        if (hasOperationInInput(currentInput)) {
-                            enablePreviouslyClickableButtons();
-                        } else {
-                            disableNumberButtons();
-                        }
-                        if (currentUser != null) {
-                            currentInput2 = input2.getText().toString();
-                            if (hasOperationInInput(currentInput2)) {
-                                enablePreviouslyClickableButtons();
-                            } else {
-                                disableNumberButtons();
-                            }
-                        }
-                    }
-                }
-            });
         }
 
         socket.on("updatePlayingUsers", new Emitter.Listener() {
@@ -410,33 +303,7 @@ public class MojBrojActivity extends AppCompatActivity {
                 });
             }
         });
-        socket.on("inputGone", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        input.setVisibility(View.GONE);
-                        input.setEnabled(false);
-                        input2.setVisibility(View.VISIBLE);
 
-                    }
-                });
-            }
-        });
-        socket.on("input2Gone", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        input.setVisibility(View.VISIBLE);
-                        input2.setVisibility(View.GONE);
-                        input2.setEnabled(false);
-                    }
-                });
-            }
-        });
         socket.on("startActivity", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -503,25 +370,6 @@ public class MojBrojActivity extends AppCompatActivity {
                 String text = (String) args[0];
                 runOnUiThread(() -> {
                     input.setText(text);
-                    input2.setText(text);
-                });
-            }
-        });
-        socket.on("input1Text", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                String text = (String) args[0];
-                runOnUiThread(() -> {
-                    input.setText(text);
-                });
-            }
-        });
-        socket.on("input2Text", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                String text = (String) args[0];
-                runOnUiThread(() -> {
-                    input2.setText(text);
                 });
             }
         });
@@ -613,8 +461,6 @@ public class MojBrojActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             socket.emit("startTimer", timerData);
-            socket.emit("inputGone", currentNotPlayingUserSocketId);
-            socket.emit("input2Gone", currentPlayingUserSocketId);
 
         }
         runOnUiThread(new Runnable() {
@@ -823,27 +669,42 @@ public class MojBrojActivity extends AppCompatActivity {
     }
     private void checkTwoAnswers() {
         String userInput = input.getText().toString().trim();
-        String userInput2 = input2.getText().toString().trim();
         Log.d("Here", "userInput: " + userInput);
-        Log.d("Here", "userInput2: " + userInput2);
 
-        if (userInput.isEmpty()) {
-            return;
-        }
-        if (userInput2.isEmpty()) {
-            return;
-        }
-        //Player 1
+        if (confirmClicked != 1) {
+            //wait for other user to finish
+            socket.emit("incrementConfirmCount");
+
+            //Player 1
             String finalResult = getResult(userInput);
-        Log.d("Here", "finalResult: " + finalResult);
-            int buttonId = buttonAnswer.getId();
-            socket.emit("setButtonText", buttonId, finalResult);
+            Log.d("Here", "finalResult: " + finalResult);
+             int buttonId1 = buttonAnswer.getId();
+            socket.emit("setButtonText", buttonId1, finalResult);
+            if (userInput.isEmpty()) {
+                socket.emit("setButtonText", buttonId1, 0);
+                return;
+            }
+        }
+        else{
+            socket.emit("decrementConfirmCount");
+            //Player 2
+            String finalResult2 = getResult(userInput);
+             int buttonId2 = buttonAnswer2.getId();
+            socket.emit("setButtonText", buttonId2, finalResult2);
+            if (userInput.isEmpty()) {
+                socket.emit("setButtonText", buttonId2, 0);
+                return;
+            }
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    socket.emit("incrementRoundIndex");
+                    socket.emit("startNextGame");
 
-        //Player 2
-        String finalResult2 = getResult(userInput2);
-        Log.d("Here", "finalResult2: " + finalResult2);
-            int buttonId1 = buttonAnswer2.getId();
-            socket.emit("setButtonText", buttonId1, finalResult2);
+                }
+            }, 5000);
+        }
+
 //        if (answer != null && finalResult.equals(answer)) {
 //                updatePoints(currentPlayingUserIndex + 1, 20);
 //
@@ -853,21 +714,13 @@ public class MojBrojActivity extends AppCompatActivity {
 //        } else {
 //            if (!finalResult.equals("Err")) {
 //                input.setText(finalAnswer);
-//                input2.setText(finalAnswer);
 //                    showToastAndEmit(finalResult + " :  Netacan odgovor!");
 //            }
 //            }
 //            showToastAndEmit("Kraj igre!");
 //            int buttonId2 = confirmButton.getId();
 //            socket.emit("buttonEnabled", buttonId2, false);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                    socket.emit("incrementRoundIndex");
-                    socket.emit("startNextGame");
 
-            }
-        }, 5000);
     }
 
     private void endGame(){
@@ -907,7 +760,8 @@ public class MojBrojActivity extends AppCompatActivity {
             }
 
             input.setText("");
-            input2.setText("");
+            buttonAnswer.setText("");
+            buttonAnswer2.setText("");
             enableAllButtons();
             clickableButtons();
             removeButtonTextForAllButtons();
@@ -967,7 +821,7 @@ public class MojBrojActivity extends AppCompatActivity {
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
-                 String serverUrl = "http://192.168.0.114:3000/getSocketId?socketId=" + SocketHandler.getSocket().id();
+                 String serverUrl = SocketHandler.getServerBaseUrl() + "/getSocketId?socketId=" + SocketHandler.getSocket().id();
                 try {
                     URL url = new URL(serverUrl);
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();

@@ -10,11 +10,13 @@ import io.socket.client.Socket;
 
 public class SocketHandler {
     static Socket socket;
+    private static final String SERVER_BASE_URL = "http://192.168.0.114:3000";
+
 
     public static void setSocket(){
         try {
 //            socket = IO.socket("http://" + BuildConfig.IP_ADDR + ":3000");
-            socket = IO.socket("http://192.168.0.114:3000");
+            socket = IO.socket(SERVER_BASE_URL);
         }catch (Exception e){
             Log.d("SocketError", e.getMessage().toString());
         }
@@ -23,5 +25,7 @@ public class SocketHandler {
     public static Socket getSocket(){
         return socket;
     }
-
+    public static String getServerBaseUrl() {
+        return SERVER_BASE_URL;
+    }
 }
