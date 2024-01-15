@@ -489,7 +489,22 @@ public class MojBrojActivity extends AppCompatActivity {
 
                             @Override
                             public void onFinish() {
-
+                                if (confirmClicked == 1) {
+                                    processAnswers();
+//                                    if (!finalResult.equalsIgnoreCase("org.mozilla.javascript.Undefined@0")
+//                                    && (!finalResult.equalsIgnoreCase("Err")  && (!finalResult.equals("null")))) {
+//
+//
+//                                    }
+//
+//                                    if (!finalResult2.equalsIgnoreCase("org.mozilla.javascript.Undefined@0")
+//                                            && (!finalResult2.equalsIgnoreCase("Err")  && (!finalResult.equals("null")))) {
+//
+//                                    }
+                                } else {
+                                    socket.emit("incrementRoundIndex");
+                                    socket.emit("startNextGame");
+                                }
                             }
                         };
                         countDownTimer.start();
@@ -507,10 +522,10 @@ public class MojBrojActivity extends AppCompatActivity {
             currentNotPlayingUser = playingUsernamesArray.getString(currentNotPlayingUserIndex);
           }
         if (playingSocketsArray.length() >= 2) {
-            currentNotPlayingUserIndex = (currentNotPlayingUserIndex + 1) % playingSocketsArray.length();
-            currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex);
             currentPlayingUserIndex = (currentPlayingUserIndex) % playingSocketsArray.length();
+            currentNotPlayingUserIndex = (currentPlayingUserIndex + 1) ;
             currentPlayingUserSocketId = playingSocketsArray.getString(currentPlayingUserIndex);
+            currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex);
 
             socket.emit("disableTouch", currentNotPlayingUserSocketId);
             socket.emit("timerStart", currentNotPlayingUserSocketId);
@@ -760,7 +775,6 @@ public class MojBrojActivity extends AppCompatActivity {
             });
         } else {
             confirmButton.setEnabled(false);
-            socket.emit("decrementConfirmCount");
 
             // Player 2
             socket.emit("setFinalAnswer2", getResult(userInput), new Ack() {
@@ -800,11 +814,12 @@ public class MojBrojActivity extends AppCompatActivity {
     }
 
     private void processAnswers() {
-         if (finalResult.equalsIgnoreCase("org.mozilla.javascript.Undefined@0")) {
+        socket.emit("decrementConfirmCount");
+         if (finalResult == null || finalResult.equalsIgnoreCase("org.mozilla.javascript.Undefined@0")) {
             finalResult = "0";
         }
 
-        if (finalResult2.equalsIgnoreCase("org.mozilla.javascript.Undefined@0")) {
+        if (finalResult2 == null || finalResult2.equalsIgnoreCase("org.mozilla.javascript.Undefined@0")) {
             finalResult2 = "0";
         }
         if ("Err".equals(finalResult) || "Err".equals(finalResult2)) {
@@ -823,7 +838,7 @@ public class MojBrojActivity extends AppCompatActivity {
                 round2Logic(answer);
             }
         }
-
+        socket.emit("inputText", finalAnswer);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -834,19 +849,13 @@ public class MojBrojActivity extends AppCompatActivity {
     }
 
     private void round1Logic(String answer) {
-        Log.d("roundLogic", "1 " );
-        Log.d("roundLogic", "finalResult: "  + finalResult);
-        Log.d("roundLogic", "finalResult2: "  + finalResult2);
-        Log.d("roundLogic", "answer: "  + answer);
           if (finalResult.equals(answer)) {
             updatePoints(currentPlayingUserIndex + 1, 20);
             showToastAndEmit(currentPlayingUser  + " - Tacan broj!");
-              Log.d("roundLogic", "eve: " + currentPlayingUserIndex + 1);
 
           } else if (finalResult2.equals(answer)) {
             updatePoints(currentPlayingUserIndex + 2, 20);
             showToastAndEmit(currentNotPlayingUser + " - Tacan broj!");
-            Log.d("roundLogic", "user: " + currentPlayingUserIndex + 2 + currentNotPlayingUser);
 
         } else {
             double answerValue = Double.parseDouble(answer);
@@ -866,19 +875,13 @@ public class MojBrojActivity extends AppCompatActivity {
         }
     }
     private void round2Logic(String answer) {
-        Log.d("roundLogic", "2" );
-        Log.d("roundLogic", "finalResult: "  + finalResult);
-        Log.d("roundLogic", "finalResult2: "  + finalResult2);
-        Log.d("roundLogic", "answer: "  + answer);
          if (finalResult.equals(answer)) {
             updatePoints(currentPlayingUserIndex, 20);
             showToastAndEmit(currentNotPlayingUser +  " - Tacan broj!");
-             Log.d("roundLogic", "eve: " + currentPlayingUserIndex);
-        } else if (finalResult2.equals(answer)) {
+            } else if (finalResult2.equals(answer)) {
             updatePoints(currentPlayingUserIndex + 1, 20);
             showToastAndEmit(currentPlayingUser +  " - Tacan broj!");
-             Log.d("roundLogic", "user: " + currentPlayingUserIndex + 1);
-        } else {
+             } else {
             double answerValue = Double.parseDouble(answer);
             double finalResultValue = Double.parseDouble(finalResult);
             double finalResult2Value = Double.parseDouble(finalResult2);
@@ -925,11 +928,11 @@ public class MojBrojActivity extends AppCompatActivity {
                 currentNotPlayingUser = playingUsernamesArray.getString(currentNotPlayingUserIndex);
                  }
             if (playingSocketsArray.length() > 0) {
-                currentNotPlayingUserIndex = (currentNotPlayingUserIndex + 1) % playingSocketsArray.length();
-                currentPlayingUserIndex = (currentPlayingUserIndex) % playingSocketsArray.length();
+                currentPlayingUserIndex = (currentPlayingUserIndex + 1) % playingSocketsArray.length();
+                currentNotPlayingUserIndex = (currentPlayingUserIndex ) ;
+                currentPlayingUserSocketId = playingSocketsArray.getString(currentPlayingUserIndex + 1);
                 currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex);
-                currentPlayingUserSocketId = playingSocketsArray.getString(currentPlayingUserIndex);
-                socket.emit("enableTouch", currentPlayingUserSocketId);
+
                 socket.emit("disableTouch", currentNotPlayingUserSocketId);
             }
             socket.emit("inputText", "");
