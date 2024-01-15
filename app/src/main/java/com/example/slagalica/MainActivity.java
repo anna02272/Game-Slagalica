@@ -23,6 +23,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.slagalica.config.SocketHandler;
 import com.example.slagalica.games.KoZnaZnaActivity;
 import com.example.slagalica.games.KorakPoKorakActivity;
+import com.example.slagalica.games.MojBrojActivity;
 import com.example.slagalica.games.SpojniceActivity;
 import com.example.slagalica.games.StartMultiplayerGameActivity;
 import com.example.slagalica.login_registration.RegistrationLoginActivity;
@@ -159,9 +160,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     if (currentUser == null) {
                         firebaseDatabase.getReference("points/guest_points").setValue(0);
                     }
-                    Intent intent = new Intent(MainActivity.this, SpojniceActivity.class);
+                    Intent intent = new Intent(MainActivity.this, MojBrojActivity.class);
                     startActivity(intent);
-
                 }
             });
 
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
-                        Intent intent = new Intent(MainActivity.this, SpojniceActivity.class);
+                        Intent intent = new Intent(MainActivity.this, MojBrojActivity.class);
                         startActivity(intent);
 
 

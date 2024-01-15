@@ -18,7 +18,13 @@ let usernamesArray =  [];
 let socketsArray =  [];
 let roundIndex = 0;
 let answerIndex = 0;
+let confirmClicked = 0;
 let isContinued;
+
+app.get('/getSocketId', (req, res) => {
+    const socketId = req.query.socketId;
+    res.send(socketId);
+});
 
 io.on('connection', (socket) => {
 //CONNECTION
@@ -102,13 +108,35 @@ io.on('connection', (socket) => {
 
             socket.on('incrementRoundIndex', () => {
                 roundIndex++;
+                console.log(roundIndex, "roundIndex");
                 io.emit('updateRoundIndex', roundIndex);
               });
 
               socket.on('decrementRoundIndex', () => {
                 roundIndex--;
+                console.log(roundIndex, "roundIndex");
                 io.emit('updateRoundIndex', roundIndex);
               });
+             socket.on('incrementAnswerIndex', () => {
+                 answerIndex++;
+                 io.emit('updateAnswerIndex', answerIndex);
+               });
+
+               socket.on('decrementAnswerIndex', () => {
+                 answerIndex--;
+                 io.emit('updateAnswerIndex', answerIndex);
+               });
+
+               socket.on('continuedTrue', () => {
+                 isContinued = true;
+                 io.emit('updateContinued', isContinued);
+               });
+
+               socket.on('continuedFalse', () => {
+                 isContinued = false;
+                 io.emit('updateContinued', isContinued);
+               });
+
 
 //SPOJNICE
            socket.on('stepChanged', (stepIndex, step) => {
@@ -154,28 +182,66 @@ io.on('connection', (socket) => {
                   io.emit('buttonClickable', buttonId, clickable, step);
              });
 
-            socket.on('incrementAnswerIndex', () => {
-                answerIndex++;
-                console.log(answerIndex);
-                io.emit('updateAnswerIndex', answerIndex);
-              });
 
-              socket.on('decrementAnswerIndex', () => {
-                answerIndex--;
-                console.log(answerIndex);
-                io.emit('updateAnswerIndex', answerIndex);
-              });
+//MOJ BROJ
+            socket.on('numberChange', ( buttonId, number) => {
+                io.emit('numberChange', buttonId, number);
+            });
 
-              socket.on('continuedTrue', () => {
-                isContinued = true;
-                io.emit('updateContinued', isContinued);
-              });
+           socket.on('answerChange', ( answer, finalAnswer) => {
+                 io.emit('answerChange', answer, finalAnswer);
+           });
 
-              socket.on('continuedFalse', () => {
-                isContinued = false;
-                io.emit('updateContinued', isContinued);
-              });
+            socket.on('setButtonText', (buttonId, buttonText) => {
+               io.emit('setButtonText', buttonId, buttonText);
+            });
 
+            socket.on('buttonEnabled', (buttonId, enabled) => {
+                io.emit('buttonEnabled', buttonId, enabled);
+            });
+
+             socket.on('buttonClickable', (buttonId, clickable) => {
+                  io.emit('buttonClickable', buttonId, clickable);
+             });
+
+          socket.on("inputText", (text) => {
+                io.emit("inputText", text);
+          });
+          socket.on("buttonAnswerText", (text) => {
+              io.emit("buttonAnswerText", text);
+          });
+
+          socket.on("buttonAnswerText2", (text) => {
+                io.emit("buttonAnswerText2", text);
+          });
+          socket.on('showToast', (message, targetSocketId) => {
+                   io.to(targetSocketId).emit('showToast', message);
+          });
+           socket.on('incrementConfirmCount', () => {
+                confirmClicked++;
+                 console.log(confirmClicked);
+            io.emit('updateConfirmClicked', confirmClicked);
+           });
+
+           socket.on('decrementConfirmCount', () => {
+              confirmClicked--;
+               console.log(confirmClicked);
+           io.emit('updateConfirmClicked', confirmClicked);
+           });
+
+           socket.on('checkTwoAnswers', () => {
+              io.emit('checkTwoAnswers');
+           });
+
+            socket.on("setFinalAnswer", (receivedAnswer, ack) => {
+                    io.emit('setFinalAnswer', receivedAnswer);
+                ack.call(null, receivedAnswer);
+            });
+
+            socket.on("setFinalAnswer2", (receivedAnswer, ack) => {
+                io.emit('setFinalAnswer2', receivedAnswer);
+              ack.call(null, receivedAnswer);
+            });
 //DISCONNECT
         socket.on('userDisconnected', (userInfo) => {
          const { username } = userInfo;
@@ -187,6 +253,7 @@ io.on('connection', (socket) => {
                  isGameStarting = false;
                  roundIndex = 0;
                  answerIndex = 0;
+                 confirmClicked = 0;
         });
            socket.on('playerDisconnected', (userInfo) => {
                  const { username } = userInfo;
@@ -200,6 +267,7 @@ io.on('connection', (socket) => {
                          isGameStarting = false;
                          roundIndex = 0;
                          answerIndex = 0;
+                         confirmClicked = 0;
 
                 });
 
@@ -220,6 +288,7 @@ io.on('connection', (socket) => {
        isGameStarting = false;
        roundIndex = 0;
        answerIndex = 0;
+       confirmClicked = 0;
    	});
 
 

@@ -94,7 +94,6 @@
                 android:drawableTint="@color/dark_pruple"
                 />
 
-
         </LinearLayout>
         <LinearLayout
             android:id="@+id/linearLayout4"

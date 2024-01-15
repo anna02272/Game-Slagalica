@@ -322,7 +322,6 @@ public class KorakPoKorakActivity extends AppCompatActivity {
 
             }
         });
-
         socket.on("answer", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -601,6 +600,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                     Toast.makeText(KorakPoKorakActivity.this, "Sledi igra MOJ BROJ!", Toast.LENGTH_SHORT).show();
                 }
                 if (currentUser != null) {
+                    socket.emit("enableTouch", currentNotPlayingUserSocketId);
                     socket.emit("startActivity");
                 } else {
                      Intent intent = new Intent(KorakPoKorakActivity.this, MojBrojActivity.class);
@@ -673,7 +673,6 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 retrieveSteps();
                 buttonHandler.postDelayed(buttonRunnable, 10000);
     }
-
     private void continueGame() throws JSONException {
         socket.emit("continuedTrue");
         if (playingUsernamesArray.length() > 0) {

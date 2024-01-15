@@ -129,9 +129,11 @@ public class PlayersFragment extends Fragment {
                     requireActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (player1Username != null && player2Username != null) {
-                                player1UsernameTextView.setText(player1Username);
-                                player2UsernameTextView.setText(player2Username);
+                            if (getActivity() != null) {
+                                if (player1Username != null && player2Username != null) {
+                                    player1UsernameTextView.setText(player1Username);
+                                    player2UsernameTextView.setText(player2Username);
+                                }
                             }
                         }
                     });
