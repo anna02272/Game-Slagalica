@@ -108,11 +108,13 @@ io.on('connection', (socket) => {
 
             socket.on('incrementRoundIndex', () => {
                 roundIndex++;
+                console.log(roundIndex, "roundIndex");
                 io.emit('updateRoundIndex', roundIndex);
               });
 
               socket.on('decrementRoundIndex', () => {
                 roundIndex--;
+                console.log(roundIndex, "roundIndex");
                 io.emit('updateRoundIndex', roundIndex);
               });
              socket.on('incrementAnswerIndex', () => {
@@ -198,20 +200,32 @@ io.on('connection', (socket) => {
                 io.emit('buttonEnabled', buttonId, enabled);
             });
 
+             socket.on('buttonClickable', (buttonId, clickable) => {
+                  io.emit('buttonClickable', buttonId, clickable);
+             });
+
           socket.on("inputText", (text) => {
                 io.emit("inputText", text);
           });
+          socket.on("buttonAnswerText", (text) => {
+              io.emit("buttonAnswerText", text);
+          });
 
+          socket.on("buttonAnswerText2", (text) => {
+                io.emit("buttonAnswerText2", text);
+          });
           socket.on('showToast', (message, targetSocketId) => {
                    io.to(targetSocketId).emit('showToast', message);
           });
            socket.on('incrementConfirmCount', () => {
                 confirmClicked++;
+                 console.log(confirmClicked);
             io.emit('updateConfirmClicked', confirmClicked);
            });
 
            socket.on('decrementConfirmCount', () => {
               confirmClicked--;
+               console.log(confirmClicked);
            io.emit('updateConfirmClicked', confirmClicked);
            });
 
@@ -219,6 +233,15 @@ io.on('connection', (socket) => {
               io.emit('checkTwoAnswers');
            });
 
+            socket.on("setFinalAnswer", (receivedAnswer, ack) => {
+                    io.emit('setFinalAnswer', receivedAnswer);
+                ack.call(null, receivedAnswer);
+            });
+
+            socket.on("setFinalAnswer2", (receivedAnswer, ack) => {
+                io.emit('setFinalAnswer2', receivedAnswer);
+              ack.call(null, receivedAnswer);
+            });
 //DISCONNECT
         socket.on('userDisconnected', (userInfo) => {
          const { username } = userInfo;
