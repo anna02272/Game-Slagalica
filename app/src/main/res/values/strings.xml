@@ -30,7 +30,7 @@
     <string name="games_points">Poeni:</string>
     <string name="games_description">Ovde ide opis igre</string>
     <string name="games_next">Odustani od igre</string>
-    <string name="games_spojnica">Spojnica</string>
+    <string name="games_spojnica">Spojnice</string>
     <string name="games_korak_po_korak">Korak po korak</string>
     <string name="games_korak">Korak</string>
     <string name="games_answer">Odgovor</string>
@@ -45,7 +45,7 @@
     <string name="games_mojbroj_divide">/</string>
     <string name="games_mojbroj_open">(</string>
     <string name="games_mojbroj_close">)</string>
-    <string name="games_asocijacija">Asocijacija</string>
+    <string name="games_asocijacija">Asocijacije</string>
     <string name="games_asocijacija_A">A</string>
     <string name="games_asocijacija_A1">A1</string>
     <string name="games_asocijacija_A2">A2</string>
@@ -87,6 +87,8 @@
     <string name="profile_procenat">\?%</string>
     <string name="games_mojbroj_stop">STOP</string>
     <string name="start_game_guest">Igraj kao gost</string>
+    <string name="add_image">Dodaj sliku</string>
+    <string name="save_image">Save</string>
 
 
 </resources>

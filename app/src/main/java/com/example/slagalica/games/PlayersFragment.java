@@ -2,6 +2,7 @@ package com.example.slagalica.games;
 
 import static com.example.slagalica.MainActivity.socket;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -129,7 +130,8 @@ public class PlayersFragment extends Fragment {
                     requireActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (getActivity() != null) {
+                            Activity activity = getActivity();
+                            if(activity != null){
                                 if (player1Username != null && player2Username != null) {
                                     player1UsernameTextView.setText(player1Username);
                                     player2UsernameTextView.setText(player2Username);
@@ -155,8 +157,9 @@ public class PlayersFragment extends Fragment {
             @Override
             public void onTick(long millisUntilFinished) {
                 int time = (int) (millisUntilFinished / 1000);
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(new Runnable() {
+                Activity activity = getActivity();
+                if(activity != null){
+                    activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             timeTextView.setText(String.valueOf(time));
@@ -167,8 +170,9 @@ public class PlayersFragment extends Fragment {
 
             @Override
             public void onFinish() {
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(new Runnable() {
+                Activity activity = getActivity();
+                if(activity != null){
+                    activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             timeTextView.setText("0");
@@ -200,8 +204,9 @@ public class PlayersFragment extends Fragment {
             countDownTimer.cancel();
         }
         timerDuration = newDuration;
-        if (getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
+        Activity activity = getActivity();
+        if(activity != null){
+            activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     startTimer(timeTextView, timerDuration);

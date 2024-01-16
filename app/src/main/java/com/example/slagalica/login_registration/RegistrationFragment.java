@@ -76,7 +76,7 @@ public class RegistrationFragment extends Fragment {
                 if (pass.isEmpty()) {
                     signupPassword.setError("Lozinka mora biti popunjena");
                 } else if (pass.length() < 8) {
-                    signupPassword.setError("Loyinka mora imati bar 8 karaktera");
+                    signupPassword.setError("Lozinka mora imati bar 8 karaktera");
                 }
                 if (confirmPass.isEmpty() || !confirmPass.equals(pass)){
                     signupConfirmPass.setError("Ponovljena lozinka nije ista");
@@ -89,9 +89,19 @@ public class RegistrationFragment extends Fragment {
                                 String userId = firebaseUser.getUid();
                                 int initialTokens = 5;
                                 int initialStars = 0;
+                                int initialPlayedGames = 0;
+                                int initialWonGames = 0;
+                                int initialLostGames = 0;
+                                int initialKoZnaZna = 0;
+                                int initialSpojnice = 0;
+                                int initialAsocijacije= 0;
+                                int initialSkocko = 0;
+                                int initialKorakPoKorak = 0;
+                                int initialMojBroj = 0;
 
                                 DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
-                                User user = new User(username, initialTokens, initialStars);
+                                User user = new User(username, initialTokens, initialStars, initialPlayedGames, initialWonGames, initialLostGames,
+                                        initialKoZnaZna, initialSpojnice, initialAsocijacije, initialSkocko, initialKorakPoKorak, initialMojBroj);
                                 usersRef.child(userId).setValue(user)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
