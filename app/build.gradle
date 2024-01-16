@@ -47,6 +47,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:24.6.0'
     implementation 'com.google.firebase:firebase-database:20.0.0'
     implementation 'com.google.firebase:firebase-auth:21.0.1'
+    implementation 'com.google.firebase:firebase-storage:19.1.0'
     implementation 'com.faendir.rhino:rhino-android:1.5.2'
     implementation "org.mozilla:rhino:1.7.13"
     implementation "com.squareup.okhttp3:okhttp:4.9.0"
@@ -54,6 +55,8 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }
     implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
 
 
 }

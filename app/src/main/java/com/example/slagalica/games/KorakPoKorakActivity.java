@@ -83,7 +83,14 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
         disableTouchActivity = new DisableTouchActivity(KorakPoKorakActivity.this);
-
+        socket.emit("timerStart", currentNotPlayingUserSocketId);
+        JSONObject timerData = new JSONObject();
+        try {
+            timerData.put("duration", 70);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        socket.emit("startTimer", timerData);
         playersFragment = PlayersFragment.newInstance(71);
         playersFragment.setGameType("KorakPoKorak");
 
@@ -405,6 +412,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         };
 
     }
+    
     private void retrieveConnectedUsers() throws JSONException {
         if (playingUsernamesArray.length() >= 2) {
             currentPlayingUserIndex = (currentPlayingUserIndex) % playingUsernamesArray.length();
@@ -779,6 +787,21 @@ public class KorakPoKorakActivity extends AppCompatActivity {
             countDownTimer.cancel();
         }
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+    }
+
     private void showToastAndEmit(String message) {
         Toast.makeText(KorakPoKorakActivity.this, message, Toast.LENGTH_SHORT).show();
         socket.emit("showToast", message);

@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class SpojniceActivity extends AppCompatActivity {
@@ -92,6 +93,14 @@ public class SpojniceActivity extends AppCompatActivity {
         currentUser = auth.getCurrentUser();
         disableTouchActivity = new DisableTouchActivity(SpojniceActivity.this);
 
+        socket.emit("timerStart", currentNotPlayingUserSocketId);
+        JSONObject timerData = new JSONObject();
+        try {
+            timerData.put("duration", 70);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        socket.emit("startTimer", timerData);
         playersFragment = PlayersFragment.newInstance(31);
         playersFragment.setGameType("Spojnice");
 
@@ -689,6 +698,7 @@ public class SpojniceActivity extends AppCompatActivity {
         }
         else {
             endGame();
+
         }
     }
     private void continueGame() throws JSONException {
@@ -720,6 +730,7 @@ public class SpojniceActivity extends AppCompatActivity {
                     }
                 }
             }
+
         socket.emit("timerStart", currentPlayingUserSocketId);
             JSONObject timerData = new JSONObject();
             try {
@@ -803,11 +814,23 @@ public class SpojniceActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         buttonHandler.removeCallbacks(buttonRunnable);
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
     }
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
-
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
     }
     private void showToastAndEmit(String message) {
         Toast.makeText(SpojniceActivity.this, message, Toast.LENGTH_SHORT).show();

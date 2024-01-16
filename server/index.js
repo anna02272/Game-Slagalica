@@ -91,8 +91,12 @@ io.on('connection', (socket) => {
                    io.emit('endGame');
               });
                socket.on('startActivity', () => {
+                    setTimeout(() => {
+                     io.emit('updatePlayingUsers', playingUsernamesArray, playingSocketsArray);
                     io.emit('startActivity');
+                }, 3000);
                });
+//
 
              socket.on('showToast', (message) => {
                io.emit('showToast', message);
@@ -200,8 +204,8 @@ io.on('connection', (socket) => {
                 io.emit('buttonEnabled', buttonId, enabled);
             });
 
-             socket.on('buttonClickable', (buttonId, clickable) => {
-                  io.emit('buttonClickable', buttonId, clickable);
+             socket.on('buttonClickable2', (buttonId, clickable) => {
+                  io.emit('buttonClickable2', buttonId, clickable);
              });
 
           socket.on("inputText", (text) => {

@@ -55,6 +55,7 @@ import java.util.Map;
 import java.util.Random;
 
 import io.socket.client.Ack;
+import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class MojBrojActivity extends AppCompatActivity {
@@ -108,7 +109,14 @@ public class MojBrojActivity extends AppCompatActivity {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
         disableTouchActivity = new DisableTouchActivity(MojBrojActivity.this);
-
+        socket.emit("timerStart", currentNotPlayingUserSocketId);
+        JSONObject timerData = new JSONObject();
+        try {
+            timerData.put("duration", 70);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        socket.emit("startTimer", timerData);
         playersFragment = PlayersFragment.newInstance(61);
         playersFragment.setGameType("MojBroj");
 
@@ -368,7 +376,7 @@ public class MojBrojActivity extends AppCompatActivity {
 
             }
         });
-        socket.on("buttonClickable", new Emitter.Listener() {
+        socket.on("buttonClickable2", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 int buttonId = (int) args[0];
@@ -528,6 +536,7 @@ public class MojBrojActivity extends AppCompatActivity {
             currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex);
 
             socket.emit("disableTouch", currentNotPlayingUserSocketId);
+            socket.emit("enableTouch", currentPlayingUserSocketId);
             socket.emit("timerStart", currentNotPlayingUserSocketId);
             JSONObject timerData = new JSONObject();
             try {
@@ -749,7 +758,6 @@ public class MojBrojActivity extends AppCompatActivity {
                 Intent intent = new Intent(MojBrojActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
-                startActivity(intent);
 
             }
         }, 5000);
@@ -934,6 +942,7 @@ public class MojBrojActivity extends AppCompatActivity {
                 currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex);
 
                 socket.emit("disableTouch", currentNotPlayingUserSocketId);
+                socket.emit("enableTouch", currentPlayingUserSocketId);
             }
             socket.emit("inputText", "");
             socket.emit("buttonAnswerText", "");
@@ -982,9 +991,9 @@ public class MojBrojActivity extends AppCompatActivity {
             int buttonId = button.getId();
             int buttonConfirmId = confirmButton.getId();
             socket.emit("buttonEnabled", buttonId, true);
-            socket.emit("buttonClickable", buttonId, true);
+            socket.emit("buttonClickable2", buttonId, true);
             socket.emit("buttonEnabled", buttonConfirmId, true);
-            socket.emit("buttonClickable", buttonConfirmId, true);
+            socket.emit("buttonClickable2", buttonConfirmId, true);
         }
     }
     private void setButtonTextForAllButtons() {
@@ -1108,7 +1117,20 @@ public class MojBrojActivity extends AppCompatActivity {
             countDownTimer.cancel();
         }
     }
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+    }
 
 }
 
