@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,10 +65,13 @@ public class ProfileFragment extends Fragment {
     private int lostGames ;
     private int koZnaZna ;
     private int spojnice ;
+    private int spojnicePoints ;
     private int asocijacije;
     private int skocko;
     private int korakPoKorak ;
+    private int korakPoKorakPoints ;
     private int mojBroj ;
+    private int mojBrojPoints;
     private Uri filePath;
     private final int PICK_IMAGE_REQUEST = 22;
     FirebaseStorage storage;
@@ -88,7 +92,6 @@ public class ProfileFragment extends Fragment {
         usernameTextView = view.findViewById(R.id.profile_username);
         emailTextView = view.findViewById(R.id.profile_email);
         profileImageView = view.findViewById(R.id.uploadImage);
-
 
         playedGamesTextView = view.findViewById(R.id.playedGames);
         wonGamesTextView = view.findViewById(R.id.wonGames);
@@ -165,8 +168,7 @@ public class ProfileFragment extends Fragment {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         wonGames = dataSnapshot.getValue(Integer.class);
-                        String wonGamesText = String.valueOf(wonGames);
-                        wonGamesTextView.setText(wonGamesText);
+                          calculateAndDisplayWonGamesPercentage();
                     } else {
                         // Handle the case where data doesn't exist
                     }
@@ -182,8 +184,7 @@ public class ProfileFragment extends Fragment {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         lostGames = dataSnapshot.getValue(Integer.class);
-                        String lostGamesText = String.valueOf(lostGames);
-                        lostGamesTextView.setText(lostGamesText);
+                          calculateAndDisplayLostGamesPercentage();
                     } else {
                         // Handle the case where data doesn't exist
                     }
@@ -194,15 +195,32 @@ public class ProfileFragment extends Fragment {
                     // Handle errors
                 }
             });
-            usersRef.child(userId).child("korakPoKorak").addListenerForSingleValueEvent(new ValueEventListener() {
+            usersRef.child(userId).child("korakPoKorakPoints").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
-                        korakPoKorak = dataSnapshot.getValue(Integer.class);
-                        String korakPoKorakText = String.valueOf(korakPoKorak);
-                        korakPoKorakTextView.setText(korakPoKorakText);
-                    } else {
-                        // Handle the case where data doesn't exist
+                        korakPoKorakPoints = dataSnapshot.getValue(Integer.class);
+
+                        usersRef.child(userId).child("korakPoKorak").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    korakPoKorak = dataSnapshot.getValue(Integer.class);
+
+                                    if (korakPoKorak != 0 && korakPoKorakPoints != 0) {
+                                        double successRate = (korakPoKorakPoints / (korakPoKorak * 25.0)) * 100;
+                                        String successRateText = String.format("%.1f", successRate);
+                                        korakPoKorakTextView.setText(successRateText + "%");
+                                    } else {
+                                        korakPoKorakTextView.setText("0%");
+                                    }
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                // Handle errors
+                            }
+                        });
                     }
                 }
 
@@ -211,15 +229,33 @@ public class ProfileFragment extends Fragment {
                     // Handle errors
                 }
             });
-            usersRef.child(userId).child("spojnice").addListenerForSingleValueEvent(new ValueEventListener() {
+            usersRef.child(userId).child("spojnicePoints").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
-                        spojnice = dataSnapshot.getValue(Integer.class);
-                        String spojniceText = String.valueOf(spojnice);
-                        spojniceTextView.setText(spojniceText);
-                    } else {
-                        // Handle the case where data doesn't exist
+                        spojnicePoints = dataSnapshot.getValue(Integer.class);
+
+                        usersRef.child(userId).child("spojnice").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    spojnice = dataSnapshot.getValue(Integer.class);
+
+                                    if (spojnice != 0 && spojnicePoints != 0) {
+                                        double successRate = (spojnicePoints / (spojnice * 20.0)) * 100;
+                                        String successRateText = String.format("%.1f", successRate);
+                                        spojniceTextView.setText(successRateText + "%");
+                                    } else {
+                                        spojniceTextView.setText("0%");
+                                    }
+
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                // Handle errors
+                            }
+                        });
                     }
                 }
 
@@ -228,13 +264,14 @@ public class ProfileFragment extends Fragment {
                     // Handle errors
                 }
             });
+
             usersRef.child(userId).child("asocijacije").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         asocijacije = dataSnapshot.getValue(Integer.class);
                         String asocijacijeText = String.valueOf(asocijacije);
-                        asocijacijeTextView.setText(asocijacijeText);
+                        asocijacijeTextView.setText(asocijacijeText + "%");
                     } else {
                         // Handle the case where data doesn't exist
                     }
@@ -252,7 +289,7 @@ public class ProfileFragment extends Fragment {
                     if (dataSnapshot.exists()) {
                         skocko = dataSnapshot.getValue(Integer.class);
                         String skockoText = String.valueOf(skocko);
-                        skockoTextView.setText(skockoText);
+                        skockoTextView.setText(skockoText + "%");
                     } else {
                         // Handle the case where data doesn't exist
                     }
@@ -270,7 +307,7 @@ public class ProfileFragment extends Fragment {
                     if (dataSnapshot.exists()) {
                         koZnaZna = dataSnapshot.getValue(Integer.class);
                         String koZnaZnaText = String.valueOf(koZnaZna);
-                        koZnaZnaTextView.setText(koZnaZnaText);
+                        koZnaZnaTextView.setText(koZnaZnaText + "%");
                     } else {
                         // Handle the case where data doesn't exist
                     }
@@ -282,15 +319,32 @@ public class ProfileFragment extends Fragment {
                 }
             });
 
-            usersRef.child(userId).child("mojBroj").addListenerForSingleValueEvent(new ValueEventListener() {
+            usersRef.child(userId).child("mojBrojPoints").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
-                        mojBroj = dataSnapshot.getValue(Integer.class);
-                        String mojBrojText = String.valueOf(mojBroj);
-                        mojBrojTextView.setText(mojBrojText);
-                    } else {
-                        // Handle the case where data doesn't exist
+                        mojBrojPoints = dataSnapshot.getValue(Integer.class);
+
+                        usersRef.child(userId).child("mojBroj").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    mojBroj = dataSnapshot.getValue(Integer.class);
+
+                                    if (mojBroj != 0 && mojBrojPoints != 0) {
+                                        double successRate = (mojBrojPoints / (mojBroj * 40.0)) * 100;
+                                        String successRateText = String.format("%.1f", successRate);
+                                        mojBrojTextView.setText(successRateText + "%");
+                                    } else {
+                                        mojBrojTextView.setText("0%");
+                                    }
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                // Handle errors
+                            }
+                        });
                     }
                 }
 
@@ -305,7 +359,6 @@ public class ProfileFragment extends Fragment {
                     if (dataSnapshot.exists()) {
                         String imageUrl = dataSnapshot.getValue(String.class);
 
-                        // Load the image into the ImageView using Picasso
                         Picasso.get().load(imageUrl).into(profileImageView);
                     } else {
                         // Handle the case where data doesn't exist
@@ -320,8 +373,18 @@ public class ProfileFragment extends Fragment {
         }
         return view;
     }
+    private void calculateAndDisplayWonGamesPercentage() {
+         double wonGamesPercentage = (playedGames > 0) ? ((double) wonGames / playedGames) * 100 : 0.0;
+         String wonGamesPercentageText = String.format("%.2f%%", wonGamesPercentage);
+         wonGamesTextView.setText(wonGamesPercentageText);
+    }
+    private void calculateAndDisplayLostGamesPercentage() {
+        double lostGamesPercentage = (playedGames > 0) ? ((double) lostGames / playedGames) * 100 : 0.0;
+        String lostGamesPercentageText = String.format("%.2f%%", lostGamesPercentage);
+        lostGamesTextView.setText(lostGamesPercentageText);
+    }
+
     private void selectImage() {
-        // Defining Implicit Intent to mobile gallery
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -338,20 +401,13 @@ public class ProfileFragment extends Fragment {
                 resultCode,
                 data);
 
-        // checking request code and result code
-        // if request code is PICK_IMAGE_REQUEST and
-        // resultCode is RESULT_OK
-        // then set image in the image view
         if (requestCode == PICK_IMAGE_REQUEST
                 && resultCode == RESULT_OK
                 && data != null
                 && data.getData() != null) {
 
-            // Get the Uri of data
             filePath = data.getData();
             try {
-
-                // Setting image on image view using Bitmap
                 Bitmap bitmap = MediaStore
                         .Images
                         .Media
@@ -367,78 +423,6 @@ public class ProfileFragment extends Fragment {
             }
         }
     }
-//    private void uploadImage() {
-//        if (filePath != null) {
-//
-//            // Code for showing progressDialog while uploading
-//            ProgressDialog progressDialog
-//                    = new ProgressDialog(getContext());
-//            progressDialog.setTitle("Uploading...");
-//            progressDialog.show();
-//
-//            // Defining the child of storageReference
-//            StorageReference ref
-//                    = storageReference
-//                    .child(
-//                            "images/"
-//                                    + UUID.randomUUID().toString());
-//
-//            // adding listeners on upload
-//            // or failure of image
-//            ref.putFile(filePath)
-//                    .addOnSuccessListener(
-//                            new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//
-//                                @Override
-//                                public void onSuccess(
-//                                        UploadTask.TaskSnapshot taskSnapshot)
-//                                {
-//
-//                                    // Image uploaded successfully
-//                                    // Dismiss dialog
-//                                    progressDialog.dismiss();
-//                                    Toast
-//                                            .makeText(getContext(),
-//                                                    "Image Uploaded!!",
-//                                                    Toast.LENGTH_SHORT)
-//                                            .show();
-//                                }
-//                            })
-//
-//                    .addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception e)
-//                        {
-//
-//                            // Error, Image not uploaded
-//                            progressDialog.dismiss();
-//                            Toast
-//                                    .makeText(getContext(),
-//                                            "Failed " + e.getMessage(),
-//                                            Toast.LENGTH_SHORT)
-//                                    .show();
-//                        }
-//                    })
-//                    .addOnProgressListener(
-//                            new OnProgressListener<UploadTask.TaskSnapshot>() {
-//
-//                                // Progress Listener for loading
-//                                // percentage on the dialog box
-//                                @Override
-//                                public void onProgress(
-//                                        UploadTask.TaskSnapshot taskSnapshot)
-//                                {
-//                                    double progress
-//                                            = (100.0
-//                                            * taskSnapshot.getBytesTransferred()
-//                                            / taskSnapshot.getTotalByteCount());
-//                                    progressDialog.setMessage(
-//                                            "Uploaded "
-//                                                    + (int)progress + "%");
-//                                }
-//                            });
-//        }
-//    }
 
     private void uploadImage() {
         if (filePath != null) {
@@ -446,22 +430,17 @@ public class ProfileFragment extends Fragment {
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
-            // Define the child of storageReference
             StorageReference ref = storageReference.child("images/" + UUID.randomUUID().toString());
 
-            // Add listeners on upload or failure of image
             ref.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            // Image uploaded successfully
                             progressDialog.dismiss();
 
-                            // Get the download URL of the uploaded image
                             ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-                                    // Save the download URL in the user's database entry
                                     saveImageUrlToDatabase(uri.toString());
                                 }
                             });
@@ -472,7 +451,6 @@ public class ProfileFragment extends Fragment {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            // Error, Image not uploaded
                             progressDialog.dismiss();
                             Toast.makeText(getContext(), "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -491,18 +469,15 @@ public class ProfileFragment extends Fragment {
         if (currentUser != null) {
             userId = currentUser.getUid();
 
-            // Save the image URL in the user's database entry
             usersRef.child(userId).child("imageUrl").setValue(imageUrl)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            // Handle the success of saving the image URL
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            // Handle the failure of saving the image URL
                         }
                     });
         }

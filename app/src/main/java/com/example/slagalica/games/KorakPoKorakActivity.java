@@ -15,14 +15,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.slagalica.game_helpers.DisableTouchActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -70,6 +75,8 @@ public class KorakPoKorakActivity extends AppCompatActivity {
     private final int TOTAL_ROUNDS = 2;
     private int buttonId;
     private boolean isContinued;
+    private DatabaseReference usersRef;
+    private String userId;
     @Override
     public void onBackPressed() {
         return;
@@ -98,8 +105,33 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 .beginTransaction()
                 .add(R.id.fragment_container, playersFragment)
                 .commit();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        if (currentUser != null) {
+            userId = currentUser.getUid();
+            usersRef = firebaseDatabase.getReference("users");
+            usersRef.child(userId).child("korakPoKorak").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        int korakPoKorak = dataSnapshot.getValue(Integer.class);
+                        int newKorakPoKorak= korakPoKorak + 1;
 
-
+                        usersRef.child(userId).child("korakPoKorak").setValue(newKorakPoKorak)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                        }
+                                    }
+                                });
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle errors
+                }
+            });
+        }
         Button buttonNext = findViewById(R.id.button_next);
         input = findViewById(R.id.input);
 
@@ -114,7 +146,11 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkAnswer();
+                try {
+                    checkAnswer();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 
@@ -135,7 +171,6 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         buttons.add(findViewById(R.id.button_13));
         buttons.add(findViewById(R.id.button_14));
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
         random = new Random();
 
         buttonSteps = new HashMap<>();
@@ -508,7 +543,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         return currentStep < 0 ? 0 : currentStep;
     }
 
-    private void checkAnswer() {
+    private void checkAnswer() throws JSONException {
             String userInput = input.getText().toString().trim();
             socket.emit("answer", userInput);
 
@@ -542,6 +577,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
             int pointsToAdd = 20 - (2 * (currentStep - 1));
             if (currentUser != null) {
                 updatePoints(currentPlayingUserIndex + 1, pointsToAdd);
+                updatePointsCount(currentPlayingUserIndex, pointsToAdd);
                 socket.emit("answer", "");
 
                 if (isContinued == true) {
@@ -549,12 +585,14 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                         socket.emit("endGame");
                         socket.emit("decrementAnswerIndex");
                          updatePoints(currentPlayingUserIndex + 1, 5);
+                        updatePointsCount(currentPlayingUserIndex, 5);
                     } else {
                         socket.emit("startNextGame");
                         socket.emit("incrementAnswerIndex");
                         socket.emit("incrementRoundIndex");
                         socket.emit("continuedTrue");
                         updatePoints(currentPlayingUserIndex + 1, 5);
+                        updatePointsCount(currentPlayingUserIndex, 5);
                     }
                 } else {
                     if (roundIndex == 1) {
@@ -805,5 +843,42 @@ public class KorakPoKorakActivity extends AppCompatActivity {
     private void showToastAndEmit(String message) {
         Toast.makeText(KorakPoKorakActivity.this, message, Toast.LENGTH_SHORT).show();
         socket.emit("showToast", message);
+    }
+    private void updatePointsCount(int playerNumber, int points) throws JSONException {
+        currentPlayingUser = playingUsernamesArray.getString(playerNumber);
+
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
+
+        Query query = usersRef.orderByChild("username").equalTo(currentPlayingUser);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    String userId = userSnapshot.getKey();
+
+                    DatabaseReference ref = usersRef.child(userId);
+                    ref.child("korakPoKorakPoints").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                int korakPoKorakPoints = dataSnapshot.getValue(Integer.class);
+                                int newPoints = (int) (korakPoKorakPoints + points);
+                                ref.child("korakPoKorakPoints").setValue(newPoints);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Handle errors
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
     }
 }

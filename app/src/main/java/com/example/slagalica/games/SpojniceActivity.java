@@ -3,7 +3,6 @@ package com.example.slagalica.games;
 
 import static com.example.slagalica.MainActivity.socket;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,23 +10,26 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.slagalica.R;
 import com.example.slagalica.game_helpers.DisableTouchActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
@@ -41,7 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class SpojniceActivity extends AppCompatActivity {
@@ -77,6 +78,9 @@ public class SpojniceActivity extends AppCompatActivity {
     private DisableTouchActivity disableTouchActivity;
     private String username;
     private SharedPreferences preferences;
+    private int spojnice ;
+    private DatabaseReference usersRef;
+    private String userId;
    @Override
     public void onBackPressed() {
         return;
@@ -109,6 +113,35 @@ public class SpojniceActivity extends AppCompatActivity {
                 .add(R.id.fragment_container, playersFragment)
                 .commit();
 
+        firebaseDatabase = FirebaseDatabase.getInstance();
+
+            if (currentUser != null) {
+                userId = currentUser.getUid();
+                usersRef = firebaseDatabase.getReference("users");
+                usersRef.child(userId).child("spojnice").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            int spojnice = dataSnapshot.getValue(Integer.class);
+                            int newSpojnice = spojnice + 1;
+
+                            usersRef.child(userId).child("spojnice").setValue(newSpojnice)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // Handle errors
+                    }
+                });
+        }
+
         Button buttonNext = findViewById(R.id.button_next);
         EditText input = findViewById(R.id.input);
 
@@ -136,7 +169,6 @@ public class SpojniceActivity extends AppCompatActivity {
             buttons.get(i).setEnabled(false);
         }
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
         random = new Random();
         buttonSteps = new HashMap<>();
 
@@ -568,6 +600,7 @@ public class SpojniceActivity extends AppCompatActivity {
                 resetButtonsSocket(firstClickedButton, "#00FF00");
                 resetButtonsSocket(secondClickedButton, "#00FF00");
                 updatePoints(currentPlayingUserIndex + 1, 2);
+                updatePointsCount(currentPlayingUserIndex, 2);
               } else {
 //                if (currentPlayingUserIndex == 0){
 //                    Log.d("currentPlayingUserIndex", "currentPlayingUserIndex: " + currentPlayingUserIndex);
@@ -611,7 +644,7 @@ public class SpojniceActivity extends AppCompatActivity {
         });
     }
 
-    private void updatePoints(int currentPlayerNumber, int points) {
+    private void updatePoints(int currentPlayerNumber, int points) throws JSONException {
         if (currentUser != null) {
           if (currentPlayerNumber > 0) {
                 playersFragment.updatePlayerPoints(currentPlayerNumber, points);
@@ -744,9 +777,9 @@ public class SpojniceActivity extends AppCompatActivity {
 
     private void endGame() throws JSONException {
         if (currentUser != null) {
-            showToastAndEmit("Igra je gotova! Sledi igra ASOCIJACIJE!");
+            showToastAndEmit("Igra je gotova! Sledi igra KORAK PO KORAK!");
         } else {
-            Toast.makeText(SpojniceActivity.this, "Igra je gotova! Sledi igra ASOCIJACIJE!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SpojniceActivity.this, "Igra je gotova! Sledi igra KORAK PO KORAK!", Toast.LENGTH_SHORT).show();
         }
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -890,6 +923,43 @@ public class SpojniceActivity extends AppCompatActivity {
             button.setClickable(false);
         });
 
+    }
+    private void updatePointsCount(int playerNumber, int points) throws JSONException {
+        currentPlayingUser = playingUsernamesArray.getString(playerNumber);
+
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
+
+        Query query = usersRef.orderByChild("username").equalTo(currentPlayingUser);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    String userId = userSnapshot.getKey();
+
+                    DatabaseReference ref = usersRef.child(userId);
+                    ref.child("spojnicePoints").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                int spojnicePoints = dataSnapshot.getValue(Integer.class);
+                                int newPoints = (int) (spojnicePoints + points);
+                                ref.child("spojnicePoints").setValue(newPoints);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Handle errors
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
     }
 
     }

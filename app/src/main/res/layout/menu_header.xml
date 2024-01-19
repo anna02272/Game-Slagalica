@@ -9,6 +9,7 @@
     >
 
     <ImageView
+        android:id="@+id/header_image"
         android:layout_width="201dp"
         android:layout_height="83dp"
         android:paddingBottom="10dp"

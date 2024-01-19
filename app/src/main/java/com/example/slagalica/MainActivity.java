@@ -27,6 +27,7 @@ import com.example.slagalica.games.MojBrojActivity;
 import com.example.slagalica.games.SpojniceActivity;
 import com.example.slagalica.games.StartMultiplayerGameActivity;
 import com.example.slagalica.login_registration.RegistrationLoginActivity;
+import com.example.slagalica.login_registration.User;
 import com.example.slagalica.menu.FriendsFragment;
 import com.example.slagalica.menu.HomeFragment;
 import com.example.slagalica.menu.NotificationFragment;
@@ -43,10 +44,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -57,11 +64,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String username;
     private String email;
     private int tokens;
+    private String date;
     private int stars;
+    private int playedGames;
     private FirebaseUser currentUser;
     private   SharedPreferences preferences;
     private String userId;
     private DatabaseReference usersRef;
+    private  TextView tokenText;
+    private  Button buttonStartGame;
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
         @Override
@@ -76,12 +87,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             Button buttonRegister = findViewById(R.id.register);
             Button buttonStartGameGuest = findViewById(R.id.startgameguest);
-            Button buttonStartGame = findViewById(R.id.startgame);
+             buttonStartGame = findViewById(R.id.startgame);
             View navView = findViewById(R.id.nav_view);
 
             ImageView tokenImage = findViewById(R.id.tokens_image);
             ImageView starImage = findViewById(R.id.stars_image);
-            TextView tokenText = findViewById(R.id.tokens_text);
+             tokenText = findViewById(R.id.tokens_text);
             TextView starText = findViewById(R.id.stars_text);
 
             FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -120,6 +131,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             buttonStartGame.setEnabled(false);
                         }
 
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
+                usersRef.child(userId).child("date").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            date = dataSnapshot.getValue(String.class);
+                            getDate();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+            usersRef.child(userId).child("stars").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        stars = dataSnapshot.getValue(Integer.class);
+                        int tokensEarned = stars / 50;
+
+
+                        if (tokensEarned != 0) {
+                            usersRef.child(userId).child("tokens").setValue(tokens + tokensEarned);
+                            usersRef.child(userId).child("stars").setValue(stars % 50);
+
+                            String tokensText = String.valueOf(tokens + tokensEarned);
+                            tokenText.setText(tokensText);
+
+                            String starsText = String.valueOf(stars % 50);
+                            starText.setText(starsText);
+                        } else {
+                            String starsText = String.valueOf(stars);
+                            starText.setText(starsText);
+                        }
                     } else {
                     }
                 }
@@ -128,17 +180,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                 }
             });
-            usersRef.child(userId).child("stars").addListenerForSingleValueEvent(new ValueEventListener() {
+            usersRef.child(userId).child("playedGames").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
-                        stars = dataSnapshot.getValue(Integer.class);
-                        String starsText = String.valueOf(stars);
-                        starText.setText(starsText);
-                    } else {
+                        playedGames = dataSnapshot.getValue(Integer.class);
                     }
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                 }
@@ -160,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     if (currentUser == null) {
                         firebaseDatabase.getReference("points/guest_points").setValue(0);
                     }
-                    Intent intent = new Intent(MainActivity.this, MojBrojActivity.class);
+                    Intent intent = new Intent(MainActivity.this, SpojniceActivity.class);
                     startActivity(intent);
                 }
             });
@@ -185,12 +233,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
-                        Intent intent = new Intent(MainActivity.this, SpojniceActivity.class);
+                        Intent intent = new Intent(MainActivity.this, KorakPoKorakActivity.class);
                         startActivity(intent);
 
 
                         if (tokens > 0) {
                             int newTokens = tokens - 1;
+                            int newPlayedGames = playedGames + 1;
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -205,15 +254,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                             });
                                     tokens = newTokens;
                                     tokenText.setText(String.valueOf(tokens));
+
+                                    usersRef.child(userId).child("playedGames").setValue(newPlayedGames)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                    } else {
+                                                    }
+                                                }
+                                            });
                                 }
                             });
 
-                        } else {
                         }
-
                     }
                 });
-
 
             preferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
             username = preferences.getString("username", "");
@@ -231,7 +287,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextView headerEmail = headerView.findViewById(R.id.header_email);
         headerUsername.setText(username);
         headerEmail.setText(email);
-
 
 
         navigationView.setNavigationItemSelectedListener(this);
@@ -298,5 +353,51 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void getDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String currentDate = dateFormat.format(new Date());
+
+        try {
+            Date storedDate = dateFormat.parse(date);
+            Date today = dateFormat.parse(currentDate);
+
+            int daysDifference = daysBetween(storedDate, today);
+
+            int newTokens = tokens + (5 * daysDifference);
+
+            updateTokensAndDate(userId, newTokens, currentDate);
+
+            String tokensText = String.valueOf(newTokens);
+            tokenText.setText(tokensText);
+            if (newTokens == 0) {
+                buttonStartGame.setEnabled(false);
+            } else{
+                buttonStartGame.setEnabled(true);
+            }
+
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+        private int daysBetween(Date startDate, Date endDate) {
+        Calendar startCalendar = Calendar.getInstance();
+        startCalendar.setTime(startDate);
+
+        Calendar endCalendar = Calendar.getInstance();
+        endCalendar.setTime(endDate);
+
+        long milliseconds = endCalendar.getTimeInMillis() - startCalendar.getTimeInMillis();
+        return (int) (milliseconds / (24 * 60 * 60 * 1000));
+    }
+
+    private void updateTokensAndDate(String userId, int newTokens, String currentDate) {
+        DatabaseReference userRef = firebaseDatabase.getReference("users").child(userId);
+        userRef.child("tokens").setValue(newTokens);
+        userRef.child("date").setValue(currentDate);
+        Log.d("USerID" , "userID: " + userId);
+        Log.d("USerID" , "tokens: " + newTokens);
+        Log.d("USerID" , "date: " + currentDate);
     }
 }

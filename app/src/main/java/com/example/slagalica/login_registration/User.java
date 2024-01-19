@@ -5,6 +5,7 @@ public class User {
     private String username;
     private int tokens;
     private int stars;
+    private  String date;
     private int playedGames;
     private int wonGames ;
     private int lostGames ;
@@ -14,6 +15,9 @@ public class User {
     private int skocko;
     private int korakPoKorak ;
     private int mojBroj ;
+    private int spojnicePoints ;
+    private int korakPoKorakPoints ;
+    private int mojBrojPoints ;
 
     public User() {
     }
@@ -22,11 +26,13 @@ public class User {
         this.username = username;
     }
 
-    public User(String username, int tokens, int stars, int playedGames, int wonGames, int lostGames,
-                int koZnaZna, int spojnice, int asocijacije, int skocko, int korakPoKorak, int mojBroj) {
+    public User(String username, int tokens, int stars, String date,  int playedGames, int wonGames, int lostGames,
+                int koZnaZna, int spojnice, int asocijacije, int skocko, int korakPoKorak, int mojBroj,
+                int spojnicePoints, int korakPoKorakPoints, int mojBrojPoints) {
         this.username = username;
         this.tokens = tokens;
         this.stars = stars;
+        this.date = date;
         this.playedGames = playedGames;
         this.wonGames = wonGames;
         this.lostGames = lostGames;
@@ -36,6 +42,9 @@ public class User {
         this.skocko = skocko;
         this.korakPoKorak = korakPoKorak;
         this.mojBroj = mojBroj;
+        this.spojnicePoints = spojnicePoints;
+        this.korakPoKorakPoints = korakPoKorakPoints;
+        this.mojBrojPoints = mojBrojPoints;
 
     }
     public String getUsername() {
@@ -56,6 +65,12 @@ public class User {
     }
     public void setStars(int stars) {
         this.stars = stars;
+    }
+    public String getDate() {
+        return date;
+    }
+    public void setDate(String date) {
+        this.date = date;
     }
     public int getPlayedGames() {
         return playedGames;
@@ -123,6 +138,28 @@ public class User {
 
     public void setMojBroj(int mojBroj) {
         this.mojBroj = mojBroj;
+    }
+    public int getSpojnicePoints() {
+        return spojnicePoints;
+    }
+
+    public void setSpojnicePoints(int spojnicePoints) {
+        this.spojnicePoints = spojnicePoints;
+    }
+    public int getKorakPoKorakPoints() {
+        return korakPoKorakPoints;
+    }
+
+    public void setKorakPoKorakPoints(int korakPoKorakPoints) {
+        this.korakPoKorakPoints = korakPoKorakPoints;
+    }
+
+    public int getMojBrojPoints() {
+        return mojBrojPoints;
+    }
+
+    public void setMojBrojPoints(int mojBrojPoints) {
+        this.mojBrojPoints = mojBrojPoints;
     }
 }
 

@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -16,25 +17,38 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.example.slagalica.MainActivity;
 import com.example.slagalica.R;
+import com.example.slagalica.config.SocketHandler;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import io.socket.emitter.Emitter;
 
@@ -44,8 +58,8 @@ public class PlayersFragment extends Fragment {
 
     private CountDownTimer countDownTimer;
     private FirebaseDatabase firebaseDatabase;
-    private TextView player1PointsTextView;
-    private TextView player2PointsTextView;
+    TextView player1PointsTextView;
+    TextView player2PointsTextView;
     private int mTimerDuration;
     private String mGameType;
     private DatabaseReference guestPointsRef;
@@ -58,11 +72,12 @@ public class PlayersFragment extends Fragment {
     private String player1Username;
     private String player2Username;
     private FirebaseUser currentUser;
-    private  TextView player1UsernameTextView;
-    private  TextView player2UsernameTextView;
+    TextView player1UsernameTextView;
+    TextView player2UsernameTextView;
+    ImageView player1ImageView;
+    ImageView player2ImageView;
     private  int timerDuration;
     private  TextView timeTextView;
-
     public PlayersFragment() {
     }
 
@@ -116,6 +131,8 @@ public class PlayersFragment extends Fragment {
 
          player1UsernameTextView = rootView.findViewById(R.id.player1Username);
          player2UsernameTextView = rootView.findViewById(R.id.player2Username);
+        player1ImageView = rootView.findViewById(R.id.player1Image);
+        player2ImageView = rootView.findViewById(R.id.player2Image);
         if (currentUser != null) {
             try {
                 socket.emit("userPlaying", new JSONObject().put("username", username));
@@ -135,6 +152,7 @@ public class PlayersFragment extends Fragment {
                                 if (player1Username != null && player2Username != null) {
                                     player1UsernameTextView.setText(player1Username);
                                     player2UsernameTextView.setText(player2Username);
+                                    loadProfileImages(player1Username, player2Username);
                                 }
                             }
                         }
@@ -145,7 +163,6 @@ public class PlayersFragment extends Fragment {
 
         return rootView;
     }
-
     private void startTimer(TextView timeTextView, int timerDuration) {
         if (countDownTimer != null) {
             countDownTimer.cancel();
@@ -198,7 +215,6 @@ public class PlayersFragment extends Fragment {
 
         }
     };
-
     public void updateTimerDuration(int newDuration) {
         if (countDownTimer != null) {
             countDownTimer.cancel();
@@ -259,7 +275,6 @@ public class PlayersFragment extends Fragment {
                     if (dataSnapshot.exists()) {
                         Long player1Points = dataSnapshot.getValue(Long.class);
                         player1PointsTextView.setText(String.valueOf(player1Points));
-
                     }
                 }
 
@@ -285,8 +300,6 @@ public class PlayersFragment extends Fragment {
         }
 
     }
-
-
     void showExitConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setTitle("Da li ste sigurni?")
@@ -296,6 +309,7 @@ public class PlayersFragment extends Fragment {
                         Intent intent = new Intent(requireActivity(), MainActivity.class);
                         startActivity(intent);
                         if (currentUser != null) {
+                            updateLostGamesCount(username);
                             try {
                                 socket.emit("playerDisconnected", new JSONObject().put("username", username));
                             } catch (JSONException e) {
@@ -323,7 +337,6 @@ public class PlayersFragment extends Fragment {
             negativeButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.buttonTextColorLight));
         }
     }
-
     private void setDescription(TextView descriptionTextView) {
         String description;
         switch (mGameType) {
@@ -351,7 +364,6 @@ public class PlayersFragment extends Fragment {
         }
         descriptionTextView.setText(description);
     }
-
     void updateGuestPoints(int pointsToAdd) {
         DatabaseReference guestPointsRef = firebaseDatabase.getReference("points/guest_points");
 
@@ -372,7 +384,6 @@ public class PlayersFragment extends Fragment {
             }
         });
     }
-
     void updatePlayerPoints(int playerNumber, int pointsToAdd) {
         DatabaseReference playerPointsRef = firebaseDatabase.getReference("points/player" + playerNumber + "_points");
 
@@ -394,4 +405,109 @@ public class PlayersFragment extends Fragment {
             }
         });
     }
+    private void updateLostGamesCount(String username) {
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
+
+        Query query = usersRef.orderByChild("username").equalTo(username);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    String userId = userSnapshot.getKey();
+
+                    DatabaseReference ref = usersRef.child(userId);
+                    ref.child("lostGames").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                int lostGames = dataSnapshot.getValue(Integer.class);
+                                ref.child("lostGames").setValue(lostGames + 1);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Handle errors
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
+    }
+    private void loadProfileImages(String player1, String player2) {
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
+
+        Query player1Query = usersRef.orderByChild("username").equalTo(player1);
+        Query player2Query = usersRef.orderByChild("username").equalTo(player2);
+        player1Query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    String player1UserId = userSnapshot.getKey();
+
+                    DatabaseReference player1Ref = usersRef.child(player1UserId);
+                    player1Ref.child("imageUrl").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                String imageUrl = dataSnapshot.getValue(String.class);
+                                if (imageUrl != null) {
+                                    Picasso.get().load(imageUrl).into(player1ImageView);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Handle errors
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
+
+        player2Query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    String player2UserId = userSnapshot.getKey();
+
+                    DatabaseReference player2Ref = usersRef.child(player2UserId);
+                    player2Ref.child("imageUrl").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                String imageUrl = dataSnapshot.getValue(String.class);
+                                if (imageUrl != null) {
+                                    Picasso.get().load(imageUrl).into(player2ImageView);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Handle errors
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
+
+    }
+
     }
