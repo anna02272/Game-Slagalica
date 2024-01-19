@@ -25,6 +25,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class RegistrationFragment extends Fragment {
@@ -89,6 +91,8 @@ public class RegistrationFragment extends Fragment {
                                 String userId = firebaseUser.getUid();
                                 int initialTokens = 5;
                                 int initialStars = 0;
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                String initialDate = dateFormat.format(new Date());
                                 int initialPlayedGames = 0;
                                 int initialWonGames = 0;
                                 int initialLostGames = 0;
@@ -98,10 +102,15 @@ public class RegistrationFragment extends Fragment {
                                 int initialSkocko = 0;
                                 int initialKorakPoKorak = 0;
                                 int initialMojBroj = 0;
+                                int initialSpojnicePoints = 0;
+                                int initialKorakPoKorakPoints = 0;
+                                int initialMojBrojPoints = 0;
+
 
                                 DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
-                                User user = new User(username, initialTokens, initialStars, initialPlayedGames, initialWonGames, initialLostGames,
-                                        initialKoZnaZna, initialSpojnice, initialAsocijacije, initialSkocko, initialKorakPoKorak, initialMojBroj);
+                                User user = new User(username, initialTokens, initialStars, initialDate,  initialPlayedGames, initialWonGames, initialLostGames,
+                                        initialKoZnaZna, initialSpojnice, initialAsocijacije, initialSkocko, initialKorakPoKorak, initialMojBroj,
+                                        initialSpojnicePoints, initialKorakPoKorakPoints, initialMojBrojPoints);
                                 usersRef.child(userId).setValue(user)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override

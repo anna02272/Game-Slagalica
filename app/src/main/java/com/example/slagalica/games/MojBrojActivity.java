@@ -2,6 +2,7 @@ package com.example.slagalica.games;
 
 import static com.example.slagalica.MainActivity.socket;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -28,12 +29,16 @@ import com.example.slagalica.R;
 import com.example.slagalica.config.SocketHandler;
 import com.example.slagalica.game_helpers.DisableTouchActivity;
 import com.example.slagalica.game_helpers.ShakeDetector;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
@@ -95,6 +100,8 @@ public class MojBrojActivity extends AppCompatActivity {
     private String finalResult;
     private String finalResult2;
     private String userInput;
+    private DatabaseReference usersRef;
+    private String userId;
 
     @Override
     public void onBackPressed() {
@@ -124,6 +131,35 @@ public class MojBrojActivity extends AppCompatActivity {
                 .beginTransaction()
                 .add(R.id.fragment_container, playersFragment)
                 .commit();
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        if (currentUser != null) {
+            userId = currentUser.getUid();
+            usersRef = firebaseDatabase.getReference("users");
+            usersRef.child(userId).child("mojBroj").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        int mojBroj = dataSnapshot.getValue(Integer.class);
+                        int newMojBroj = mojBroj + 1;
+
+                        usersRef.child(userId).child("mojBroj").setValue(newMojBroj)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                        }
+                                    }
+                                });
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle errors
+                }
+            });
+        }
 
         shakeDetector = new ShakeDetector();
         shakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
@@ -215,7 +251,6 @@ public class MojBrojActivity extends AppCompatActivity {
         buttons.add(findViewById(R.id.button_open));
         buttons.add(findViewById(R.id.button_close));
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
         random = new Random();
 
         buttonSteps = new HashMap<>();
@@ -498,7 +533,11 @@ public class MojBrojActivity extends AppCompatActivity {
                             @Override
                             public void onFinish() {
                                 if (confirmClicked == 1) {
-                                    processAnswers();
+                                    try {
+                                        processAnswers();
+                                    } catch (JSONException e) {
+                                        throw new RuntimeException(e);
+                                    }
 //                                    if (!finalResult.equalsIgnoreCase("org.mozilla.javascript.Undefined@0")
 //                                    && (!finalResult.equalsIgnoreCase("Err")  && (!finalResult.equals("null")))) {
 //
@@ -794,7 +833,7 @@ public class MojBrojActivity extends AppCompatActivity {
 
                     getPlayersSocketId(new OnSocketIdReceivedListener() {
                         @Override
-                        public void onSocketIdReceived(String socketId) {
+                        public void onSocketIdReceived(String socketId) throws JSONException {
                             processAnswers();
                         }
                 });
@@ -821,7 +860,7 @@ public class MojBrojActivity extends AppCompatActivity {
         }
     }
 
-    private void processAnswers() {
+    private void processAnswers() throws JSONException {
         socket.emit("decrementConfirmCount");
          if (finalResult == null || finalResult.equalsIgnoreCase("org.mozilla.javascript.Undefined@0")) {
             finalResult = "0";
@@ -837,6 +876,7 @@ public class MojBrojActivity extends AppCompatActivity {
                 showToastAndEmit("Niko ne dobija bodove!");
             } else {
                 updatePoints(currentPlayingUserIndex + 1, 5);
+                updatePointsCount(currentPlayingUser, 5);
                 showToastAndEmit(currentPlayingUser + " - Brojevi su isti, poene dobija cija je runda!");
             }
         } else {
@@ -856,13 +896,15 @@ public class MojBrojActivity extends AppCompatActivity {
         }, 5000);
     }
 
-    private void round1Logic(String answer) {
+    private void round1Logic(String answer) throws JSONException {
           if (finalResult.equals(answer)) {
             updatePoints(currentPlayingUserIndex + 1, 20);
+              updatePointsCount(currentPlayingUser, 20);
             showToastAndEmit(currentPlayingUser  + " - Tacan broj!");
 
           } else if (finalResult2.equals(answer)) {
             updatePoints(currentPlayingUserIndex + 2, 20);
+              updatePointsCount(currentNotPlayingUser, 20);
             showToastAndEmit(currentNotPlayingUser + " - Tacan broj!");
 
         } else {
@@ -875,19 +917,23 @@ public class MojBrojActivity extends AppCompatActivity {
 
             if (difference1 < difference2) {
                 updatePoints(currentPlayingUserIndex + 1, 5);
+                updatePointsCount(currentPlayingUser, 5);
                 showToastAndEmit(currentPlayingUser + " : " + finalResult + " - Blizi broj!");
             } else {
                 updatePoints(currentPlayingUserIndex + 2, 5);
+                updatePointsCount(currentNotPlayingUser, 5);
                 showToastAndEmit(currentNotPlayingUser + " : " + finalResult2 + " - Blizi broj!");
             }
         }
     }
-    private void round2Logic(String answer) {
+    private void round2Logic(String answer) throws JSONException {
          if (finalResult.equals(answer)) {
             updatePoints(currentPlayingUserIndex, 20);
+             updatePointsCount(currentNotPlayingUser, 20);
             showToastAndEmit(currentNotPlayingUser +  " - Tacan broj!");
             } else if (finalResult2.equals(answer)) {
             updatePoints(currentPlayingUserIndex + 1, 20);
+             updatePointsCount(currentPlayingUser, 20);
             showToastAndEmit(currentPlayingUser +  " - Tacan broj!");
              } else {
             double answerValue = Double.parseDouble(answer);
@@ -898,10 +944,12 @@ public class MojBrojActivity extends AppCompatActivity {
             double difference2 = Math.abs(finalResult2Value - answerValue);
 
             if (difference1 < difference2) {
-                updatePoints(currentPlayingUserIndex + 2, 5);
+                updatePoints(currentPlayingUserIndex + 1, 5);
+                updatePointsCount(currentNotPlayingUser, 5);
                 showToastAndEmit(currentNotPlayingUser + " : " + finalResult + " - Blizi broj!");
             } else {
-                updatePoints(currentPlayingUserIndex + 1, 5);
+                updatePoints(currentPlayingUserIndex + 2, 5);
+                updatePointsCount(currentPlayingUser, 5);
                 showToastAndEmit(currentPlayingUser + " : " + finalResult2 + " - Blizi broj!");
             }
         }
@@ -909,6 +957,22 @@ public class MojBrojActivity extends AppCompatActivity {
     private void endGame(){
         socket.emit("inputText", finalAnswer);
         showToastAndEmit("Kraj igre!");
+
+        String player1PUsername = playersFragment.player1UsernameTextView.getText().toString();
+        String player2Username = playersFragment.player2UsernameTextView.getText().toString();
+        int player1Points = Integer.parseInt(playersFragment.player1PointsTextView.getText().toString());
+        int player2Points = Integer.parseInt(playersFragment.player2PointsTextView.getText().toString());
+
+        if (player1Points > player2Points) {
+              updateGamesCount(player1PUsername, player2Username);
+              updateStarsCount(player1PUsername, player2Username, player1Points, player2Points);
+        } else if (player1Points < player2Points) {
+              updateGamesCount(player2Username, player1PUsername);
+              updateStarsCount(player2Username, player1PUsername, player2Points, player1Points);
+        } else {
+            updateTiedStarsCount(player1PUsername, player2Username, player1Points, player2Points);
+        }
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -926,6 +990,207 @@ public class MojBrojActivity extends AppCompatActivity {
             }
         }, 5000);
     }
+    private void updateGamesCount(String winnerUsername, String loserUsername) {
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
+
+        Query winnerQuery = usersRef.orderByChild("username").equalTo(winnerUsername);
+        Query loserQuery = usersRef.orderByChild("username").equalTo(loserUsername);
+        winnerQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    String winnerUserId = userSnapshot.getKey();
+
+                    DatabaseReference winnerRef = usersRef.child(winnerUserId);
+                    winnerRef.child("wonGames").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                int wonGames = dataSnapshot.getValue(Integer.class);
+                                winnerRef.child("wonGames").setValue(wonGames + 1);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Handle errors
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
+
+        loserQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    String loserUserId = userSnapshot.getKey();
+
+                    DatabaseReference loserRef = usersRef.child(loserUserId);
+                    loserRef.child("lostGames").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                int lostGames = dataSnapshot.getValue(Integer.class);
+                                loserRef.child("lostGames").setValue(lostGames + 1);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Handle errors
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
+    }
+    private void updateStarsCount(String winnerUsername, String loserUsername, int winnerPoints, int loserPoints) {
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
+
+        Query winnerQuery = usersRef.orderByChild("username").equalTo(winnerUsername);
+        Query loserQuery = usersRef.orderByChild("username").equalTo(loserUsername);
+
+        int winnerAdditionalStars = winnerPoints / 40;
+        int loserAdditionalStars = loserPoints / 40;
+        winnerQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    String winnerUserId = userSnapshot.getKey();
+
+                    DatabaseReference winnerRef = usersRef.child(winnerUserId);
+                    winnerRef.child("stars").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                int stars = dataSnapshot.getValue(Integer.class);
+                                winnerRef.child("stars").setValue(stars + 10 + winnerAdditionalStars);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Handle errors
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
+        loserQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    String loserUserId = userSnapshot.getKey();
+
+                    DatabaseReference loserRef = usersRef.child(loserUserId);
+                    loserRef.child("stars").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                int stars = dataSnapshot.getValue(Integer.class);
+                                int newStars = Math.max(stars - 10 + loserAdditionalStars, 0);
+                                loserRef.child("stars").setValue(newStars);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Handle errors
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
+    }
+    private void updateTiedStarsCount(String player1, String player2, int player1Points, int player2Points) {
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
+
+        Query player1Query = usersRef.orderByChild("username").equalTo(player1);
+        Query player2Query = usersRef.orderByChild("username").equalTo(player2);
+
+        int player1AdditionalStars = player1Points / 40;
+        int player2AdditionalStars = player2Points / 40;
+        player1Query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    String player1UserId = userSnapshot.getKey();
+
+                    DatabaseReference player1Ref = usersRef.child(player1UserId);
+                    player1Ref.child("stars").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                int stars = dataSnapshot.getValue(Integer.class);
+                                 player1Ref.child("stars").setValue(stars + player1AdditionalStars);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Handle errors
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
+        player2Query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    String player2UserId = userSnapshot.getKey();
+
+                    DatabaseReference player2Ref = usersRef.child(player2UserId);
+                    player2Ref.child("stars").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                int stars = dataSnapshot.getValue(Integer.class);
+                                player2Ref.child("stars").setValue(stars + player2AdditionalStars);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Handle errors
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
+    }
+
     private void startNextGame() throws JSONException {
         if (roundIndex == 1) {
             if (playingUsernamesArray.length() > 0) {
@@ -1044,7 +1309,11 @@ public class MojBrojActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String socketId) {
                 if (socketId != null) {
-                    listener.onSocketIdReceived(socketId);
+                    try {
+                        listener.onSocketIdReceived(socketId);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
                     Log.d("Socket", "SocketIdFromPlayerThatClicked: " + socketId);
                 } else {
                     Log.d("Socket", "Failed to retrieve socket ID");
@@ -1053,7 +1322,7 @@ public class MojBrojActivity extends AppCompatActivity {
         }.execute();
     }
     interface OnSocketIdReceivedListener {
-        void onSocketIdReceived(String socketId);
+        void onSocketIdReceived(String socketId) throws JSONException;
     }
     private void startTimer() {
         if (currentUser == null) {
@@ -1130,6 +1399,41 @@ public class MojBrojActivity extends AppCompatActivity {
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
+    }
+    private void updatePointsCount(String playerUsername, int points) throws JSONException {
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
+
+        Query query = usersRef.orderByChild("username").equalTo(playerUsername);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    String userId = userSnapshot.getKey();
+
+                    DatabaseReference ref = usersRef.child(userId);
+                    ref.child("mojBrojPoints").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                int mojBrojPoints = dataSnapshot.getValue(Integer.class);
+                                int newPoints = (int) (mojBrojPoints + points);
+                                ref.child("mojBrojPoints").setValue(newPoints);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Handle errors
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
     }
 
 }
