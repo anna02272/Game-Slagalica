@@ -10,7 +10,7 @@ import io.socket.client.Socket;
 
 public class SocketHandler {
     static Socket socket;
-    private static final String SERVER_BASE_URL = "http://192.168.1.6:3000";
+    private static final String SERVER_BASE_URL = "http://192.168.0.114:3000";
 
 
     public static void setSocket(){

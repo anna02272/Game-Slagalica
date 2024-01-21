@@ -72,6 +72,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
     private int roundsPlayed = 1;
     private int roundIndex;
     private int answerIndex;
+    private int currentGame1;
     private final int TOTAL_ROUNDS = 2;
     private int buttonId;
     private boolean isContinued;
@@ -90,14 +91,16 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
         disableTouchActivity = new DisableTouchActivity(KorakPoKorakActivity.this);
-        socket.emit("timerStart", currentNotPlayingUserSocketId);
-        JSONObject timerData = new JSONObject();
-        try {
-            timerData.put("duration", 70);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        socket.emit("startTimer", timerData);
+
+//        socket.emit("timerStart1", currentNotPlayingUserSocketId);
+//        JSONObject timerData = new JSONObject();
+//        try {
+//            timerData.put("duration", 70);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        socket.emit("startTimer", timerData);
+
         playersFragment = PlayersFragment.newInstance(71);
         playersFragment.setGameType("KorakPoKorak");
 
@@ -182,7 +185,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
             button.setEnabled(false);
         }
 
-        socket.on("updatePlayingUsers", new Emitter.Listener() {
+        socket.on("updatePlayingUsers2", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 if (args.length >= 2) {
@@ -196,7 +199,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 }
             }
         });
-        socket.on("touchDisabled", new Emitter.Listener() {
+        socket.on("touchDisabled1", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 runOnUiThread(new Runnable() {
@@ -207,7 +210,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 });
             }
         });
-        socket.on("touchEnabled", new Emitter.Listener() {
+        socket.on("touchEnabled1", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 runOnUiThread(new Runnable() {
@@ -218,12 +221,14 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 });
             }
         });
-        socket.on("timerStarted", new Emitter.Listener() {
+        socket.on("timerStarted1", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
+                Log.d("Here", "call");
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d("Here", "run");
                         currentCount = 7;
                         if (countDownTimer != null) {
                             countDownTimer.cancel();
@@ -250,7 +255,11 @@ public class KorakPoKorakActivity extends AppCompatActivity {
 
                             @Override
                             public void onFinish() {
-                                socket.emit("continueGame");
+                                if (currentGame1 > 0){
+
+                                } else {
+                                    socket.emit("continueGame1");
+                                }
                             }
                         };
 
@@ -259,7 +268,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 });
             }
         });
-        socket.on("timerStarted10", new Emitter.Listener() {
+        socket.on("1timerStarted10", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 runOnUiThread(new Runnable() {
@@ -275,16 +284,21 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                             }
                             @Override
                             public void onFinish() {
-                                if (answerIndex == 1) {
-                                    socket.emit("decrementAnswerIndex");
-                                    socket.emit("endGame");
-                                    socket.emit("continuedFalse");
-                                } else {
-                                    socket.emit("incrementAnswerIndex");
-                                    socket.emit("incrementRoundIndex");
-                                    socket.emit("startNextGame");
-                                    socket.emit("continuedFalse");
+                                if (currentGame1 > 0){
 
+                                } else {
+                                    if (answerIndex == 1) {
+                                        socket.emit("decrementAnswerIndex1");
+                                        endGame();
+//                                    socket.emit("endGame1");
+                                        socket.emit("continuedFalse1");
+                                    } else {
+                                        socket.emit("incrementAnswerIndex1");
+                                        socket.emit("incrementRoundIndex1");
+                                        socket.emit("startNextGame1");
+                                        socket.emit("continuedFalse1");
+
+                                    }
                                 }
                             }
                         };
@@ -320,7 +334,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
             }
 
         });
-        socket.on("startActivity", new Emitter.Listener() {
+        socket.on("startActivity1", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 runOnUiThread(() -> {
@@ -374,7 +388,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
             }
 
         });
-        socket.on("endGame", new Emitter.Listener() {
+        socket.on("endGame1", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 runOnUiThread(() -> {
@@ -382,7 +396,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 });
             }
         });
-        socket.on("continueGame", new Emitter.Listener() {
+        socket.on("continueGame1", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 runOnUiThread(() -> {
@@ -394,7 +408,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 });
             }
         });
-        socket.on("startNextGame", new Emitter.Listener() {
+        socket.on("startNextGame1", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 runOnUiThread(() -> {
@@ -406,25 +420,30 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 });
             }
         });
-        socket.on("updateRoundIndex", new Emitter.Listener() {
+        socket.on("updateRoundIndex1", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 roundIndex = (int) args[0];
             }
         });
-        socket.on("updateAnswerIndex", new Emitter.Listener() {
+        socket.on("updateAnswerIndex1", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 answerIndex = (int) args[0];
             }
         });
-        socket.on("updateContinued", new Emitter.Listener() {
+        socket.on("updateContinued1", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 isContinued = (boolean) args[0];
             }
         });
-
+        socket.on("updateCurrentGame1", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                currentGame1 = (int) args[0];
+            }
+        });
         buttonHandler = new Handler();
         buttonRunnable = new Runnable() {
             @Override
@@ -456,8 +475,9 @@ public class KorakPoKorakActivity extends AppCompatActivity {
         if (playingSocketsArray.length() >= 2) {
             currentNotPlayingUserIndex = (currentNotPlayingUserIndex + 1) % playingSocketsArray.length();
             currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex );
-            socket.emit("disableTouch", currentNotPlayingUserSocketId);
-            socket.emit("timerStart", currentNotPlayingUserSocketId);
+//            socket.emit("disableTouch1", currentNotPlayingUserSocketId);
+//            Log.d("Touch disabled", "disable not playing retrieve: " + currentNotPlayingUserSocketId);
+            socket.emit("timerStart1", currentNotPlayingUserSocketId);
             JSONObject timerData = new JSONObject();
             try {
                 timerData.put("duration", 70);
@@ -582,27 +602,29 @@ public class KorakPoKorakActivity extends AppCompatActivity {
 
                 if (isContinued == true) {
                     if (answerIndex == 1) {
-                        socket.emit("endGame");
-                        socket.emit("decrementAnswerIndex");
+//                        socket.emit("endGame1");
+                        endGame();
+                        socket.emit("decrementAnswerIndex1");
                          updatePoints(currentPlayingUserIndex + 1, 5);
                         updatePointsCount(currentPlayingUserIndex, 5);
                     } else {
-                        socket.emit("startNextGame");
-                        socket.emit("incrementAnswerIndex");
-                        socket.emit("incrementRoundIndex");
-                        socket.emit("continuedTrue");
+                        socket.emit("startNextGame1");
+                        socket.emit("incrementAnswerIndex1");
+                        socket.emit("incrementRoundIndex1");
+                        socket.emit("continuedTrue1");
                         updatePoints(currentPlayingUserIndex + 1, 5);
                         updatePointsCount(currentPlayingUserIndex, 5);
                     }
                 } else {
                     if (roundIndex == 1) {
-                        socket.emit("decrementRoundIndex");
-                        socket.emit("endGame");
+                        socket.emit("decrementRoundIndex1");
+                        endGame();
+//                        socket.emit("endGame1");
                     } else {
-                        socket.emit("incrementAnswerIndex");
-                        socket.emit("incrementRoundIndex");
-                        socket.emit("startNextGame");
-                        //socket.emit("continuedTrue");
+                        socket.emit("incrementAnswerIndex1");
+                        socket.emit("incrementRoundIndex1");
+                        socket.emit("startNextGame1");
+                        //socket.emit("continuedTrue1");
                     }
                 }
             } else {
@@ -619,13 +641,14 @@ public class KorakPoKorakActivity extends AppCompatActivity {
 
                 if (isContinued == true) {
                     if (answerIndex == 1) {
-                        socket.emit("decrementAnswerIndex");
-                        socket.emit("endGame");
-                        socket.emit("continuedFalse");
+                        socket.emit("decrementAnswerIndex1");
+                        endGame();
+//                        socket.emit("endGame1");
+                        socket.emit("continuedFalse1");
                     } else {
-                        socket.emit("incrementAnswerIndex");
-                        socket.emit("startNextGame");
-                        socket.emit("continuedFalse");
+                        socket.emit("incrementAnswerIndex1");
+                        socket.emit("startNextGame1");
+                        socket.emit("continuedFalse1");
                     }
                 }
             }
@@ -642,19 +665,20 @@ public class KorakPoKorakActivity extends AppCompatActivity {
              }
                 if (currentUser != null) {
                     showToastAndEmit("Igra je gotova! Sledi igra MOJ BROJ!");
+                    socket.emit("incrementCurrentGame1");
                 } else {
                     Toast.makeText(KorakPoKorakActivity.this, "Sledi igra MOJ BROJ!", Toast.LENGTH_SHORT).show();
                 }
                 if (currentUser != null) {
-                    socket.emit("enableTouch", currentNotPlayingUserSocketId);
-                    socket.emit("startActivity");
+                    socket.emit("enableTouch1", currentNotPlayingUserSocketId);
+                    socket.emit("startActivity1");
                 } else {
                      Intent intent = new Intent(KorakPoKorakActivity.this, MojBrojActivity.class);
                     startActivity(intent);
                     finish();
                 }
             }
-        }, 5000);
+        }, 3000);
     }
     private void startNextGame() throws JSONException {
         if (isContinued == true) {
@@ -668,10 +692,12 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 currentPlayingUserIndex = (currentPlayingUserIndex) % playingSocketsArray.length();
                 currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex);
                 currentPlayingUserSocketId = playingSocketsArray.getString(currentPlayingUserIndex);
-                socket.emit("enableTouch", currentPlayingUserSocketId);
-                socket.emit("disableTouch", currentNotPlayingUserSocketId);
+//                socket.emit("enableTouch1", currentPlayingUserSocketId);
+//                socket.emit("disableTouch1", currentNotPlayingUserSocketId);
+                Log.d("Touch disabled", "enable  playing start next: " + currentPlayingUserSocketId);
+                Log.d("Touch disabled", "disable not playing start next: " + currentNotPlayingUserSocketId);
             }
-            socket.emit("continuedFalse");
+            socket.emit("continuedFalse1");
         } else {
             if (playingUsernamesArray.length() > 0) {
             currentPlayingUserIndex = (currentPlayingUserIndex + 1) % playingUsernamesArray.length();
@@ -683,8 +709,10 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                 currentPlayingUserIndex = (currentPlayingUserIndex) % playingSocketsArray.length();
                 currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex);
                 currentPlayingUserSocketId = playingSocketsArray.getString(currentPlayingUserIndex);
-                socket.emit("enableTouch", currentPlayingUserSocketId);
-                socket.emit("disableTouch", currentNotPlayingUserSocketId);
+//                socket.emit("enableTouch1", currentPlayingUserSocketId);
+//                socket.emit("disableTouch1", currentNotPlayingUserSocketId);
+                Log.d("Touch disabled", "enable  playing start next 2: " + currentPlayingUserSocketId);
+                Log.d("Touch disabled", "disable not playing start next 2: " + currentNotPlayingUserSocketId);
             }
          }
                 for (int i = 0; i < 1; i++) {
@@ -714,13 +742,13 @@ public class KorakPoKorakActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 socket.emit("startTimer", timerData);
-                socket.emit("timerStart", currentPlayingUserSocketId);
+                socket.emit("timerStart1", currentPlayingUserSocketId);
                 showToastAndEmit("Runda 1 je gotova! Pocinje nova runda.");
                 retrieveSteps();
                 buttonHandler.postDelayed(buttonRunnable, 10000);
     }
     private void continueGame() throws JSONException {
-        socket.emit("continuedTrue");
+        socket.emit("continuedTrue1");
         if (playingUsernamesArray.length() > 0) {
             currentPlayingUserIndex = (currentPlayingUserIndex + 1) % playingUsernamesArray.length();
             currentPlayingUser = playingUsernamesArray.getString(currentPlayingUserIndex);
@@ -731,10 +759,12 @@ public class KorakPoKorakActivity extends AppCompatActivity {
             currentPlayingUserIndex = (currentPlayingUserIndex) % playingSocketsArray.length();
             currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex );
             currentPlayingUserSocketId = playingSocketsArray.getString(currentPlayingUserIndex);
-            socket.emit("enableTouch", currentPlayingUserSocketId);
-            socket.emit("disableTouch", currentNotPlayingUserSocketId);
+//            socket.emit("enableTouch1", currentPlayingUserSocketId);
+//            socket.emit("disableTouch1", currentNotPlayingUserSocketId);
+            Log.d("Touch disabled", "enable  playing continue : " + currentPlayingUserSocketId);
+            Log.d("Touch disabled", "disable not playing continue : " + currentNotPlayingUserSocketId);
         }
-        socket.emit("timerStart10", currentPlayingUserSocketId);
+        socket.emit("1timerStart10", currentPlayingUserSocketId);
         JSONObject timerData = new JSONObject();
         try {
             timerData.put("duration", 15);
@@ -842,7 +872,7 @@ public class KorakPoKorakActivity extends AppCompatActivity {
 
     private void showToastAndEmit(String message) {
         Toast.makeText(KorakPoKorakActivity.this, message, Toast.LENGTH_SHORT).show();
-        socket.emit("showToast", message);
+        socket.emit("showToast1", message);
     }
     private void updatePointsCount(int playerNumber, int points) throws JSONException {
         currentPlayingUser = playingUsernamesArray.getString(playerNumber);
