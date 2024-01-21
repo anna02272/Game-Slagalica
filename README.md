@@ -152,7 +152,7 @@ Each round consists of six games played consecutively, with each game having a d
 ### Menu :
 <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/cbd5c15d-9ac5-41b6-aef8-4e004dbaf22d" alt="Menu light" width="45%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/453c02a8-665d-4a05-94ee-8688c0312567" alt="Menu dark" width="45%">
 ### Profile :
-<img src="[Profile](https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/ef66d5f6-03f9-4b75-bb76-58732c05ad48)" alt="Profile" width="45%"> 
+<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/7c0f7da3-ec54-4a96-9058-aaf4edb880e3" alt="Profile" width="45%"> 
 
 
 
