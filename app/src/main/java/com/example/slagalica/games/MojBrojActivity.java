@@ -2,9 +2,6 @@ package com.example.slagalica.games;
 
 import static com.example.slagalica.MainActivity.socket;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,8 +20,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.slagalica.MainActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.slagalica.MainActivity;
 import com.example.slagalica.R;
 import com.example.slagalica.config.SocketHandler;
 import com.example.slagalica.game_helpers.DisableTouchActivity;
@@ -60,7 +59,6 @@ import java.util.Map;
 import java.util.Random;
 
 import io.socket.client.Ack;
-import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class MojBrojActivity extends AppCompatActivity {
@@ -94,6 +92,7 @@ public class MojBrojActivity extends AppCompatActivity {
     private String socketIdFromPlayerThatClicked;
     private int roundIndex;
     private int confirmClicked;
+    private int currentGame2;
     private int buttonId;
     private String number;
     private String SocketIdFromPlayerThatClicked;
@@ -116,14 +115,14 @@ public class MojBrojActivity extends AppCompatActivity {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
         disableTouchActivity = new DisableTouchActivity(MojBrojActivity.this);
-        socket.emit("timerStart", currentNotPlayingUserSocketId);
-        JSONObject timerData = new JSONObject();
-        try {
-            timerData.put("duration", 70);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        socket.emit("startTimer", timerData);
+//        socket.emit("timerStart2", currentNotPlayingUserSocketId);
+//        JSONObject timerData = new JSONObject();
+//        try {
+//            timerData.put("duration", 60);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        socket.emit("startTimer", timerData);
         playersFragment = PlayersFragment.newInstance(61);
         playersFragment.setGameType("MojBroj");
 
@@ -314,7 +313,7 @@ public class MojBrojActivity extends AppCompatActivity {
             });
         }
 
-        socket.on("updatePlayingUsers", new Emitter.Listener() {
+        socket.on("updatePlayingUsers3", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 if (args.length >= 2) {
@@ -328,7 +327,7 @@ public class MojBrojActivity extends AppCompatActivity {
                 }
             }
         });
-        socket.on("touchDisabled", new Emitter.Listener() {
+        socket.on("touchDisabled2", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 runOnUiThread(new Runnable() {
@@ -339,7 +338,7 @@ public class MojBrojActivity extends AppCompatActivity {
                 });
             }
         });
-        socket.on("touchEnabled", new Emitter.Listener() {
+        socket.on("touchEnabled2", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 runOnUiThread(new Runnable() {
@@ -351,7 +350,7 @@ public class MojBrojActivity extends AppCompatActivity {
             }
         });
 
-        socket.on("startActivity", new Emitter.Listener() {
+        socket.on("startActivity2", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 runOnUiThread(() -> {
@@ -474,7 +473,7 @@ public class MojBrojActivity extends AppCompatActivity {
                 });
             }
         });
-        socket.on("endGame", new Emitter.Listener() {
+        socket.on("endGame2", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 runOnUiThread(() -> {
@@ -482,7 +481,7 @@ public class MojBrojActivity extends AppCompatActivity {
                 });
             }
         });
-        socket.on("startNextGame", new Emitter.Listener() {
+        socket.on("startNextGame2", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 runOnUiThread(() -> {
@@ -508,13 +507,19 @@ public class MojBrojActivity extends AppCompatActivity {
                 confirmClicked = (int) args[0];
             }
         });
-        socket.on("updateRoundIndex", new Emitter.Listener() {
+        socket.on("updateRoundIndex2", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 roundIndex = (int) args[0];
             }
         });
-        socket.on("timerStarted", new Emitter.Listener() {
+        socket.on("updateCurrentGame2", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                currentGame2 = (int) args[0];
+            }
+        });
+        socket.on("timerStarted2", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 runOnUiThread(new Runnable() {
@@ -532,12 +537,15 @@ public class MojBrojActivity extends AppCompatActivity {
 
                             @Override
                             public void onFinish() {
-                                if (confirmClicked == 1) {
-                                    try {
-                                        processAnswers();
-                                    } catch (JSONException e) {
-                                        throw new RuntimeException(e);
-                                    }
+                                if (currentGame2 > 0) {
+
+                                } else {
+                                    if (confirmClicked == 1) {
+                                        try {
+                                            processAnswers();
+                                        } catch (JSONException e) {
+                                            throw new RuntimeException(e);
+                                        }
 //                                    if (!finalResult.equalsIgnoreCase("org.mozilla.javascript.Undefined@0")
 //                                    && (!finalResult.equalsIgnoreCase("Err")  && (!finalResult.equals("null")))) {
 //
@@ -548,14 +556,19 @@ public class MojBrojActivity extends AppCompatActivity {
 //                                            && (!finalResult2.equalsIgnoreCase("Err")  && (!finalResult.equals("null")))) {
 //
 //                                    }
-                                } else {
-                                    socket.emit("incrementRoundIndex");
-                                    socket.emit("startNextGame");
+//                                Log.d("Here", "nista");
+
+                                    } else {
+                                        socket.emit("incrementRoundIndex2");
+                                        socket.emit("startNextGame2");
+                                    }
                                 }
+
                             }
                         };
                         countDownTimer.start();
                     }
+
                 });
             }
         });
@@ -574,9 +587,9 @@ public class MojBrojActivity extends AppCompatActivity {
             currentPlayingUserSocketId = playingSocketsArray.getString(currentPlayingUserIndex);
             currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex);
 
-            socket.emit("disableTouch", currentNotPlayingUserSocketId);
-            socket.emit("enableTouch", currentPlayingUserSocketId);
-            socket.emit("timerStart", currentNotPlayingUserSocketId);
+            socket.emit("disableTouch2", currentNotPlayingUserSocketId);
+            socket.emit("enableTouch2", currentPlayingUserSocketId);
+            socket.emit("timerStart2", currentNotPlayingUserSocketId);
             JSONObject timerData = new JSONObject();
             try {
                 timerData.put("duration", 60);
@@ -598,7 +611,7 @@ public class MojBrojActivity extends AppCompatActivity {
 
     private void showToastAndEmit(String message) {
         Toast.makeText(MojBrojActivity.this, message, Toast.LENGTH_SHORT).show();
-        socket.emit("showToast", message);
+        socket.emit("showToast2", message);
     }
 
     private void disableNumberButtons() {
@@ -890,8 +903,8 @@ public class MojBrojActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                socket.emit("incrementRoundIndex");
-                socket.emit("startNextGame");
+                socket.emit("incrementRoundIndex2");
+                socket.emit("startNextGame2");
             }
         }, 5000);
     }
@@ -979,7 +992,8 @@ public class MojBrojActivity extends AppCompatActivity {
                 if (countDownTimer != null) {
                     countDownTimer.cancel();
                 }
-                socket.emit("startActivity");
+                socket.emit("startActivity2");
+
                 try {
                     preferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
                     String username = preferences.getString("username", "");
@@ -988,7 +1002,7 @@ public class MojBrojActivity extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
             }
-        }, 5000);
+        }, 3000);
     }
     private void updateGamesCount(String winnerUsername, String loserUsername) {
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
@@ -1206,8 +1220,8 @@ public class MojBrojActivity extends AppCompatActivity {
                 currentPlayingUserSocketId = playingSocketsArray.getString(currentPlayingUserIndex + 1);
                 currentNotPlayingUserSocketId = playingSocketsArray.getString(currentNotPlayingUserIndex);
 
-                socket.emit("disableTouch", currentNotPlayingUserSocketId);
-                socket.emit("enableTouch", currentPlayingUserSocketId);
+                socket.emit("disableTouch2", currentNotPlayingUserSocketId);
+                socket.emit("enableTouch2", currentPlayingUserSocketId);
             }
             socket.emit("inputText", "");
             socket.emit("buttonAnswerText", "");
@@ -1224,12 +1238,13 @@ public class MojBrojActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             socket.emit("startTimer", timerData);
-            socket.emit("timerStart", currentPlayingUserSocketId);
+            socket.emit("timerStart2", currentPlayingUserSocketId);
             showToastAndEmit("Runda 1 je gotova! Pocinje nova runda.");
             retrieveNumbers();
             onResume();
         } else {
-            socket.emit("endGame");
+            endGame();
+//            socket.emit("endGame2");
         }
 
     }
@@ -1370,7 +1385,7 @@ public class MojBrojActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (currentUser != null) {
-                    socket.emit("enableTouch", currentNotPlayingUserSocketId);
+                    socket.emit("enableTouch2", currentNotPlayingUserSocketId);
                 }
                 setButtonTextForAllButtons();
             }

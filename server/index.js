@@ -17,10 +17,16 @@ let playingUsernamesArray =  [];
 let usernamesArray =  [];
 let socketsArray =  [];
 let roundIndex = 0;
-let answerIndex = 0;
+let answerIndex1 = 0;
 let confirmClicked = 0;
 let isContinued;
-
+let roundIndex1 = 0;
+let roundIndex2 = 0;
+let confirmClicked1 = 0;
+let isContinued1;
+let currentGame = 0;
+let currentGame1 = 0;
+let currentGame2 = 0;
 app.get('/getSocketId', (req, res) => {
     const socketId = req.query.socketId;
     res.send(socketId);
@@ -43,6 +49,9 @@ io.on('connection', (socket) => {
                 playingUsernamesArray = Object.values(playingUsers).map(user => user.username);
                 playingSocketsArray = Object.values(playingUsers).map(user => user.socket.id);
                 io.emit('updatePlayingUsers', playingUsernamesArray, playingSocketsArray);
+                io.emit('updatePlayingUsers1', playingUsernamesArray, playingSocketsArray);
+                io.emit('updatePlayingUsers2', playingUsernamesArray, playingSocketsArray);
+                io.emit('updatePlayingUsers3', playingUsernamesArray, playingSocketsArray);
                 console.log("playingSocketsArray",playingSocketsArray)
                 console.log("Playing Users:",playingUsernamesArray)
          });
@@ -78,71 +87,79 @@ io.on('connection', (socket) => {
           socket.on('timerStart10', (targetSocketId) => {
                            io.to(targetSocketId).emit('timerStarted10');
                   });
-
-//GAMES
-            socket.on('startNextGame', () => {
-                    io.emit('startNextGame');
-                });
-
-             socket.on('continueGame', () => {
-                     io.emit('continueGame');
-            });
-              socket.on('endGame', () => {
-                   io.emit('endGame');
-              });
-               socket.on('startActivity', () => {
-                    setTimeout(() => {
-                     io.emit('updatePlayingUsers', playingUsernamesArray, playingSocketsArray);
-                    io.emit('startActivity');
-                }, 3000);
-               });
-//
-
-             socket.on('showToast', (message) => {
-               io.emit('showToast', message);
-             });
-
-             socket.on('disableTouch', (targetSocketId) => {
-                io.to(targetSocketId).emit('touchDisabled');
-            });
-
-            socket.on('enableTouch', (targetSocketId) => {
-                io.to(targetSocketId).emit('touchEnabled');
-            });
-
-            socket.on('incrementRoundIndex', () => {
-                roundIndex++;
-                console.log(roundIndex, "roundIndex");
-                io.emit('updateRoundIndex', roundIndex);
-              });
-
-              socket.on('decrementRoundIndex', () => {
-                roundIndex--;
-                console.log(roundIndex, "roundIndex");
-                io.emit('updateRoundIndex', roundIndex);
-              });
-             socket.on('incrementAnswerIndex', () => {
-                 answerIndex++;
-                 io.emit('updateAnswerIndex', answerIndex);
+          socket.on('timerStart1', (targetSocketId) => {
+                        io.to(targetSocketId).emit('timerStarted1');
                });
 
-               socket.on('decrementAnswerIndex', () => {
-                 answerIndex--;
-                 io.emit('updateAnswerIndex', answerIndex);
+           socket.on('1timerStart10', (targetSocketId) => {
+                       io.to(targetSocketId).emit('1timerStarted10');
+               });
+            socket.on('timerStart2', (targetSocketId) => {
+                        io.to(targetSocketId).emit('timerStarted2');
                });
 
-               socket.on('continuedTrue', () => {
-                 isContinued = true;
-                 io.emit('updateContinued', isContinued);
-               });
-
-               socket.on('continuedFalse', () => {
-                 isContinued = false;
-                 io.emit('updateContinued', isContinued);
+           socket.on('2timerStart10', (targetSocketId) => {
+                       io.to(targetSocketId).emit('2timerStarted10');
                });
 
 
 //SPOJNICE
+
+         socket.on('retrieveSteps', (targetSocketId) => {
+                  io.to(targetSocketId).emit('retrieveSteps');
+         });
+        socket.on('startNextGame', () => {
+                     io.emit('startNextGame');
+                 });
+
+              socket.on('continueGame', () => {
+                      io.emit('continueGame');
+             });
+               socket.on('endGame', () => {
+                    io.emit('endGame');
+               });
+                socket.on('startActivity', () => {
+                     io.emit('startActivity');
+                });
+
+              socket.on('showToast', (message) => {
+                io.emit('showToast', message);
+              });
+
+              socket.on('disableTouch', (targetSocketId) => {
+                 io.to(targetSocketId).emit('touchDisabled');
+             });
+
+             socket.on('enableTouch', (targetSocketId) => {
+                 io.to(targetSocketId).emit('touchEnabled');
+             });
+
+             socket.on('incrementRoundIndex', () => {
+                 roundIndex++;
+                  console.log("roundIndex: " + roundIndex)
+                 io.emit('updateRoundIndex', roundIndex);
+               });
+
+               socket.on('decrementRoundIndex', () => {
+                 roundIndex--;
+                  console.log("roundIndex: " + roundIndex)
+                 io.emit('updateRoundIndex', roundIndex);
+               });
+            socket.on('incrementCurrentGame', () => {
+                 currentGame++;
+                 console.log("currentGame: " + currentGame)
+                 io.emit('updateCurrentGame', currentGame);
+               });
+
+                socket.on('continuedTrue', () => {
+                  isContinued = true;
+                  io.emit('updateContinued', isContinued);
+                });
+
+                socket.on('continuedFalse', () => {
+                  isContinued = false;
+                  io.emit('updateContinued', isContinued);
+                });
            socket.on('stepChanged', (stepIndex, step) => {
                    io.emit('stepChanged', stepIndex, step);
                });
@@ -167,8 +184,74 @@ io.on('connection', (socket) => {
             socket.on("message_received", (message) => {
                  io.emit('message_received', message);
              });
-
+         socket.on('buttonClickableSpojnice', (buttonId, clickable) => {
+                          io.emit('buttonClickableSpojnice', buttonId, clickable);
+                     });
 //KORAK PO KORAK
+             socket.on('startNextGame1', () => {
+                     io.emit('startNextGame1');
+                 });
+
+              socket.on('continueGame1', () => {
+                      io.emit('continueGame1');
+             });
+               socket.on('endGame1', () => {
+                    io.emit('endGame1');
+               });
+                socket.on('startActivity1', () => {
+                     io.emit('startActivity1');
+                });
+
+              socket.on('showToast1', (message) => {
+                io.emit('showToast1', message);
+              });
+
+              socket.on('disableTouch1', (targetSocketId) => {
+                 io.to(targetSocketId).emit('touchDisabled1');
+             });
+
+             socket.on('enableTouch1', (targetSocketId) => {
+                 io.to(targetSocketId).emit('touchEnabled1');
+             });
+
+             socket.on('incrementRoundIndex1', () => {
+                 roundIndex1++;
+                 console.log("roundIndex1: " + roundIndex1)
+                 io.emit('updateRoundIndex1', roundIndex1);
+               });
+
+               socket.on('decrementRoundIndex1', () => {
+                 roundIndex1--;
+                 console.log("roundIndex1: " + roundIndex1)
+                 io.emit('updateRoundIndex1', roundIndex1);
+               });
+              socket.on('incrementAnswerIndex1', () => {
+                  answerIndex1++;
+                  console.log("answerIndex1: " + answerIndex1)
+                  io.emit('updateAnswerIndex1', answerIndex1);
+                });
+
+                socket.on('decrementAnswerIndex1', () => {
+                  answerIndex1--;
+                   console.log("answerIndex1: " + answerIndex1)
+                  io.emit('updateAnswerIndex1', answerIndex1);
+                });
+
+                socket.on('continuedTrue1', () => {
+                  isContinued1 = true;
+                  io.emit('updateContinued1', isContinued1);
+                });
+
+                socket.on('continuedFalse1', () => {
+                  isContinued1 = false;
+                  io.emit('updateContinued1', isContinued1);
+                });
+            socket.on('incrementCurrentGame1', () => {
+                 currentGame1++;
+                 console.log("currentGame1: " + currentGame1)
+                 io.emit('updateCurrentGame1', currentGame1);
+               });
+
             socket.on('stepChange', ( buttonId, step, answer) => {
                    io.emit('stepChange', buttonId, step, answer);
                });
@@ -188,6 +271,44 @@ io.on('connection', (socket) => {
 
 
 //MOJ BROJ
+              socket.on('startNextGame2', () => {
+                     io.emit('startNextGame2');
+                 });
+               socket.on('endGame2', () => {
+                    io.emit('endGame2');
+               });
+                socket.on('startActivity2', () => {
+                     io.emit('startActivity2');
+                });
+
+              socket.on('showToast2', (message) => {
+                io.emit('showToast2', message);
+              });
+
+              socket.on('disableTouch2', (targetSocketId) => {
+                 io.to(targetSocketId).emit('touchDisabled2');
+             });
+
+             socket.on('enableTouch2', (targetSocketId) => {
+                 io.to(targetSocketId).emit('touchEnabled2');
+             });
+
+             socket.on('incrementRoundIndex2', () => {
+                 roundIndex2++;
+                  console.log("roundIndex2: " + roundIndex2)
+                 io.emit('updateRoundIndex2', roundIndex2);
+               });
+
+               socket.on('decrementRoundIndex2', () => {
+                 roundIndex2--;
+                  console.log("roundIndex2: " + roundIndex2)
+                 io.emit('updateRoundIndex2', roundIndex2);
+               });
+            socket.on('incrementCurrentGame2', () => {
+                 currentGame2++;
+                 console.log("currentGame2: " + currentGame2)
+                 io.emit('updateCurrentGame2', currentGame2);
+               });
             socket.on('numberChange', ( buttonId, number) => {
                 io.emit('numberChange', buttonId, number);
             });
@@ -223,7 +344,7 @@ io.on('connection', (socket) => {
           });
            socket.on('incrementConfirmCount', () => {
                 confirmClicked++;
-                 console.log(confirmClicked);
+                 console.log("confirmClicked: " + confirmClicked);
             io.emit('updateConfirmClicked', confirmClicked);
            });
 
@@ -256,8 +377,14 @@ io.on('connection', (socket) => {
                  userReadyCount = 0;
                  isGameStarting = false;
                  roundIndex = 0;
-                 answerIndex = 0;
+                 answerIndex1 = 0;
                  confirmClicked = 0;
+                  roundIndex1 = 0;
+                   roundIndex2 = 0;
+                  confirmClicked1 = 0;
+                  currentGame = 0
+                  currentGame1 = 0
+                  currentGame2 = 0
         });
            socket.on('playerDisconnected', (userInfo) => {
                  const { username } = userInfo;
@@ -265,14 +392,22 @@ io.on('connection', (socket) => {
                      playingUsernamesArray = Object.values(playingUsers).map(user => user.username);
                       playingSocketsArray = Object.values(playingUsers).map(user => user.socket.id);
                       io.emit('updatePlayingUsers', playingUsernamesArray, playingSocketsArray);
+                       io.emit('updatePlayingUsers1', playingUsernamesArray, playingSocketsArray);
+                        io.emit('updatePlayingUsers2', playingUsernamesArray, playingSocketsArray);
+                         io.emit('updatePlayingUsers3', playingUsernamesArray, playingSocketsArray);
                           console.log("Playing Users:",playingUsernamesArray)
                      playingSocketsArray = Object.values(playingUsers).map(user => user.socket.id);
                          userReadyCount = 0;
                          isGameStarting = false;
                          roundIndex = 0;
-                         answerIndex = 0;
+                         answerIndex1 = 0;
                          confirmClicked = 0;
-
+                         roundIndex1 = 0;
+                         roundIndex2 = 0;
+                          confirmClicked1 = 0;
+                           currentGame = 0
+                           currentGame1 = 0
+                           currentGame2 = 0
                 });
 
     socket.on('disconnect', (userInfo) =>{
@@ -286,13 +421,22 @@ io.on('connection', (socket) => {
    	     playingUsernamesArray = Object.values(playingUsers).map(user => user.username);
    	      playingSocketsArray = Object.values(playingUsers).map(user => user.socket.id);
          io.emit('updatePlayingUsers', playingUsernamesArray, playingSocketsArray);
+          io.emit('updatePlayingUsers1', playingUsernamesArray, playingSocketsArray);
+           io.emit('updatePlayingUsers2', playingUsernamesArray, playingSocketsArray);
+            io.emit('updatePlayingUsers3', playingUsernamesArray, playingSocketsArray);
         console.log("Playing Users:",playingUsernamesArray)
 
    	   userReadyCount = 0;
        isGameStarting = false;
        roundIndex = 0;
-       answerIndex = 0;
+       answerIndex1 = 0;
        confirmClicked = 0;
+        roundIndex1 = 0;
+       roundIndex2 = 0;
+        confirmClicked1 = 0;
+         currentGame = 0
+        currentGame1 = 0
+        currentGame2 = 0
    	});
 
 

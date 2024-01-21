@@ -166,6 +166,106 @@
       "step5": "Ima svog agenta i svoju premiju",
       "step6": "Za vozilo je obavezno",
       "step7": "Postoji i Kasko varijanta"
+    },
+    "steps6": {
+      "answer": "Vino",
+      "step1": "Ima veze sa vinogradima",
+      "step2": "Dolazi u različitim sortama",
+      "step3": "Deo je mnogih proslava",
+      "step4": "Mogu biti crveno, belo ili roze",
+      "step5": "Neki smatraju da se poboljšava starenjem",
+      "step6": "Pije se iz specifičnih čaša",
+      "step7": "Naziv je i za određeni alkoholni proizvod"
+    },
+    "steps7": {
+      "answer": "Bicikl",
+      "step1": "Ima dva točka",
+      "step2": "Pokreće se pedalama",
+      "step3": "Popularan je sredstvo za rekreaciju",
+      "step4": "Može biti sa ili bez brzina",
+      "step5": "Koristi se za prevoz ili vožnju",
+      "step6": "Brendovi uključuju Škotski bicikl i Giant",
+      "step7": "Dobar način da istražite okolinu"
+    },
+    "steps8": {
+      "answer": "Cvet",
+      "step1": "Deo je biljke",
+      "step2": "Mnogi imaju lep miris",
+      "step3": "Često se koriste u dekoracijama",
+      "step4": "Ima različite boje i oblike",
+      "step5": "Oprašuje ih vetar ili insekti",
+      "step6": "Simbolizuje ljubav, sreću ili tugu",
+      "step7": "Često se daje kao poklon"
+    },
+    "steps9": {
+      "answer": "More",
+      "step1": "Ogromna vodena masa",
+      "step2": "Dom mnogih morskih života",
+      "step3": "Često je destinacija odmora",
+      "step4": "Valovi su deo njegovog pejzaža",
+      "step5": "Nekima pruža izvor hrane",
+      "step6": "Poznato po plićacima i dubinama",
+      "step7": "Ponekad se povezuje sa mirnom ili burnom površinom"
+    },
+    "steps10": {
+      "answer": "Satelit",
+      "step1": "Kruži oko nekog nebeskog tela",
+      "step2": "Može biti prirodni ili veštački",
+      "step3": "Često se koristi za komunikaciju",
+      "step4": "Deluje putem gravitacije",
+      "step5": "Može biti deo svemirskih istraživanja",
+      "step6": "Ima različite vrste, uključujući komunikacione i opservacione",
+      "step7": "Određeni broj planeta ima prirodne ove objekte"
+    },
+    "steps11": {
+      "answer": "Kosarka",
+      "step1": "Igra sa loptom",
+      "step2": "Postoje timovi sa pet igrača",
+      "step3": "Koš je postavljen na visini od 3.05 metara",
+      "step4": "Popularna širom sveta",
+      "step5": "Driblanje i šutiranje su osnovni elementi",
+      "step6": "NBA je najpoznatija profesionalna liga",
+      "step7": "Olimpijski sport"
+    },
+    "steps12": {
+      "answer": "Internet",
+      "step1": "Globalna mreža povezanih računara",
+      "step2": "Omogućava deljenje informacija",
+      "step3": "Često se koristi za pretraživanje",
+      "step4": "Sadrži milijarde internet stranica",
+      "step5": "Povezan je sa svim uređajima sa pristupom mreži",
+      "step6": "Bežična i žičana povezanost",
+      "step7": "Revolucionizovao način komunikacije"
+    },
+    "steps13": {
+      "answer": "Televizor",
+      "step1": "Elektronski uređaj za prikaz slika i zvuka",
+      "step2": "Dolazi u različitim veličinama",
+      "step3": "Povezan sa antenom ili kablovskom mrežom",
+      "step4": "Omogućava gledanje različitih programa",
+      "step5": "Mnogi imaju mogućnost povezivanja sa internetom",
+      "step6": "Dio svakodnevnog života",
+      "step7": "Prvi komercijalno dostupan uređaj od sredine 20. veka"
+    },
+    "steps14": {
+      "answer": "Sah",
+      "step1": "Strateška društvena igra",
+      "step2": "Svaki igrač ima 16 figura",
+      "step3": "Cilj je postići mat",
+      "step4": "Potezi uključuju skakanje konja i rokade",
+      "step5": "Igra sa dugom istorijom",
+      "step6": "Svetsko prvenstvo u šahu",
+      "step7": "Poznata i kao 'kraljevska igra'"
+    },
+    "steps15": {
+      "answer": "Republika",
+      "step1": "Oblik vladavine",
+      "step2": "Predstavnički sistem upravljanja",
+      "step3": "Građani biraju predstavnike",
+      "step4": "Vlast zasnovana na zakonu",
+      "step5": "Odmara na principima jednakosti",
+      "step6": "Predsednički ili parlamentarni modeli",
+      "step7": "Primeri uključuju Sjedinjene Američke Države i Francusku"
     }
   },
   "moj_broj": {
@@ -219,6 +319,106 @@
       "number7": "846",
       "number8": "(9 + 9) * (50 - 3) = 846"
     },
+    "numbers6": {
+      "number1": "7",
+      "number2": "2",
+      "number3": "4",
+      "number4": "8",
+      "number5": "15",
+      "number6": "25",
+      "number7": "201",
+      "number8": "7 * (25 + 4) - 2 = 201"
+    },
+    "numbers7": {
+      "number1": "1",
+      "number2": "3",
+      "number3": "7",
+      "number4": "6",
+      "number5": "10",
+      "number6": "50",
+      "number7": "298",
+      "number8": "(7 - 1) * 50 - 6 / 3 = 298"
+    },
+    "numbers8": {
+      "number1": "4",
+      "number2": "8",
+      "number3": "2",
+      "number4": "6",
+      "number5": "10",
+      "number6": "25",
+      "number7": "658",
+      "number8": "(6 * 4 + 2) * 25 + 8 = 658"
+    },
+    "numbers9": {
+      "number1": "5",
+      "number2": "2",
+      "number3": "7",
+      "number4": "9",
+      "number5": "15",
+      "number6": "50",
+      "number7": "3039",
+      "number8": "(50 - 2) * 7 * 9 + 15 = 3039"
+    },
+    "numbers10": {
+      "number1": "3",
+      "number2": "6",
+      "number3": "8",
+      "number4": "2",
+      "number5": "10",
+      "number6": "25",
+      "number7": "1247",
+      "number8": "(8 * 6 + 2) * 25 - 3 = 1247"
+    },
+    "numbers11": {
+      "number1": "2",
+      "number2": "4",
+      "number3": "6",
+      "number4": "8",
+      "number5": "10",
+      "number6": "25",
+      "number7": "156",
+      "number8": "(8 - 2) * 25 + 6 = 156"
+    },
+    "numbers12": {
+      "number1": "5",
+      "number2": "3",
+      "number3": "9",
+      "number4": "6",
+      "number5": "15",
+      "number6": "50",
+      "number7": "804",
+      "number8": "(50 × 15) + (9 × 6) = 804"
+    },
+    "numbers13": {
+      "number1": "7",
+      "number2": "2",
+      "number3": "4",
+      "number4": "8",
+      "number5": "15",
+      "number6": "25",
+      "number7": "694",
+      "number8": "(25 * 4 - 2) * 7 + 8 = 694"
+    },
+    "numbers14": {
+      "number1": "6",
+      "number2": "9",
+      "number3": "3",
+      "number4": "5",
+      "number5": "10",
+      "number6": "50",
+      "number7": "797",
+      "number8": "(10 + 6) * 50 - 9 / 3 = 797"
+    },
+    "numbers15": {
+      "number1": "3",
+      "number2": "8",
+      "number3": "2",
+      "number4": "6",
+      "number5": "15",
+      "number6": "25",
+      "number7": "153",
+      "number8": "(8 - 2) * 25 + 3 = 153"
+    },
     "operations": {
       "close": ")",
       "divide": "/",
@@ -229,7 +429,7 @@
     }
   },
   "points": {
-    "guest_points": 0,
+    "guest_points": 42,
     "player1_points": 0,
     "player2_points": 0
   },
@@ -325,6 +525,167 @@
       "step3": "Durmitor",
       "step4": "Biogradska Gora",
       "step5": "Mala Fatra"
+    },
+    "spojnica6": {
+      "answer1": "Vincent van Gogh",
+      "answer2": "Leonardo da Vinci",
+      "answer3": "Pablo Picasso",
+      "answer4": "Claude Monet",
+      "answer5": "Michelangelo",
+      "step1": "Zvezdana noć",
+      "step2": "Mona Liza",
+      "step3": "Guernica",
+      "step4": "Vodeni ljiljani",
+      "step5": "David"
+    },
+    "spojnica7": {
+      "answer1": "Albert Einstein",
+      "answer2": "Marie Curie",
+      "answer3": "Isaac Newton",
+      "answer4": "Galileo Galilei",
+      "answer5": "Stephen Hawking",
+      "step1": "Teorija relativnosti",
+      "step2": "Radioaktivni raspad",
+      "step3": "Zakoni kretanja",
+      "step4": "Opservacije teleskopa",
+      "step5": "Crne rupe"
+    },
+    "spojnica8": {
+      "answer1": "Romeo i Julija",
+      "answer2": "Hamlet",
+      "answer3": "Magbet",
+      "answer4": "Otelo",
+      "answer5": "San letnje noći",
+      "step1": "Tragedija",
+      "step2": "Biti ili ne biti",
+      "step3": "Očišćen, prokleti fleke!",
+      "step4": "Ljubomora i izdaja",
+      "step5": "Magična šuma"
+    },
+    "spojnica9": {
+      "answer1": "Pariz",
+      "answer2": "London",
+      "answer3": "Njujork",
+      "answer4": "Tokio",
+      "answer5": "Sidnej",
+      "step1": "Ajfelov toranj",
+      "step2": "Big Ben",
+      "step3": "Statua slobode",
+      "step4": "Tokio toranj",
+      "step5": "Sidnejska opera"
+    },
+    "spojnica10": {
+      "answer1": "Fudbal",
+      "answer2": "Košarka",
+      "answer3": "Tenis",
+      "answer4": "Golf",
+      "answer5": "Plivanje",
+      "step1": "Svetsko prvenstvo",
+      "step2": "Slam Dunk",
+      "step3": "Grend slem",
+      "step4": "Masters turnir",
+      "step5": "Olimpijsko slobodno plivanje"
+    },
+    "spojnica11": {
+      "answer1": "Univerzum",
+      "answer2": "Galaksija",
+      "answer3": "Planeta",
+      "answer4": "Zvezda",
+      "answer5": "Mesečev ciklus",
+      "step1": "Nebeski poredak",
+      "step2": "Mlečni put",
+      "step3": "Plavi svet",
+      "step4": "Sjajna kugla gasa",
+      "step5": "Od mladog meseca do punog meseca"
+    },
+    "spojnica12": {
+      "answer1": "Šuma",
+      "answer2": "Planina",
+      "answer3": "Reka",
+      "answer4": "Ostrvo",
+      "answer5": "Pustinja",
+      "step1": "Bujan zeleni svet",
+      "step2": "Vrhovi u oblacima",
+      "step3": "Žubor vode",
+      "step4": "Okruženo vodom",
+      "step5": "Peščani horizonti"
+    },
+    "spojnica13": {
+      "answer1": "Jazz",
+      "answer2": "Rock",
+      "answer3": "Pop",
+      "answer4": "Hip Hop",
+      "answer5": "Klasika",
+      "step1": "Sloboda improvizacije",
+      "step2": "Gitarski rifovi",
+      "step3": "Melodični refren",
+      "step4": "Ulice reči",
+      "step5": "Elegancija simfonije"
+    },
+    "spojnica14": {
+      "answer1": "Crvena",
+      "answer2": "Plava",
+      "answer3": "Zelena",
+      "answer4": "Žuta",
+      "answer5": "Ljubičasta",
+      "step1": "Strastvena energija",
+      "step2": "Spokojnost okeana",
+      "step3": "Svezina proleća",
+      "step4": "Sjaj sunca",
+      "step5": "Misteriozna noć"
+    },
+    "spojnica15": {
+      "answer1": "Kafa",
+      "answer2": "Čaj",
+      "answer3": "Sok",
+      "answer4": "Voda",
+      "answer5": "Smoothie",
+      "step1": "Jutarnji eliksir",
+      "step2": "Opuštajući ritual",
+      "step3": "Osvežavajući gutljaj",
+      "step4": "Čista esencija",
+      "step5": "Voćna harmonija"
+    }
+
+  },
+  "users": {
+    "PYILHTXmnNWU1lKy7bE7rUOCShz2": {
+      "asocijacije": 0,
+      "date": "2024-01-19",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/mobilneaplikacije2023.appspot.com/o/images%2F4bc4bff8-625c-49bb-bea9-46f87abbf318?alt=media&token=a88abeee-fa4e-4662-9731-113b7b4a5392",
+      "koZnaZna": 0,
+      "korakPoKorak": 9,
+      "korakPoKorakPoints": 14,
+      "lostGames": 13,
+      "mojBroj": 3,
+      "mojBrojPoints": 5,
+      "playedGames": 45,
+      "skocko": 0,
+      "spojnice": 9,
+      "spojnicePoints": 10,
+      "stars": 0,
+      "tokens": 21,
+      "username": "user",
+      "wonGames": 4
+    },
+    "dbAPtZJIYpaDMDxOE4yybA86diP2": {
+      "asocijacije": 0,
+      "date": "2024-01-19",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/mobilneaplikacije2023.appspot.com/o/images%2F59d6464c-7994-4f46-80c9-578a576e0362?alt=media&token=6bd5f70d-3ef8-482d-b174-28cab9bd59e8",
+      "koZnaZna": 0,
+      "korakPoKorak": 5,
+      "korakPoKorakPoints": 34,
+      "lostGames": 6,
+      "mojBroj": 3,
+      "mojBrojPoints": 25,
+      "playedGames": 44,
+      "skocko": 0,
+      "spojnice": 10,
+      "spojnicePoints": 18,
+      "stars": 37,
+      "tokens": 133,
+      "username": "eve",
+      "wonGames": 10
     }
   }
 }

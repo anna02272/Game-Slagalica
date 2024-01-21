@@ -144,19 +144,20 @@ public class PlayersFragment extends Fragment {
                 public void call(Object... args) {
                     playingUsernamesArray = (JSONArray) args[0];
                     retrieveConnectedUsers();
-                    requireActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Activity activity = getActivity();
-                            if(activity != null){
-                                if (player1Username != null && player2Username != null) {
-                                    player1UsernameTextView.setText(player1Username);
-                                    player2UsernameTextView.setText(player2Username);
-                                    loadProfileImages(player1Username, player2Username);
+
+                    Activity activity = getActivity();
+                    if (activity != null) {
+                        requireActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                    if (player1Username != null && player2Username != null) {
+                                        player1UsernameTextView.setText(player1Username);
+                                        player2UsernameTextView.setText(player2Username);
+                                        loadProfileImages(player1Username, player2Username);
                                 }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             });
         }
@@ -168,7 +169,8 @@ public class PlayersFragment extends Fragment {
             countDownTimer.cancel();
         }
         if (currentUser != null) {
-            socket.on("syncTimer", onSyncTimer);
+                socket.on("syncTimer", onSyncTimer);
+
         }
         countDownTimer = new CountDownTimer(timerDuration * 1000, 1000) {
             @Override
@@ -195,6 +197,10 @@ public class PlayersFragment extends Fragment {
                             timeTextView.setText("0");
                         }
                     });
+                    if (countDownTimer != null) {
+                        countDownTimer.cancel();
+                        countDownTimer = null;
+                    }
                 }
             }
         };
