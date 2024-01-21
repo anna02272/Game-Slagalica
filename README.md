@@ -130,7 +130,8 @@ Each round consists of six games played consecutively, with each game having a d
 
 ## Images of project (light and dark mode)
 ### Splash screen: 
-![Splash screen light](https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/f8045cf3-6992-448f-90e8-7698d85d49c0)![Splash screen dark](https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/ceddccf6-9ace-4a92-8a9c-ba8c35b552df)
+<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/f8045cf3-6992-448f-90e8-7698d85d49c0" alt="Splash screen light" width="45%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/ceddccf6-9ace-4a92-8a9c-ba8c35b552df" alt="Splash screen dark" width="45%">
+
 ### Home page :
 #### Guest
 ![Main page guest](https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/010128f4-0a7b-4388-84e0-f72a1a1fd760)
