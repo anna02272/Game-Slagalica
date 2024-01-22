@@ -136,9 +136,9 @@ Each round consists of six games played consecutively, with each game having a d
 ### Game Spojnice :
 <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/bcf56342-b88c-42c8-8917-8e5412c8a56c" alt="Spojnice light" width="45%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/1fc87dd5-b746-45a6-a6e9-7b28bd3054d9" alt="Spojnice dark" width="45%">
 ### Game Korak po korak :
-<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/24e6a521-783f-461d-af02-a3c4d9ce1f4b" alt="Korak po korak light" width="45%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/96318537-98c9-49f8-bbda-6b4a18900c6f" alt="Korak po korak dark" width="45%">
+<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/24e6a521-783f-461d-af02-a3c4d9ce1f4b" alt="Korak po korak light" width="45%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/b5fc43f7-82d5-4f26-b46d-5bfcac8adf8e" alt="Korak po korak dark" width="45%">
 ### Game Moj broj :
-<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/1c2b840b-fb1d-4835-bf5f-2f13faea3f6b" alt="Moj broj light" width="45%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/d8411f5d-85b0-47bb-9e2a-a2daa8d4d1ac" alt="Moj broj dark" width="45%">
+<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/1c2b840b-fb1d-4835-bf5f-2f13faea3f6b" alt="Moj broj light" width="45%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/674d89b1-d6b4-44c1-af7b-eeff33bf5b80" alt="Moj broj dark" width="45%">
 ### Game Asocijacije :
 <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/a8be9e5f-57e1-4d9e-a5f0-440aa0f0a417" alt="Asocijacije light" width="45%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/fe4e4d38-734d-4edd-bc72-7299d14059c5" alt="Asocijacije dark" width="45%">
 ### Game Ko zna zna :
