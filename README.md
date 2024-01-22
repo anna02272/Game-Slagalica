@@ -4,7 +4,7 @@
 The project task involves developing an Android mobile application inspired by the quiz game "Slagalica." The mobile application aims to facilitate player competition through one-on-one gaming across several different games.
 
 ## Technologies Used:
-The mobile application is developed using Java programming language for Android, utilizing Firebase for database creation and management. Implemented the application using a three-layer architecture for clear separation of the presentation layer, business logic, and data management.
+The mobile application is developed using Java programming language for Android, utilizing Firebase for database creation and management, also incorporates the use of WebSockets to enable real-time communication and updates. Implemented the application using a three-layer architecture for clear separation of the presentation layer, business logic, and data management.
 
 ## Launch Guide
 
