@@ -6,8 +6,6 @@ The project task involves developing an Android mobile application inspired by t
 ## Technologies Used:
 The mobile application is developed using Java programming language for Android, utilizing Firebase for database creation and management. Implemented the application using a three-layer architecture for clear separation of the presentation layer, business logic, and data management.
 
-# Mobile Application Project
-
 ## Launch Guide
 
 ### Prerequisites
