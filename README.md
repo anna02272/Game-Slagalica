@@ -130,27 +130,27 @@ Each round consists of six games played consecutively, with each game having a d
 ### Splash screen: 
 <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/f8045cf3-6992-448f-90e8-7698d85d49c0" alt="Splash screen light" width="30%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/ceddccf6-9ace-4a92-8a9c-ba8c35b552df" alt="Splash screen dark" width="30%">
 ### Home page (guest and user):
-<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/010128f4-0a7b-4388-84e0-f72a1a1fd760" alt="Home page guest" width="45%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/b1792b91-280e-43d2-a969-ba647bcbe702" alt="Home page user" width="45%">
+<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/010128f4-0a7b-4388-84e0-f72a1a1fd760" alt="Home page guest" width="30%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/b1792b91-280e-43d2-a969-ba647bcbe702" alt="Home page user" width="30%">
 ### Start game :
-<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/7842cae7-b1eb-4162-a9ae-d381bd711dd8" alt="Start game light" width="45%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/f36359fd-f60c-4c77-80ff-1ea6de5c734a" alt="Start game dark" width="45%">
+<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/7842cae7-b1eb-4162-a9ae-d381bd711dd8" alt="Start game light" width="30%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/f36359fd-f60c-4c77-80ff-1ea6de5c734a" alt="Start game dark" width="30%">
 ### Game Spojnice :
-<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/bcf56342-b88c-42c8-8917-8e5412c8a56c" alt="Spojnice light" width="45%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/1fc87dd5-b746-45a6-a6e9-7b28bd3054d9" alt="Spojnice dark" width="45%">
+<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/bcf56342-b88c-42c8-8917-8e5412c8a56c" alt="Spojnice light" width="30%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/1fc87dd5-b746-45a6-a6e9-7b28bd3054d9" alt="Spojnice dark" width="30%">
 ### Game Korak po korak :
-<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/24e6a521-783f-461d-af02-a3c4d9ce1f4b" alt="Korak po korak light" width="45%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/b5fc43f7-82d5-4f26-b46d-5bfcac8adf8e" alt="Korak po korak dark" width="45%">
+<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/24e6a521-783f-461d-af02-a3c4d9ce1f4b" alt="Korak po korak light" width="30%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/b5fc43f7-82d5-4f26-b46d-5bfcac8adf8e" alt="Korak po korak dark" width="30%">
 ### Game Moj broj :
-<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/1c2b840b-fb1d-4835-bf5f-2f13faea3f6b" alt="Moj broj light" width="45%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/674d89b1-d6b4-44c1-af7b-eeff33bf5b80" alt="Moj broj dark" width="45%">
+<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/1c2b840b-fb1d-4835-bf5f-2f13faea3f6b" alt="Moj broj light" width="30%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/674d89b1-d6b4-44c1-af7b-eeff33bf5b80" alt="Moj broj dark" width="30%">
 ### Game Asocijacije :
-<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/a8be9e5f-57e1-4d9e-a5f0-440aa0f0a417" alt="Asocijacije light" width="45%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/fe4e4d38-734d-4edd-bc72-7299d14059c5" alt="Asocijacije dark" width="45%">
+<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/a8be9e5f-57e1-4d9e-a5f0-440aa0f0a417" alt="Asocijacije light" width="30%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/fe4e4d38-734d-4edd-bc72-7299d14059c5" alt="Asocijacije dark" width="30%">
 ### Game Ko zna zna :
-<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/fd4c95b4-43c0-4257-80ed-4019258a3368" alt="Ko zna zna light" width="45%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/0886f6ca-ebe5-40b7-b3f7-fdc758d81fdb" alt="Ko zna zna dark" width="45%">
+<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/fd4c95b4-43c0-4257-80ed-4019258a3368" alt="Ko zna zna light" width="30%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/0886f6ca-ebe5-40b7-b3f7-fdc758d81fdb" alt="Ko zna zna dark" width="30%">
 ### Game Skocko:
-<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/24fb2a98-b486-4f0c-b535-58c8da3d1332" alt="Skocko light" width="45%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/eba14181-14e5-4814-a0d3-7de047d1be6b" alt="Skocko dark" width="45%">
+<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/24fb2a98-b486-4f0c-b535-58c8da3d1332" alt="Skocko light" width="30%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/eba14181-14e5-4814-a0d3-7de047d1be6b" alt="Skocko dark" width="30%">
 ### Login and registration :
-<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/77a5bd3a-6ea4-47e8-94be-e3023e0b3a23" alt="Login" width="45%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/a64e83fe-f799-4d94-b2ed-079325d3846a" alt="Registration" width="45%">
+<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/77a5bd3a-6ea4-47e8-94be-e3023e0b3a23" alt="Login" width="30%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/a64e83fe-f799-4d94-b2ed-079325d3846a" alt="Registration" width="30%">
 ### Menu :
-<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/cbd5c15d-9ac5-41b6-aef8-4e004dbaf22d" alt="Menu light" width="45%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/453c02a8-665d-4a05-94ee-8688c0312567" alt="Menu dark" width="45%">
+<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/cbd5c15d-9ac5-41b6-aef8-4e004dbaf22d" alt="Menu light" width="30%"> <img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/453c02a8-665d-4a05-94ee-8688c0312567" alt="Menu dark" width="30%">
 ### Profile :
-<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/7c0f7da3-ec54-4a96-9058-aaf4edb880e3" alt="Profile" width="45%"> 
+<img src="https://github.com/anna02272/MobilneAplikacije2023-projekat/assets/96575598/7c0f7da3-ec54-4a96-9058-aaf4edb880e3" alt="Profile" width="30%"> 
 
 
 
