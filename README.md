@@ -1,4 +1,4 @@
-# Mobile Application Project
+# Mobile Game Slagalica Project
 
 ## System Purpose:
 The project task involves developing an Android mobile application inspired by the quiz game "Slagalica." The mobile application aims to facilitate player competition through one-on-one gaming across several different games.
@@ -16,7 +16,7 @@ The mobile application is developed using Java programming language for Android,
 ### Steps to Launch the Application
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/your-username/mobile-application.git
+   git clone https://github.com/anna02272/Game-Slagalica
    ```
 2. **Open in Android Studio:**
    Open Android Studio and choose "Open an existing Android Studio project." Navigate to the cloned repository and select the project folder.
